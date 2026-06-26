@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlinkFlow — Profit Analytics for Meesho Sellers</title>
+  <meta name="description" content="India's first AI-powered profit analytics platform built exclusively for Meesho sellers. Upload your reports and know your real profit in seconds." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:       #2563EB;
+      --blue-dark:  #1D4ED8;
+      --blue-light: #EFF6FF;
+      --green:      #16A34A;
+      --green-light:#F0FDF4;
+      --red:        #DC2626;
+      --red-light:  #FEF2F2;
+      --yellow:     #D97706;
+      --ink:        #0F172A;
+      --ink-2:      #1E293B;
+      --muted:      #64748B;
+      --border:     #E2E8F0;
+      --surface:    #F8FAFC;
+      --white:      #FFFFFF;
+      --radius:     12px;
+      --shadow-sm:  0 1px 3px rgba(0,0,0,.08);
+      --shadow-md:  0 4px 16px rgba(0,0,0,.10);
+      --shadow-lg:  0 8px 32px rgba(0,0,0,.12);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--ink);
+      background: var(--white);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+    }
+    .nav-inner {
+      max-width: 1120px; margin: 0 auto;
+      display: flex; align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+    .logo {
+      display: flex; align-items: center; gap: 8px;
+      font-family: 'Sora', sans-serif;
+      font-size: 20px; font-weight: 800;
+      color: var(--ink); text-decoration: none;
+    }
+    .logo-icon {
+      width: 32px; height: 32px;
+      background: var(--blue);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .logo-icon svg { width: 18px; height: 18px; }
+    .logo span { color: var(--blue); }
+    .nav-links {
+      display: flex; align-items: center; gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 14px; font-weight: 500;
+      color: var(--muted); text-decoration: none;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-actions { display: flex; align-items: center; gap: 12px; }
+    .btn-ghost {
+      font-size: 14px; font-weight: 500;
+      color: var(--ink); text-decoration: none;
+      padding: 8px 16px; border-radius: 8px;
+      transition: background .2s;
+    }
+    .btn-ghost:hover { background: var(--surface); }
+    .btn-primary {
+      font-size: 14px; font-weight: 600;
+      color: var(--white); background: var(--blue);
+      text-decoration: none;
+      padding: 9px 20px; border-radius: 8px;
+      transition: background .2s, transform .15s;
+      border: none; cursor: pointer;
+    }
+    .btn-primary:hover { background: var(--blue-dark); transform: translateY(-1px); }
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; padding: 4px;
+    }
+    .hamburger span {
+      display: block; width: 22px; height: 2px;
+      background: var(--ink); border-radius: 2px;
+      transition: .3s;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 96px 24px 80px;
+      text-align: center;
+      background: linear-gradient(180deg, #EFF6FF 0%, #FFFFFF 100%);
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--blue-light); color: var(--blue);
+      font-size: 13px; font-weight: 600;
+      padding: 6px 14px; border-radius: 100px;
+      border: 1px solid #BFDBFE;
+      margin-bottom: 28px;
+    }
+    .hero-badge svg { width: 14px; height: 14px; }
+    .hero h1 {
+      font-family: 'Sora', sans-serif;
+      font-size: clamp(36px, 6vw, 64px);
+      font-weight: 800; line-height: 1.1;
+      letter-spacing: -1.5px;
+      color: var(--ink);
+      max-width: 800px; margin: 0 auto 20px;
+    }
+    .hero h1 .accent { color: var(--blue); }
+    .hero-sub {
+      font-size: clamp(16px, 2vw, 19px);
+      color: var(--muted); max-width: 560px;
+      margin: 0 auto 40px; line-height: 1.7;
+    }
+    .hero-ctas {
+      display: flex; align-items: center;
+      justify-content: center; gap: 12px;
+      flex-wrap: wrap; margin-bottom: 16px;
+    }
+    .btn-hero {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 16px; font-weight: 600;
+      padding: 14px 28px; border-radius: 10px;
+      text-decoration: none; transition: .2s;
+    }
+    .btn-hero-primary {
+      background: var(--blue); color: var(--white);
+      box-shadow: 0 4px 14px rgba(37,99,235,.35);
+    }
+    .btn-hero-primary:hover {
+      background: var(--blue-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(37,99,235,.4);
+    }
+    .btn-hero-secondary {
+      background: var(--white); color: var(--ink);
+      border: 1.5px solid var(--border);
+    }
+    .btn-hero-secondary:hover {
+      border-color: #94A3B8;
+      transform: translateY(-2px);
+    }
+    .hero-note {
+      font-size: 13px; color: var(--muted);
+      margin-bottom: 64px;
+    }
+    .hero-note span { color: var(--green); font-weight: 600; }
+
+    /* ── MEESHO BADGE ── */
+    .meesho-only {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #FFF7ED; border: 1px solid #FED7AA;
+      color: #C2410C; font-size: 13px; font-weight: 600;
+      padding: 8px 16px; border-radius: 100px;
+      margin-bottom: 48px;
+    }
+
+    /* ── DASHBOARD PREVIEW ── */
+    .dashboard-preview {
+      max-width: 900px; margin: 0 auto;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+    }
+    .db-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 20px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .db-dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+    }
+    .db-dot-red { background: #FF5F57; }
+    .db-dot-yellow { background: #FFBD2E; }
+    .db-dot-green { background: #28C840; }
+    .db-url {
+      flex: 1; background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 6px; padding: 4px 12px;
+      font-size: 12px; color: var(--muted);
+      text-align: center; max-width: 280px;
+      margin: 0 auto;
+    }
+    .db-body { padding: 24px; }
+    .db-title {
+      font-size: 14px; font-weight: 600;
+      color: var(--muted); margin-bottom: 16px;
+      display: flex; align-items: center;
+      justify-content: space-between;
+    }
+    .db-month {
+      font-size: 12px; background: var(--blue-light);
+      color: var(--blue); padding: 3px 10px;
+      border-radius: 100px; font-weight: 600;
+    }
+    .db-cards {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 12px; margin-bottom: 20px;
+    }
+    .db-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px;
+    }
+    .db-card-label {
+      font-size: 11px; color: var(--muted);
+      font-weight: 500; margin-bottom: 6px;
+      text-transform: uppercase; letter-spacing: .5px;
+    }
+    .db-card-value {
+      font-size: 22px; font-weight: 700;
+      color: var(--ink); line-height: 1;
+    }
+    .db-card-value.green { color: var(--green); }
+    .db-card-value.red { color: var(--red); }
+    .db-card-change {
+      font-size: 11px; margin-top: 4px;
+      font-weight: 500;
+    }
+    .db-card-change.up { color: var(--green); }
+    .db-card-change.down { color: var(--red); }
+    .db-bottom {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .db-chart-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px;
+    }
+    .db-chart-title {
+      font-size: 12px; font-weight: 600;
+      color: var(--ink); margin-bottom: 12px;
+    }
+    .chart-bars {
+      display: flex; align-items: flex-end;
+      gap: 6px; height: 60px;
+    }
+    .chart-bar {
+      flex: 1; border-radius: 4px 4px 0 0;
+      background: var(--blue);
+      opacity: .7; transition: opacity .2s;
+    }
+    .chart-bar:hover { opacity: 1; }
+    .chart-bar.accent { background: var(--green); opacity: 1; }
+    .sku-list { display: flex; flex-direction: column; gap: 8px; }
+    .sku-row {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+    .sku-name { color: var(--ink); font-weight: 500; }
+    .sku-profit { font-weight: 600; }
+    .sku-profit.pos { color: var(--green); }
+    .sku-profit.neg { color: var(--red); }
+    .sku-bar-wrap {
+      flex: 1; height: 4px; background: var(--border);
+      border-radius: 2px; margin: 0 8px;
+    }
+    .sku-bar-fill {
+      height: 100%; border-radius: 2px;
+      background: var(--blue);
+    }
+
+    /* ── STATS ── */
+    .stats {
+      padding: 48px 24px;
+      background: var(--ink);
+    }
+    .stats-inner {
+      max-width: 1120px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(4,1fr);
+      gap: 32px; text-align: center;
+    }
+    .stat-num {
+      font-family: 'Sora', sans-serif;
+      font-size: 36px; font-weight: 800;
+      color: var(--white); line-height: 1;
+      margin-bottom: 6px;
+    }
+    .stat-num span { color: var(--blue); }
+    .stat-label { font-size: 14px; color: #94A3B8; font-weight: 500; }
+
+    /* ── SECTION SHARED ── */
+    section { padding: 96px 24px; }
+    .section-inner { max-width: 1120px; margin: 0 auto; }
+    .eyebrow {
+      display: inline-block;
+      font-size: 12px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1.5px;
+      color: var(--blue); margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: 'Sora', sans-serif;
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 800; line-height: 1.15;
+      letter-spacing: -.5px;
+      color: var(--ink); margin-bottom: 16px;
+    }
+    .section-sub {
+      font-size: 17px; color: var(--muted);
+      max-width: 520px; line-height: 1.7;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .how { background: var(--surface); }
+    .steps {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      gap: 24px; margin-top: 56px;
+      position: relative;
+    }
+    .steps::before {
+      content: '';
+      position: absolute; top: 32px; left: 10%;
+      width: 80%; height: 1px;
+      background: var(--border);
+    }
+    .step { position: relative; }
+    .step-num {
+      width: 48px; height: 48px;
+      background: var(--blue); color: var(--white);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 700;
+      margin-bottom: 20px; position: relative; z-index: 1;
+      font-family: 'Sora', sans-serif;
+    }
+    .step h3 {
+      font-size: 16px; font-weight: 700;
+      color: var(--ink); margin-bottom: 8px;
+    }
+    .step p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+    /* ── PROBLEM ── */
+    .problem-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 48px; align-items: center; margin-top: 56px;
+    }
+    .problem-list { display: flex; flex-direction: column; gap: 16px; }
+    .problem-item {
+      display: flex; gap: 14px; align-items: flex-start;
+      padding: 16px; border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--white);
+    }
+    .problem-icon {
+      width: 36px; height: 36px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; font-size: 16px;
+    }
+    .problem-icon.red { background: var(--red-light); }
+    .problem-icon.yellow { background: #FFFBEB; }
+    .problem-text h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .problem-text p { font-size: 13px; color: var(--muted); }
+    .solution-box {
+      background: var(--blue);
+      border-radius: 16px; padding: 32px;
+      color: var(--white);
+    }
+    .solution-box h3 {
+      font-family: 'Sora', sans-serif;
+      font-size: 24px; font-weight: 800;
+      margin-bottom: 24px; line-height: 1.3;
+    }
+    .solution-item {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 14px; font-size: 14px;
+    }
+    .solution-check {
+      width: 20px; height: 20px;
+      background: rgba(255,255,255,.2);
+      border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px;
+    }
+
+    /* ── FEATURES ── */
+    .features-grid {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 20px; margin-top: 56px;
+    }
+    .feature-card {
+      padding: 24px; border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--white);
+      transition: box-shadow .2s, transform .2s;
+    }
+    .feature-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-3px);
+    }
+    .feature-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      background: var(--blue-light);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px; font-size: 20px;
+    }
+    .feature-card h3 {
+      font-size: 15px; font-weight: 700;
+      margin-bottom: 8px; color: var(--ink);
+    }
+    .feature-card p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+    .feature-tag {
+      display: inline-block; margin-top: 12px;
+      font-size: 11px; font-weight: 600;
+      padding: 3px 8px; border-radius: 4px;
+    }
+    .tag-blue { background: var(--blue-light); color: var(--blue); }
+    .tag-green { background: var(--green-light); color: var(--green); }
+    .tag-orange { background: #FFF7ED; color: #C2410C; }
+
+    /* ── SETTLEMENT EXPLAINER ── */
+    .settlement { background: var(--surface); }
+    .settlement-visual {
+      margin-top: 48px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 16px; padding: 32px;
+      box-shadow: var(--shadow-sm);
+    }
+    .timeline {
+      display: flex; flex-direction: column; gap: 0;
+    }
+    .timeline-row {
+      display: flex; gap: 16px; align-items: flex-start;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .timeline-row:last-child { border-bottom: none; }
+    .timeline-dot {
+      width: 36px; height: 36px; border-radius: 50%;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700;
+    }
+    .dot-blue { background: var(--blue-light); color: var(--blue); }
+    .dot-yellow { background: #FFFBEB; color: var(--yellow); }
+    .dot-green { background: var(--green-light); color: var(--green); }
+    .timeline-content h4 {
+      font-size: 14px; font-weight: 600; margin-bottom: 4px;
+    }
+    .timeline-content p { font-size: 13px; color: var(--muted); }
+    .settlement-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 32px; align-items: start;
+    }
+
+    /* ── PRICING ── */
+    .pricing-grid {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      gap: 20px; margin-top: 56px; align-items: start;
+    }
+    .pricing-card {
+      border: 1px solid var(--border);
+      border-radius: 16px; padding: 28px;
+      background: var(--white);
+      position: relative;
+    }
+    .pricing-card.popular {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+    }
+    .popular-badge {
+      position: absolute; top: -12px; left: 50%;
+      transform: translateX(-50%);
+      background: var(--blue); color: var(--white);
+      font-size: 11px; font-weight: 700;
+      padding: 4px 12px; border-radius: 100px;
+      white-space: nowrap;
+    }
+    .plan-name {
+      font-size: 14px; font-weight: 600;
+      color: var(--muted); margin-bottom: 8px;
+    }
+    .plan-price {
+      font-family: 'Sora', sans-serif;
+      font-size: 36px; font-weight: 800;
+      color: var(--ink); line-height: 1;
+      margin-bottom: 4px;
+    }
+    .plan-price span {
+      font-size: 16px; font-weight: 500;
+      color: var(--muted);
+    }
+    .plan-period { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+    .plan-divider {
+      height: 1px; background: var(--border);
+      margin: 20px 0;
+    }
+    .plan-features { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .plan-features li {
+      display: flex; align-items: flex-start; gap: 8px;
+      font-size: 13px; color: var(--ink);
+    }
+    .plan-features li::before {
+      content: '✓'; color: var(--green);
+      font-weight: 700; flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .plan-features li.off { color: var(--muted); }
+    .plan-features li.off::before { content: '–'; color: var(--border); }
+    .plan-btn {
+      display: block; text-align: center;
+      margin-top: 24px; padding: 11px;
+      border-radius: 8px; font-size: 14px;
+      font-weight: 600; text-decoration: none;
+      transition: .2s; cursor: pointer; border: none;
+      width: 100%;
+    }
+    .plan-btn-outline {
+      border: 1.5px solid var(--border);
+      color: var(--ink); background: var(--white);
+    }
+    .plan-btn-outline:hover { border-color: var(--blue); color: var(--blue); }
+    .plan-btn-primary {
+      background: var(--blue); color: var(--white);
+    }
+    .plan-btn-primary:hover { background: var(--blue-dark); }
+
+    /* ── TESTIMONIALS ── */
+    .testimonials { background: var(--surface); }
+    .testimonials-grid {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 20px; margin-top: 56px;
+    }
+    .testimonial-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 24px;
+    }
+    .stars { color: #F59E0B; font-size: 14px; margin-bottom: 12px; }
+    .testimonial-text {
+      font-size: 14px; color: var(--ink);
+      line-height: 1.7; margin-bottom: 16px;
+      font-style: italic;
+    }
+    .testimonial-author {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .author-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--blue); color: var(--white);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700; flex-shrink: 0;
+    }
+    .author-name { font-size: 13px; font-weight: 600; color: var(--ink); }
+    .author-meta { font-size: 12px; color: var(--muted); }
+
+    /* ── FAQ ── */
+    .faq-list {
+      max-width: 720px; margin: 48px auto 0;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .faq-item {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden; background: var(--white);
+    }
+    .faq-q {
+      padding: 18px 20px;
+      display: flex; justify-content: space-between;
+      align-items: center; cursor: pointer;
+      font-size: 15px; font-weight: 600; color: var(--ink);
+      user-select: none;
+    }
+    .faq-q:hover { background: var(--surface); }
+    .faq-icon {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--blue-light); color: var(--blue);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; flex-shrink: 0;
+      transition: transform .3s;
+    }
+    .faq-a {
+      padding: 0 20px; max-height: 0;
+      overflow: hidden; transition: max-height .3s, padding .3s;
+      font-size: 14px; color: var(--muted); line-height: 1.7;
+    }
+    .faq-item.open .faq-a {
+      max-height: 200px; padding: 0 20px 18px;
+    }
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+
+    /* ── CTA BANNER ── */
+    .cta-banner {
+      padding: 80px 24px;
+      background: var(--blue);
+      text-align: center;
+    }
+    .cta-banner h2 {
+      font-family: 'Sora', sans-serif;
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 800; color: var(--white);
+      margin-bottom: 16px; line-height: 1.2;
+    }
+    .cta-banner p {
+      font-size: 17px; color: rgba(255,255,255,.8);
+      margin-bottom: 36px;
+    }
+    .btn-white {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--white); color: var(--blue);
+      font-size: 16px; font-weight: 700;
+      padding: 14px 32px; border-radius: 10px;
+      text-decoration: none; transition: .2s;
+    }
+    .btn-white:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,.2);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--ink-2);
+      padding: 56px 24px 32px;
+    }
+    .footer-inner {
+      max-width: 1120px; margin: 0 auto;
+    }
+    .footer-top {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px; margin-bottom: 48px;
+    }
+    .footer-brand .logo { color: var(--white); margin-bottom: 12px; display: flex; }
+    .footer-brand p {
+      font-size: 13px; color: #94A3B8; line-height: 1.7;
+    }
+    .footer-col h4 {
+      font-size: 13px; font-weight: 700;
+      color: var(--white); margin-bottom: 16px;
+      text-transform: uppercase; letter-spacing: .5px;
+    }
+    .footer-col a {
+      display: block; font-size: 13px;
+      color: #94A3B8; text-decoration: none;
+      margin-bottom: 10px; transition: color .2s;
+    }
+    .footer-col a:hover { color: var(--white); }
+    .footer-bottom {
+      border-top: 1px solid #334155;
+      padding-top: 24px;
+      display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 12px;
+    }
+    .footer-bottom p { font-size: 12px; color: #64748B; }
+    .footer-bottom a { color: #64748B; text-decoration: none; }
+    .footer-bottom a:hover { color: #94A3B8; }
+
+    /* ── ALERT BAR ── */
+    .alert-bar {
+      background: var(--ink); color: var(--white);
+      text-align: center; padding: 10px 24px;
+      font-size: 13px; font-weight: 500;
+    }
+    .alert-bar a { color: #93C5FD; text-decoration: underline; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      .nav-links, .nav-actions .btn-ghost { display: none; }
+      .hamburger { display: flex; }
+      .db-cards { grid-template-columns: repeat(2,1fr); }
+      .db-bottom { grid-template-columns: 1fr; }
+      .stats-inner { grid-template-columns: repeat(2,1fr); gap: 24px; }
+      .steps { grid-template-columns: 1fr 1fr; }
+      .steps::before { display: none; }
+      .problem-grid { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr 1fr; }
+      .pricing-grid { grid-template-columns: 1fr 1fr; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .settlement-grid { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 32px; }
+      .footer-brand { grid-column: 1/-1; }
+      section { padding: 64px 24px; }
+    }
+    @media (max-width: 480px) {
+      .steps { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .db-cards { grid-template-columns: 1fr 1fr; }
+      .footer-top { grid-template-columns: 1fr; }
+      .stats-inner { grid-template-columns: repeat(2,1fr); }
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up {
+      opacity: 0; animation: fadeUp .6s ease forwards;
+    }
+    .fade-up:nth-child(1) { animation-delay: .1s; }
+    .fade-up:nth-child(2) { animation-delay: .2s; }
+    .fade-up:nth-child(3) { animation-delay: .3s; }
+    .fade-up:nth-child(4) { animation-delay: .4s; }
+  </style>
+</head>
+<body>
+
+<!-- ALERT BAR -->
+<div class="alert-bar">
+  🚀 Early access open for Meesho sellers — <a href="#pricing">Get 3 months free</a>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+        </svg>
+      </div>
+      Blink<span>Flow</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="#" class="btn-ghost">Sign in</a>
+      <a href="#pricing" class="btn-primary">Start Free →</a>
+    </div>
+    <div class="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
+    Built exclusively for Meesho sellers
+  </div>
+
+  <h1>Know Your Real<br/><span class="accent">Meesho Profit</span><br/>Instantly</h1>
+
+  <p class="hero-sub">
+    Upload your Orders, Settlement and Cost Sheet.
+    BlinkFlow automatically calculates your real profit,
+    flags missing payments and tells you exactly which
+    products are making or losing money.
+  </p>
+
+  <div class="hero-ctas">
+    <a href="#pricing" class="btn-hero btn-hero-primary">
+      Start Free — No Card Needed →
+    </a>
+    <a href="#how" class="btn-hero btn-hero-secondary">
+      See How It Works
+    </a>
+  </div>
+
+  <p class="hero-note">
+    <span>✓ Free forever</span> &nbsp;·&nbsp;
+    No installation &nbsp;·&nbsp;
+    Works with real Meesho CSV files
+  </p>
+
+  <div class="meesho-only">
+    🛍️ Meesho sellers only — we go deep, not broad
+  </div>
+
+  <!-- Dashboard Preview -->
+  <div class="dashboard-preview">
+    <div class="db-header">
+      <div class="db-dot db-dot-red"></div>
+      <div class="db-dot db-dot-yellow"></div>
+      <div class="db-dot db-dot-green"></div>
+      <div class="db-url">blinkflow.in/dashboard</div>
+    </div>
+    <div class="db-body">
+      <div class="db-title">
+        February 2026 — P&L Report
+        <span class="db-month">🟢 Confirmed</span>
+      </div>
+      <div class="db-cards">
+        <div class="db-card fade-up">
+          <div class="db-card-label">Revenue</div>
+          <div class="db-card-value">₹1.19L</div>
+          <div class="db-card-change up">↑ 12% vs Jan</div>
+        </div>
+        <div class="db-card fade-up">
+          <div class="db-card-label">Net Profit</div>
+          <div class="db-card-value green">₹18,420</div>
+          <div class="db-card-change up">↑ 8% vs Jan</div>
+        </div>
+        <div class="db-card fade-up">
+          <div class="db-card-label">RTO Loss</div>
+          <div class="db-card-value red">₹16,017</div>
+          <div class="db-card-change down">↑ 231 RTOs</div>
+        </div>
+        <div class="db-card fade-up">
+          <div class="db-card-label">Settlement</div>
+          <div class="db-card-value">1,717</div>
+          <div class="db-card-change up">277 pending</div>
+        </div>
+      </div>
+      <div class="db-bottom">
+        <div class="db-chart-box">
+          <div class="db-chart-title">Monthly Revenue</div>
+          <div class="chart-bars">
+            <div class="chart-bar" style="height:40%"></div>
+            <div class="chart-bar" style="height:55%"></div>
+            <div class="chart-bar" style="height:45%"></div>
+            <div class="chart-bar" style="height:70%"></div>
+            <div class="chart-bar" style="height:60%"></div>
+            <div class="chart-bar accent" style="height:100%"></div>
+          </div>
+        </div>
+        <div class="db-chart-box">
+          <div class="db-chart-title">Top SKUs by Profit</div>
+          <div class="sku-list">
+            <div class="sku-row">
+              <span class="sku-name">4cEanQgU</span>
+              <div class="sku-bar-wrap"><div class="sku-bar-fill" style="width:90%"></div></div>
+              <span class="sku-profit pos">+₹557</span>
+            </div>
+            <div class="sku-row">
+              <span class="sku-name">LkkMQiKM</span>
+              <div class="sku-bar-wrap"><div class="sku-bar-fill" style="width:70%"></div></div>
+              <span class="sku-profit pos">+₹389</span>
+            </div>
+            <div class="sku-row">
+              <span class="sku-name">k-8VwSBC</span>
+              <div class="sku-bar-wrap"><div class="sku-bar-fill" style="width:20%;background:#DC2626"></div></div>
+              <span class="sku-profit neg">-₹5,889</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stats-inner">
+    <div>
+      <div class="stat-num">1.5<span>M+</span></div>
+      <div class="stat-label">Active Meesho Sellers</div>
+    </div>
+    <div>
+      <div class="stat-num">₹<span>37K</span></div>
+      <div class="stat-label">Avg monthly RTO loss per seller</div>
+    </div>
+    <div>
+      <div class="stat-num">86<span>%</span></div>
+      <div class="stat-label">Payments arrive next month</div>
+    </div>
+    <div>
+      <div class="stat-num">3<span>sec</span></div>
+      <div class="stat-label">To get your real P&L</div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="section-inner">
+    <div class="eyebrow">How it works</div>
+    <h2 class="section-title">From messy CSVs to<br/>clear profit — in 4 steps</h2>
+    <p class="section-sub">
+      No Excel formulas. No VLOOKUP errors. No waiting.
+      Upload your files and BlinkFlow does the rest.
+    </p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Upload Orders Report</h3>
+        <p>Download your monthly orders CSV from Meesho supplier panel and upload here.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Upload Settlement Files</h3>
+        <p>Upload this month's and next month's settlement file. BlinkFlow handles cross-month matching automatically.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Add Your SKU Costs</h3>
+        <p>Upload a simple cost sheet with your SKU codes and purchase prices. One time setup.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h3>Get Your Real P&L</h3>
+        <p>Instant profit dashboard with SKU-wise breakdown, RTO analysis and settlement cross-check.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM / SOLUTION -->
+<section>
+  <div class="section-inner">
+    <div class="eyebrow">The Problem</div>
+    <h2 class="section-title">Meesho sellers are flying blind</h2>
+    <div class="problem-grid">
+      <div class="problem-list">
+        <div class="problem-item">
+          <div class="problem-icon red">😰</div>
+          <div class="problem-text">
+            <h4>Settlements split across two months</h4>
+            <p>86% of your orders get paid next month. So your P&L is always incomplete.</p>
+          </div>
+        </div>
+        <div class="problem-item">
+          <div class="problem-icon red">📦</div>
+          <div class="problem-text">
+            <h4>RTOs silently killing your profit</h4>
+            <p>Every RTO costs you packaging and time. Most sellers don't know their real RTO loss.</p>
+          </div>
+        </div>
+        <div class="problem-item">
+          <div class="problem-icon yellow">⚠️</div>
+          <div class="problem-text">
+            <h4>VLOOKUP errors in Excel</h4>
+            <p>Manual sheets show wrong profit because #N/A errors silently zero out your costs.</p>
+          </div>
+        </div>
+        <div class="problem-item">
+          <div class="problem-icon yellow">💸</div>
+          <div class="problem-text">
+            <h4>Missing settlement payments</h4>
+            <p>Meesho sometimes underpays. Without cross-checking you never know.</p>
+          </div>
+        </div>
+      </div>
+      <div class="solution-box">
+        <h3>BlinkFlow solves all of this automatically</h3>
+        <div class="solution-item">
+          <div class="solution-check">✓</div>
+          Cross-month settlement matching by Order ID
+        </div>
+        <div class="solution-item">
+          <div class="solution-check">✓</div>
+          Real RTO cost calculated per SKU
+        </div>
+        <div class="solution-item">
+          <div class="solution-check">✓</div>
+          Zero VLOOKUP errors — costs applied to every order
+        </div>
+        <div class="solution-item">
+          <div class="solution-check">✓</div>
+          Settlement cross-check flags underpayments
+        </div>
+        <div class="solution-item">
+          <div class="solution-check">✓</div>
+          Pending tracker shows what's still coming
+        </div>
+        <div class="solution-item">
+          <div class="solution-check">✓</div>
+          Ad spend automatically deducted from profit
+        </div>
+        <div class="solution-item">
+          <div class="solution-check">✓</div>
+          Downloadable Excel + PDF report for CA
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section style="background:var(--surface)" id="features">
+  <div class="section-inner">
+    <div class="eyebrow">Features</div>
+    <h2 class="section-title">Everything a Meesho seller<br/>needs to run their business</h2>
+    <p class="section-sub">
+      Built by a Meesho seller who deals with these problems every single day.
+    </p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Automatic P&L Calculation</h3>
+        <p>Every order reconciled. Delivered, RTO, Return and Exchange — each calculated with the correct formula.</p>
+        <span class="feature-tag tag-blue">Core Feature</span>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔄</div>
+        <h3>Cross-Month Settlement</h3>
+        <p>Upload this month and next month's settlement. BlinkFlow matches every Order ID automatically across files.</p>
+        <span class="feature-tag tag-blue">Core Feature</span>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📦</div>
+        <h3>RTO Loss Tracker</h3>
+        <p>See exactly how much money RTOs cost you per SKU per month. Find your highest RTO products instantly.</p>
+        <span class="feature-tag tag-orange">Insight</span>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚠️</div>
+        <h3>Settlement Cross-Check</h3>
+        <p>BlinkFlow compares expected vs actual payment for every order. Flags underpayments so you can raise tickets.</p>
+        <span class="feature-tag tag-green">Money Recovery</span>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <h3>SKU-wise Profit</h3>
+        <p>See profit, margin, RTO rate and return rate for every single SKU. Know what to reorder and what to drop.</p>
+        <span class="feature-tag tag-blue">Analytics</span>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <h3>AI Business Insights</h3>
+        <p>Ask questions like "Which SKU is losing me the most money?" and get instant AI-powered answers.</p>
+        <span class="feature-tag tag-orange">Coming Soon</span>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🖼️</div>
+        <h3>Image Optimizer</h3>
+        <p>Generate optimized product images that qualify for lowest Meesho shipping slab. Save ₹5,000+ monthly.</p>
+        <span class="feature-tag tag-green">Save Money</span>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📥</div>
+        <h3>Export Reports</h3>
+        <p>Download complete P&L as Excel or PDF. 4 tabs: Summary, SKU breakdown, Order detail, Settlement check.</p>
+        <span class="feature-tag tag-blue">Pro Feature</span>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">👥</div>
+        <h3>Multi-Account Manager</h3>
+        <p>Manage multiple Meesho seller accounts from one login. See combined P&L or per-account breakdown.</p>
+        <span class="feature-tag tag-orange">Agency Feature</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SETTLEMENT EXPLAINER -->
+<section class="settlement">
+  <div class="section-inner">
+    <div class="settlement-grid">
+      <div>
+        <div class="eyebrow">Settlement Intelligence</div>
+        <h2 class="section-title">The 20-day settlement problem — solved</h2>
+        <p class="section-sub">
+          Meesho pays you 15-20 days after delivery. This means half your monthly orders are always paid next month. BlinkFlow tracks every rupee automatically.
+        </p>
+      </div>
+      <div class="settlement-visual">
+        <div class="timeline">
+          <div class="timeline-row">
+            <div class="timeline-dot dot-blue">📦</div>
+            <div class="timeline-content">
+              <h4>Feb 1-28 — Orders Placed</h4>
+              <p>1,994 orders placed on Meesho. BlinkFlow reads every Order ID.</p>
+            </div>
+          </div>
+          <div class="timeline-row">
+            <div class="timeline-dot dot-yellow">💰</div>
+            <div class="timeline-content">
+              <h4>Feb Settlement File</h4>
+              <p>Only 286 orders paid (14%). BlinkFlow matches them instantly.</p>
+            </div>
+          </div>
+          <div class="timeline-row">
+            <div class="timeline-dot dot-yellow">💰</div>
+            <div class="timeline-content">
+              <h4>March Settlement File</h4>
+              <p>Remaining 1,426 Feb orders paid here. BlinkFlow catches all of them.</p>
+            </div>
+          </div>
+          <div class="timeline-row">
+            <div class="timeline-dot dot-green">✅</div>
+            <div class="timeline-content">
+              <h4>Complete February P&L</h4>
+              <p>All orders matched. Real profit calculated. 277 orders still pending April — tracked automatically.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="section-inner" style="text-align:center">
+    <div class="eyebrow">Pricing</div>
+    <h2 class="section-title">Simple pricing that grows with you</h2>
+    <p class="section-sub" style="margin:0 auto 0">
+      Start free. Upgrade when you're ready. Cancel anytime.
+    </p>
+    <div class="pricing-grid">
+      <!-- Free -->
+      <div class="pricing-card">
+        <div class="plan-name">Free</div>
+        <div class="plan-price">₹0</div>
+        <div class="plan-period">forever</div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li>P&L Dashboard</li>
+          <li>1 month history</li>
+          <li>Up to 500 orders</li>
+          <li>Basic SKU breakdown</li>
+          <li>10 image credits/month</li>
+          <li class="off">Excel/PDF Export</li>
+          <li class="off">Settlement cross-check</li>
+          <li class="off">Multiple accounts</li>
+        </ul>
+        <a href="#" class="plan-btn plan-btn-outline">Start Free</a>
+      </div>
+      <!-- Starter -->
+      <div class="pricing-card popular">
+        <div class="popular-badge">⭐ Most Popular</div>
+        <div class="plan-name">Starter</div>
+        <div class="plan-price">₹299<span>/mo</span></div>
+        <div class="plan-period">billed monthly</div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li>Everything in Free</li>
+          <li>3 months history</li>
+          <li>Unlimited orders</li>
+          <li>Excel + PDF Export</li>
+          <li>Settlement cross-check</li>
+          <li>100 image credits/month</li>
+          <li class="off">AI Insights</li>
+          <li class="off">Multiple accounts</li>
+        </ul>
+        <a href="#" class="plan-btn plan-btn-primary">Start Free Trial</a>
+      </div>
+      <!-- Pro -->
+      <div class="pricing-card">
+        <div class="plan-name">Pro</div>
+        <div class="plan-price">₹599<span>/mo</span></div>
+        <div class="plan-period">billed monthly</div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li>Everything in Starter</li>
+          <li>12 months history</li>
+          <li>Up to 5 accounts</li>
+          <li>AI Business Insights</li>
+          <li>500 image credits/month</li>
+          <li>RTO trend analysis</li>
+          <li>Priority support</li>
+          <li class="off">White label reports</li>
+        </ul>
+        <a href="#" class="plan-btn plan-btn-outline">Get Pro</a>
+      </div>
+      <!-- Agency -->
+      <div class="pricing-card">
+        <div class="plan-name">Agency</div>
+        <div class="plan-price">₹1,499<span>/mo</span></div>
+        <div class="plan-period">billed monthly</div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li>Everything in Pro</li>
+          <li>Unlimited accounts</li>
+          <li>Unlimited image credits</li>
+          <li>White label reports</li>
+          <li>Client dashboard</li>
+          <li>Bulk CSV processing</li>
+          <li>Dedicated support</li>
+          <li>Early access to features</li>
+        </ul>
+        <a href="#" class="plan-btn plan-btn-outline">Contact Us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="section-inner" style="text-align:center">
+    <div class="eyebrow">Early Feedback</div>
+    <h2 class="section-title">What Meesho sellers say</h2>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"I was calculating profit in Excel for 2 years. BlinkFlow showed me I was actually losing money on 3 of my top SKUs because of RTOs. Game changer."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">R</div>
+          <div>
+            <div class="author-name">Rahul S.</div>
+            <div class="author-meta">Meesho Seller · 2,000 orders/month</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"The settlement cross-check found ₹2,840 in underpayments in my very first month. I raised tickets and got the money back. BlinkFlow paid for itself 10x."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">P</div>
+          <div>
+            <div class="author-name">Priya M.</div>
+            <div class="author-meta">Meesho Seller · Hair accessories</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"I manage 5 Meesho accounts for clients. The agency plan saves me 3 hours every month on P&L calculations. Best ₹1,499 I spend."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">A</div>
+          <div>
+            <div class="author-name">Amit K.</div>
+            <div class="author-meta">Meesho Account Manager · 5 accounts</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="section-inner" style="text-align:center">
+    <div class="eyebrow">FAQ</div>
+    <h2 class="section-title">Frequently asked questions</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Which platforms does BlinkFlow support?
+          <div class="faq-icon">+</div>
+        </div>
+        <div class="faq-a">BlinkFlow is built exclusively for Meesho sellers. We go deep on Meesho's exact settlement structure, CSV formats, and fee system. Amazon and Flipkart support is planned for 2027.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          How does BlinkFlow handle the settlement delay problem?
+          <div class="faq-icon">+</div>
+        </div>
+        <div class="faq-a">You upload both this month's and next month's settlement file. BlinkFlow matches every Order ID across both files automatically. Orders not yet settled are shown as pending with an estimated value and expected date.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Is my data safe and private?
+          <div class="faq-icon">+</div>
+        </div>
+        <div class="faq-a">Yes. Your data is encrypted and stored securely on Supabase servers. We never share or sell your business data. Each account's data is completely isolated.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Do I need to install anything?
+          <div class="faq-icon">+</div>
+        </div>
+        <div class="faq-a">No installation needed. BlinkFlow is a web app that works in any browser on mobile or desktop. Just upload your files and your P&L is ready.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          How accurate is the profit calculation?
+          <div class="faq-icon">+</div>
+        </div>
+        <div class="faq-a">Very accurate. We built and tested the engine against real Meesho data from multiple seller accounts. It accounts for TCS, TDS, return shipping (₹162), RTO costs, multi-quantity orders, and ad spend deductions.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Can I manage multiple Meesho accounts?
+          <div class="faq-icon">+</div>
+        </div>
+        <div class="faq-a">Yes. The Pro plan supports up to 5 accounts. The Agency plan supports unlimited accounts with a combined dashboard view — perfect for account managers who handle multiple sellers.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<div class="cta-banner">
+  <h2>Stop guessing your Meesho profit</h2>
+  <p>Join Meesho sellers who know their real numbers every month</p>
+  <a href="#pricing" class="btn-white">
+    Start Free Today →
+  </a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="/" class="logo">
+          <div class="logo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+            </svg>
+          </div>
+          Blink<span>Flow</span>
+        </a>
+        <p style="margin-top:12px">India's first AI profit analytics platform built exclusively for Meesho sellers. Know your real profit. Recover missing payments. Grow confidently.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#">Changelog</a>
+        <a href="#">Roadmap</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="#">About</a>
+        <a href="#">Blog</a>
+        <a href="#">Careers</a>
+        <a href="#">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Refund Policy</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 BlinkFlow. Built for Meesho sellers in India. 🇮🇳</p>
+      <p>Made with ❤️ by a Meesho seller</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // FAQ toggle
+  function toggleFaq(el) {
+    const item = el.parentElement;
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+
+  // Mobile menu
+  function toggleMenu() {
+    const links = document.querySelector('.nav-links');
+    const actions = document.querySelector('.nav-actions');
+    if (links.style.display === 'flex') {
+      links.style.display = '';
+      actions.style.display = '';
+    } else {
+      links.style.cssText = 'display:flex;flex-direction:column;position:fixed;top:64px;left:0;right:0;background:white;padding:24px;border-bottom:1px solid #E2E8F0;z-index:99;gap:20px;';
+      actions.style.cssText = 'display:flex;flex-direction:column;position:fixed;top:200px;left:0;right:0;background:white;padding:0 24px 24px;z-index:99;gap:12px;';
+    }
+  }
+
+  // Scroll animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.feature-card, .step, .pricing-card, .testimonial-card, .problem-item').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity .5s ease, transform .5s ease';
+    observer.observe(el);
+  });
+</script>
+
+</body>
+</html>
