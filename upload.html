@@ -361,16 +361,17 @@
 
       // Parse ads
       let ads = 0
-      const wsAds = wb.Sheets['Ads Cost']
-      if (wsAds) {
-        const adsRows = XLSX.utils.sheet_to_json(wsAds, { header: 1 })
-        adsRows.slice(2).forEach(row => {
-          if (row[7] && typeof row[7] === 'number' && row[7] !== 0) {
-            ads += Math.abs(row[7])
-          }
-        })
-      }
-
+     // REPLACE with:
+const wsAds = wb.Sheets['Ads Cost']
+if (wsAds) {
+  const adsRows = XLSX.utils.sheet_to_json(wsAds, { header: 1 })
+  adsRows.slice(3).forEach(row => {  // slice(3) skips title + header + formula rows
+    const val = parseFloat(row[3])   // col 3 = "Ad Cost" (excl. GST)
+    if (!isNaN(val) && val !== 0) {
+      ads += Math.abs(val)
+    }
+  })
+}
       return { orders, ads }
     }
 
