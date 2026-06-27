@@ -14,187 +14,62 @@
       --green: #16A34A; --green-light: #F0FDF4;
       --red: #DC2626; --red-light: #FEF2F2;
     }
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--surface); min-height: 100vh;
-      -webkit-font-smoothing: antialiased;
-    }
-    nav {
-      background: var(--white); border-bottom: 1px solid var(--border);
-      padding: 0 24px; position: sticky; top: 0; z-index: 100;
-    }
-    .nav-inner {
-      max-width: 800px; margin: 0 auto;
-      display: flex; align-items: center;
-      justify-content: space-between; height: 64px;
-    }
-    .logo {
-      display: flex; align-items: center; gap: 8px;
-      font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 800;
-      color: var(--ink); text-decoration: none;
-    }
-    .logo-icon {
-      width: 32px; height: 32px; background: var(--blue);
-      border-radius: 8px; display: flex; align-items: center; justify-content: center;
-    }
+    body { font-family: 'Inter', sans-serif; background: var(--surface); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+    nav { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 24px; position: sticky; top: 0; z-index: 100; }
+    .nav-inner { max-width: 800px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .logo { display: flex; align-items: center; gap: 8px; font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 800; color: var(--ink); text-decoration: none; }
+    .logo-icon { width: 32px; height: 32px; background: var(--blue); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
     .logo-icon svg { width: 18px; height: 18px; }
     .logo span { color: var(--blue); }
-    .nav-back {
-      font-size: 14px; color: var(--muted); text-decoration: none; transition: color .2s;
-    }
-    .nav-back:hover { color: var(--ink); }
+    .nav-back { font-size: 14px; color: var(--muted); text-decoration: none; }
     main { max-width: 800px; margin: 0 auto; padding: 48px 24px; }
-    h1 {
-      font-family: 'Sora', sans-serif;
-      font-size: 28px; font-weight: 800; color: var(--ink); margin-bottom: 8px;
-    }
+    h1 { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 800; color: var(--ink); margin-bottom: 8px; }
     .subtitle { font-size: 15px; color: var(--muted); margin-bottom: 40px; }
-    .upload-section {
-      background: var(--white); border: 1.5px solid var(--border);
-      border-radius: 16px; padding: 28px; margin-bottom: 16px;
-    }
-    .upload-section.completed { border-color: var(--green); }
-    .section-header {
-      display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
-    }
-    .section-num {
-      width: 32px; height: 32px; border-radius: 8px;
-      background: var(--blue); color: white;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 14px; font-weight: 700; flex-shrink: 0;
-    }
-    .section-num.done { background: var(--green); }
+    .upload-section { background: var(--white); border: 1.5px solid var(--border); border-radius: 16px; padding: 28px; margin-bottom: 16px; }
+    .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .section-num { width: 32px; height: 32px; border-radius: 8px; background: var(--blue); color: white; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
     .section-title { font-size: 15px; font-weight: 700; color: var(--ink); }
     .section-desc { font-size: 12px; color: var(--muted); margin-top: 2px; }
-    .drop-zone {
-      border: 2px dashed var(--border); border-radius: 10px;
-      padding: 24px; text-align: center; cursor: pointer;
-      transition: .2s; position: relative;
-    }
+    .drop-zone { border: 2px dashed var(--border); border-radius: 10px; padding: 24px; text-align: center; cursor: pointer; transition: .2s; position: relative; }
     .drop-zone:hover { border-color: var(--blue); background: var(--blue-light); }
-    .drop-zone input[type="file"] {
-      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
-    }
+    .drop-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
     .drop-icon { font-size: 28px; margin-bottom: 6px; }
     .drop-text { font-size: 13px; color: var(--muted); }
     .drop-text strong { color: var(--blue); }
     .drop-hint { font-size: 11px; color: #94A3B8; margin-top: 4px; }
-    .file-added {
-      display: none; align-items: center; gap: 8px;
-      background: var(--green-light); border: 1px solid #BBF7D0;
-      border-radius: 8px; padding: 10px 14px;
-      font-size: 13px; color: var(--green); font-weight: 600;
-      margin-top: 8px;
-    }
+    .file-added { display: none; align-items: center; gap: 8px; background: var(--green-light); border: 1px solid #BBF7D0; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: var(--green); font-weight: 600; margin-top: 8px; }
     .file-added.show { display: flex; }
     .settlement-files { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
-    .settlement-file-row {
-      display: flex; align-items: center; justify-content: space-between;
-      background: var(--green-light); border: 1px solid #BBF7D0;
-      border-radius: 8px; padding: 8px 12px;
-      font-size: 13px; color: var(--green); font-weight: 600;
-    }
-    .btn-remove {
-      background: none; border: none; color: var(--red);
-      cursor: pointer; font-size: 14px; padding: 0 4px;
-    }
-    .btn-add-more {
-      display: flex; align-items: center; gap: 6px;
-      background: none; border: 1.5px dashed var(--border);
-      border-radius: 8px; padding: 8px 14px;
-      font-size: 13px; color: var(--muted); cursor: pointer;
-      transition: .2s; font-family: 'Inter', sans-serif;
-      position: relative; width: 100%;
-    }
-    .btn-add-more input {
-      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
-    }
+    .settlement-file-row { display: flex; align-items: center; justify-content: space-between; background: var(--green-light); border: 1px solid #BBF7D0; border-radius: 8px; padding: 8px 12px; font-size: 13px; color: var(--green); font-weight: 600; }
+    .btn-remove { background: none; border: none; color: var(--red); cursor: pointer; font-size: 14px; padding: 0 4px; }
+    .btn-add-more { display: flex; align-items: center; gap: 6px; background: none; border: 1.5px dashed var(--border); border-radius: 8px; padding: 8px 14px; font-size: 13px; color: var(--muted); cursor: pointer; transition: .2s; font-family: 'Inter', sans-serif; position: relative; width: 100%; }
+    .btn-add-more input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
     .btn-add-more:hover { border-color: var(--blue); color: var(--blue); }
-    select {
-      width: 100%; padding: 10px 14px;
-      border: 1.5px solid var(--border); border-radius: 8px;
-      font-size: 14px; font-family: 'Inter', sans-serif;
-      color: var(--ink); background: var(--white); outline: none;
-      cursor: pointer; transition: border-color .2s;
-    }
+    select { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; font-family: 'Inter', sans-serif; color: var(--ink); background: var(--white); outline: none; cursor: pointer; }
     select:focus { border-color: var(--blue); }
     .select-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .submit-section {
-      background: var(--white); border: 1px solid var(--border);
-      border-radius: 16px; padding: 28px; text-align: center;
-    }
-    .btn-calculate {
-      width: 100%; padding: 15px;
-      background: var(--blue); color: white;
-      border: none; border-radius: 10px;
-      font-size: 15px; font-weight: 700;
-      font-family: 'Inter', sans-serif;
-      cursor: pointer; transition: .2s;
-    }
-    .btn-calculate:hover { background: var(--blue-dark); transform: translateY(-1px); }
-    .btn-calculate:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+    .submit-section { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 28px; text-align: center; }
+    .btn-calculate { width: 100%; padding: 15px; background: var(--blue); color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; transition: .2s; }
+    .btn-calculate:hover { background: var(--blue-dark); }
+    .btn-calculate:disabled { opacity: .6; cursor: not-allowed; }
     .submit-note { font-size: 12px; color: var(--muted); margin-top: 8px; }
     .processing { display: none; text-align: center; padding: 40px 24px; }
     .processing.show { display: block; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .process-spinner {
-      width: 44px; height: 44px;
-      border: 4px solid var(--blue-light); border-top-color: var(--blue);
-      border-radius: 50%; animation: spin .8s linear infinite;
-      margin: 0 auto 16px;
-    }
-    .process-steps { list-style: none; text-align: left; max-width: 300px; margin: 20px auto 0; }
-    .process-step {
-      display: flex; align-items: center; gap: 8px;
-      font-size: 13px; color: var(--muted); padding: 5px 0;
-    }
+    .process-spinner { width: 44px; height: 44px; border: 4px solid var(--blue-light); border-top-color: var(--blue); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 16px; }
+    .process-steps { list-style: none; text-align: left; max-width: 320px; margin: 20px auto 0; }
+    .process-step { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); padding: 5px 0; }
     .process-step.done { color: var(--green); }
     .process-step.active { color: var(--ink); font-weight: 600; }
-    .error-msg {
-      background: var(--red-light); border: 1px solid #FECACA;
-      color: var(--red); font-size: 13px;
-      padding: 10px 14px; border-radius: 8px;
-      margin-bottom: 16px; display: none;
-    }
-    .new-biz-form {
-      display: none; margin-top: 12px;
-      padding: 16px; background: var(--blue-light);
-      border-radius: 10px; border: 1px solid #BFDBFE;
-    }
+    .error-msg { background: var(--red-light); border: 1px solid #FECACA; color: var(--red); font-size: 13px; padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; display: none; }
+    .new-biz-form { display: none; margin-top: 12px; padding: 16px; background: var(--blue-light); border-radius: 10px; border: 1px solid #BFDBFE; }
     .new-biz-form.show { display: block; }
-    .new-biz-form input {
-      width: 100%; padding: 10px 14px; margin-bottom: 8px;
-      border: 1.5px solid var(--border); border-radius: 8px;
-      font-size: 14px; font-family: 'Inter', sans-serif;
-      color: var(--ink); background: var(--white); outline: none;
-    }
-    .new-biz-form input:focus { border-color: var(--blue); }
-    .btn-save-biz {
-      padding: 9px 18px; background: var(--blue); color: white;
-      border: none; border-radius: 8px; font-size: 13px; font-weight: 600;
-      cursor: pointer; font-family: 'Inter', sans-serif;
-    }
-    .loading-screen {
-      position: fixed; inset: 0; background: white;
-      display: flex; align-items: center; justify-content: center; z-index: 999;
-    }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-    .loading-logo {
-      font-family: 'Sora', sans-serif; font-size: 24px;
-      font-weight: 800; color: var(--ink); animation: pulse 1s infinite;
-    }
-    @media (max-width: 600px) {
-      main { padding: 24px 16px; }
-      .select-row { grid-template-columns: 1fr; }
-    }
+    .new-biz-form input { width: 100%; padding: 10px 14px; margin-bottom: 8px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; font-family: 'Inter', sans-serif; color: var(--ink); background: var(--white); outline: none; }
+    .btn-save-biz { padding: 9px 18px; background: var(--blue); color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
+    @media (max-width: 600px) { main { padding: 24px 16px; } .select-row { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
-
-  <div class="loading-screen" id="loadingScreen">
-    <div class="loading-logo">⚡ BlinkFlow</div>
-  </div>
-
   <nav>
     <div class="nav-inner">
       <a href="/dashboard" class="logo">
@@ -215,13 +90,12 @@
 
     <div class="error-msg" id="errorMsg"></div>
 
-    <!-- Step 1: Select Month + Account -->
-    <div class="upload-section" id="step1">
+    <div class="upload-section">
       <div class="section-header">
-        <div class="section-num" id="num1">1</div>
+        <div class="section-num">1</div>
         <div>
           <div class="section-title">Select Month & Account</div>
-          <div class="section-desc">Which month and which Meesho account?</div>
+          <div class="section-desc">Which month and Meesho account?</div>
         </div>
       </div>
       <div class="select-row">
@@ -242,15 +116,14 @@
       </div>
       <div class="new-biz-form" id="newBizForm">
         <input type="text" id="bizName" placeholder="Account name (e.g. Geeta Traders)" />
-        <input type="text" id="bizMeeshoId" placeholder="Meesho Seller ID (e.g. 3537454)" />
+        <input type="text" id="bizMeeshoId" placeholder="Meesho Seller ID (optional)" />
         <button class="btn-save-biz" onclick="saveNewBusiness()">Save Account</button>
       </div>
     </div>
 
-    <!-- Step 2: Orders CSV -->
-    <div class="upload-section" id="step2">
+    <div class="upload-section">
       <div class="section-header">
-        <div class="section-num" id="num2">2</div>
+        <div class="section-num">2</div>
         <div>
           <div class="section-title">Orders Report</div>
           <div class="section-desc">Meesho Seller Panel → Reports → Order Report → Download CSV</div>
@@ -260,17 +133,14 @@
         <input type="file" accept=".csv" id="ordersFile" onchange="fileSelected('orders', this)" />
         <div class="drop-icon">📋</div>
         <div class="drop-text">Drop your <strong>Orders CSV</strong> here or click to browse</div>
-        <div class="drop-hint">File name starts with: Orders_YYYY-MM...</div>
+        <div class="drop-hint">File name: Orders_YYYY-MM-DD...csv</div>
       </div>
-      <div class="file-added" id="ordersAdded">
-        ✅ <span id="ordersFileName">Orders file added</span>
-      </div>
+      <div class="file-added" id="ordersAdded">✅ <span id="ordersFileName">Orders file added</span></div>
     </div>
 
-    <!-- Step 3: Settlement Files -->
-    <div class="upload-section" id="step3">
+    <div class="upload-section">
       <div class="section-header">
-        <div class="section-num" id="num3">3</div>
+        <div class="section-num">3</div>
         <div>
           <div class="section-title">Settlement Files</div>
           <div class="section-desc">Upload this month + next month's settlement for complete P&L</div>
@@ -281,58 +151,47 @@
         <input type="file" accept=".xlsx,.xls" multiple onchange="addSettlementFiles(this)" />
         + Add Settlement File
       </div>
-      <p style="font-size:11px;color:#94A3B8;margin-top:6px">
-        💡 Add both current month and next month's file for complete results
-      </p>
+      <p style="font-size:11px;color:#94A3B8;margin-top:6px">💡 Add both current month and next month's file for complete results</p>
     </div>
 
-    <!-- Step 4: SKU Costs -->
-    <div class="upload-section" id="step4">
+    <div class="upload-section">
       <div class="section-header">
-        <div class="section-num" id="num4">4</div>
+        <div class="section-num">4</div>
         <div>
           <div class="section-title">SKU Cost Sheet</div>
-          <div class="section-desc">Two columns: SKU Code | Your purchase price</div>
+          <div class="section-desc">CSV file with two columns: SKU Code | Your purchase price</div>
         </div>
       </div>
       <div class="drop-zone" id="skuZone">
-        <input type="file" accept=".csv,.xlsx" id="skuFile" onchange="fileSelected('sku', this)" />
+        <input type="file" accept=".csv" id="skuFile" onchange="fileSelected('sku', this)" />
         <div class="drop-icon">💰</div>
-        <div class="drop-text">Drop your <strong>SKU Cost Sheet</strong> here or click to browse</div>
-        <div class="drop-hint">CSV or Excel with SKU and cost columns</div>
+        <div class="drop-text">Drop your <strong>SKU Cost CSV</strong> here or click to browse</div>
+        <div class="drop-hint">Must be CSV format. Two columns: SKU, Cost</div>
       </div>
-      <div class="file-added" id="skuAdded">
-        ✅ <span id="skuFileName">SKU cost file added</span>
-      </div>
+      <div class="file-added" id="skuAdded">✅ <span id="skuFileName">SKU cost file added</span></div>
     </div>
 
-    <!-- Calculate Button -->
     <div class="submit-section" id="submitSection">
-      <button class="btn-calculate" id="calculateBtn" onclick="calculatePnL()">
-        ⚡ Calculate My P&L
-      </button>
-      <p class="submit-note">Takes 10-30 seconds depending on order volume</p>
+      <button class="btn-calculate" id="calculateBtn" onclick="calculatePnL()">⚡ Calculate My P&L</button>
+      <p class="submit-note">Processing happens in your browser — no data size limits</p>
     </div>
 
-    <!-- Processing Screen -->
     <div class="processing" id="processingSection">
       <div class="process-spinner"></div>
-      <h3 style="font-family:'Sora',sans-serif;font-size:20px;font-weight:800;margin-bottom:8px">
-        Calculating your P&L...
-      </h3>
+      <h3 style="font-family:'Sora',sans-serif;font-size:20px;font-weight:800;margin-bottom:8px">Calculating your P&L...</h3>
       <p style="font-size:13px;color:#64748B">Please don't close this window</p>
       <ul class="process-steps">
         <li class="process-step active" id="ps1">⏳ Reading orders file...</li>
         <li class="process-step" id="ps2">⏳ Reading settlement files...</li>
-        <li class="process-step" id="ps3">⏳ Matching Order IDs...</li>
-        <li class="process-step" id="ps4">⏳ Applying SKU costs...</li>
+        <li class="process-step" id="ps3">⏳ Reading SKU costs...</li>
+        <li class="process-step" id="ps4">⏳ Matching orders to settlements...</li>
         <li class="process-step" id="ps5">⏳ Calculating profit per order...</li>
         <li class="process-step" id="ps6">⏳ Saving to database...</li>
       </ul>
+      <div id="progressText" style="margin-top:16px;font-size:13px;color:#64748B"></div>
     </div>
   </main>
 
-  <!-- SheetJS for reading Excel files -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
   <script type="module">
@@ -342,53 +201,42 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlyZWhwenNhamx0cGlucWRqcWdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1MDIzNTEsImV4cCI6MjA5ODA3ODM1MX0.T4gyFGHdNg4xQOQoHf02XUHz2Nkapb7ybW9Ln2BC7Ts'
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
-    // Check auth
     const { data: { session } } = await supabase.auth.getSession()
-    if (!session) { window.location.href = '/login' }
+    if (!session) { window.location.href = '/login'; }
 
-    document.getElementById('loadingScreen').style.display = 'none'
-    window._session = session
     window._supabase = supabase
+    window._session = session
 
     // Load businesses
     const { data: businesses } = await supabase
-      .from('businesses')
-      .select('id, name, meesho_id')
-      .eq('user_id', session.user.id)
+      .from('businesses').select('id, name, meesho_id').eq('user_id', session.user.id)
 
     const bizSelect = document.getElementById('selectBusiness')
     if (businesses && businesses.length > 0) {
       businesses.forEach(b => {
         const opt = document.createElement('option')
         opt.value = b.id
-        opt.textContent = `${b.name} (${b.meesho_id || 'No ID'})`
+        opt.textContent = b.name + (b.meesho_id ? ` (${b.meesho_id})` : '')
         bizSelect.insertBefore(opt, bizSelect.lastElementChild)
       })
     }
 
-    // Save new business
     window.saveNewBusiness = async function() {
       const name = document.getElementById('bizName').value.trim()
       const meeshoId = document.getElementById('bizMeeshoId').value.trim()
       if (!name) { alert('Please enter account name'); return }
-
-      const { data, error } = await supabase
-        .from('businesses')
-        .insert({ user_id: session.user.id, name, meesho_id: meeshoId })
-        .select()
-        .single()
-
-      if (error) { alert('Error saving: ' + error.message); return }
-
+      const { data, error } = await supabase.from('businesses')
+        .insert({ user_id: session.user.id, name, meesho_id: meeshoId || null })
+        .select().single()
+      if (error) { alert('Error: ' + error.message); return }
       const opt = document.createElement('option')
       opt.value = data.id
-      opt.textContent = `${name} (${meeshoId})`
+      opt.textContent = name
       bizSelect.insertBefore(opt, bizSelect.lastElementChild)
       bizSelect.value = data.id
       document.getElementById('newBizForm').classList.remove('show')
     }
 
-    // File storage
     window.uploadedFiles = { orders: null, settlements: [], sku: null }
 
     window.fileSelected = function(type, input) {
@@ -414,8 +262,7 @@
         window.uploadedFiles.settlements.push(file)
         const row = document.createElement('div')
         row.className = 'settlement-file-row'
-        row.innerHTML = `<span>✅ ${file.name}</span>
-          <button class="btn-remove" onclick="removeSettlement(this, '${file.name}')">✕</button>`
+        row.innerHTML = `<span>✅ ${file.name}</span><button class="btn-remove" onclick="removeSettlement(this,'${file.name}')">✕</button>`
         list.appendChild(row)
       })
     }
@@ -429,186 +276,275 @@
       document.getElementById('newBizForm').classList.toggle('show', select.value === 'new')
     }
 
-    // Parse CSV file
-    async function parseCSV(file) {
-      return new Promise((resolve) => {
+    function setStep(id, state) {
+      const el = document.getElementById(id)
+      if (!el) return
+      el.className = 'process-step ' + state
+      if (state === 'done') el.textContent = '✅ ' + el.textContent.replace(/^[⏳🔄✅] /, '')
+      if (state === 'active') el.textContent = '🔄 ' + el.textContent.replace(/^[⏳🔄✅] /, '')
+    }
+
+    // Parse CSV with Windows line ending support
+    function parseCSVText(text) {
+      const lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n').filter(l => l.trim())
+      if (lines.length < 2) return []
+      const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''))
+      const rows = []
+      for (let i = 1; i < lines.length; i++) {
+        const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''))
+        if (values.length < 2) continue
+        const row = {}
+        headers.forEach((h, idx) => { row[h] = values[idx] || '' })
+        rows.push(row)
+      }
+      return rows
+    }
+
+    async function readFileAsText(file) {
+      return new Promise(resolve => {
         const reader = new FileReader()
-        reader.onload = (e) => {
-          const text = e.target.result
-        const lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n').filter(l => l.trim())
-const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''))
-const rows = []
-for (let i = 1; i < lines.length; i++) {
-  const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''))
-  if (values.length < 2) continue
-            const row = {}
-            headers.forEach((h, idx) => { row[h] = values[idx] || '' })
-            rows.push(row)
-          }
-          resolve(rows)
-        }
+        reader.onload = e => resolve(e.target.result)
         reader.readAsText(file)
       })
     }
 
-    // Parse Excel file
-    async function parseExcel(file) {
-      return new Promise((resolve) => {
+    async function readFileAsArrayBuffer(file) {
+      return new Promise(resolve => {
         const reader = new FileReader()
-        reader.onload = (e) => {
-          const wb = XLSX.read(e.target.result, { type: 'array' })
-          const ws = wb.Sheets['Order Payments']
-          if (!ws) { resolve([]); return }
-          const rows = XLSX.utils.sheet_to_json(ws, { header: 1 })
-          if (rows.length < 4) { resolve([]); return }
-          const headers = rows[1]
-          const data = []
-          for (let i = 3; i < rows.length; i++) {
-            const row = rows[i]
-            if (!row[0]) continue
-            const obj = {}
-            headers.forEach((h, idx) => { if (h) obj[h] = row[idx] })
-            data.push(obj)
-          }
-          resolve(data)
-        }
+        reader.onload = e => resolve(e.target.result)
         reader.readAsArrayBuffer(file)
       })
     }
 
-    // Parse SKU cost file
-    async function parseSkuCosts(file) {
-      const costs = {}
-      if (file.name.endsWith('.csv')) {
-        const rows = await parseCSV(file)
-        rows.forEach(row => {
-          const keys = Object.keys(row)
-          if (keys.length >= 2) {
-            const sku = row[keys[0]]?.trim()
-            const cost = parseFloat(row[keys[1]])
-            if (sku && !isNaN(cost)) costs[sku] = cost
+    async function parseSettlementXLSX(file) {
+      const buffer = await readFileAsArrayBuffer(file)
+      const wb = XLSX.read(buffer, { type: 'array' })
+      const ws = wb.Sheets['Order Payments']
+      if (!ws) return { orders: [], ads: 0 }
+      
+      const allRows = XLSX.utils.sheet_to_json(ws, { header: 1 })
+      if (allRows.length < 4) return { orders: [], ads: 0 }
+      
+      const headers = allRows[1]
+      const orders = []
+      for (let i = 3; i < allRows.length; i++) {
+        const row = allRows[i]
+        if (!row[0]) continue
+        const obj = {}
+        headers.forEach((h, idx) => { if (h) obj[h] = row[idx] })
+        orders.push(obj)
+      }
+
+      // Parse ads
+      let ads = 0
+      const wsAds = wb.Sheets['Ads Cost']
+      if (wsAds) {
+        const adsRows = XLSX.utils.sheet_to_json(wsAds, { header: 1 })
+        adsRows.slice(2).forEach(row => {
+          if (row[7] && typeof row[7] === 'number' && row[7] !== 0) {
+            ads += Math.abs(row[7])
           }
-        })
-      } else {
-        const reader = new FileReader()
-        await new Promise(resolve => {
-          reader.onload = (e) => {
-            const wb = XLSX.read(e.target.result, { type: 'array' })
-            const ws = wb.Sheets[wb.SheetNames[0]]
-            const rows = XLSX.utils.sheet_to_json(ws, { header: 1 })
-            rows.slice(1).forEach(row => {
-              if (row[0] && row[1]) {
-                const sku = String(row[0]).trim()
-                const cost = parseFloat(row[1])
-                if (sku && !isNaN(cost)) costs[sku] = cost
-              }
-            })
-            resolve()
-          }
-          reader.readAsArrayBuffer(file)
         })
       }
-      return costs
+
+      return { orders, ads }
     }
 
-    // Step indicator
-    function setStep(stepId, state) {
-      const el = document.getElementById(stepId)
-      if (!el) return
-      el.className = `process-step ${state}`
-      if (state === 'done') el.textContent = el.textContent.replace('⏳', '✅')
-      if (state === 'active') el.textContent = el.textContent.replace('⏳', '🔄')
-    }
-
-    // Main calculate function
     window.calculatePnL = async function() {
       const month = document.getElementById('selectMonth').value
       const bizId = document.getElementById('selectBusiness').value
       const errorMsg = document.getElementById('errorMsg')
       errorMsg.style.display = 'none'
 
-      // Validate
       if (!month) { errorMsg.textContent = 'Please select a month.'; errorMsg.style.display = 'block'; return }
       if (!bizId || bizId === 'new') { errorMsg.textContent = 'Please select an account.'; errorMsg.style.display = 'block'; return }
       if (!window.uploadedFiles.orders) { errorMsg.textContent = 'Please upload your Orders CSV.'; errorMsg.style.display = 'block'; return }
       if (window.uploadedFiles.settlements.length === 0) { errorMsg.textContent = 'Please upload at least one Settlement file.'; errorMsg.style.display = 'block'; return }
-      if (!window.uploadedFiles.sku) { errorMsg.textContent = 'Please upload your SKU Cost Sheet.'; errorMsg.style.display = 'block'; return }
+      if (!window.uploadedFiles.sku) { errorMsg.textContent = 'Please upload your SKU Cost CSV.'; errorMsg.style.display = 'block'; return }
 
-      // Show processing
       document.getElementById('submitSection').style.display = 'none'
       document.getElementById('processingSection').classList.add('show')
 
       try {
+        const PACKAGING = 5
+
         // Step 1: Parse orders
         setStep('ps1', 'active')
-        const rawOrders = await parseCSV(window.uploadedFiles.orders)
+        const ordersText = await readFileAsText(window.uploadedFiles.orders)
+        const rawOrders = parseCSVText(ordersText)
         const orders = rawOrders.map(row => ({
-          sub_order_no: row['Sub Order No'] || '',
-          sku: row['SKU'] || '',
+          sub_order_no: (row['Sub Order No'] || '').trim(),
+          sku: (row['SKU'] || '').trim(),
           quantity: parseInt(row['Quantity']) || 1,
           listed_price: parseFloat(row['Supplier Listed Price (Incl. GST + Commission)']) || 0,
-          order_status: row['Reason for Credit Entry'] || '',
-          order_date: row['Order Date'] || ''
+          order_status: row['Reason for Credit Entry'] || ''
         })).filter(o => o.sub_order_no)
+        
+        document.getElementById('progressText').textContent = `Loaded ${orders.length.toLocaleString()} orders`
         setStep('ps1', 'done')
         setStep('ps2', 'active')
 
-        // Step 2: Parse settlement files
-        const allSettlements = []
+        // Step 2: Parse settlements
+        const settlementMap = {}
+        let totalAds = 0
+
         for (const file of window.uploadedFiles.settlements) {
-          const rows = await parseExcel(file)
-          rows.forEach(row => {
-            if (!row['Sub Order No']) return
-            allSettlements.push({
-              sub_order_no: String(row['Sub Order No']).trim(),
-              status: row['Live Order Status'] || '',
+          const { orders: sOrders, ads } = await parseSettlementXLSX(file)
+          totalAds += ads
+          sOrders.forEach(row => {
+            const orderId = String(row['Sub Order No'] || '').trim()
+            if (!orderId) return
+            settlementMap[orderId] = {
+              status: String(row['Live Order Status'] || ''),
               settlement: parseFloat(row['Final Settlement Amount']) || 0,
-              order_date: row['Order Date'] ? String(row['Order Date']) : '',
+              order_date: String(row['Order Date'] || ''),
               return_shipping: Math.abs(parseFloat(row['Return Shipping Charge (Incl. GST)']) || 0),
               tcs: Math.abs(parseFloat(row['TCS']) || 0),
               tds: Math.abs(parseFloat(row['TDS']) || 0),
-            })
+            }
           })
         }
 
-        // Filter settlements to only this month's orders + cross-month
-        const orderIds = new Set(orders.map(o => o.sub_order_no))
-        const relevantSettlements = allSettlements.filter(s => orderIds.has(s.sub_order_no))
+        document.getElementById('progressText').textContent = `Loaded ${Object.keys(settlementMap).length.toLocaleString()} settlement records`
         setStep('ps2', 'done')
         setStep('ps3', 'active')
 
-        // Step 3: Calculate ads spend from settlement files
-        let adsSpend = 0
-        for (const file of window.uploadedFiles.settlements) {
-          await new Promise(resolve => {
-            const reader = new FileReader()
-            reader.onload = (e) => {
-              try {
-                const wb = XLSX.read(e.target.result, { type: 'array' })
-                const ws = wb.Sheets['Ads Cost']
-                if (ws) {
-                  const rows = XLSX.utils.sheet_to_json(ws, { header: 1 })
-                  rows.slice(2).forEach(row => {
-                    if (row[7] && typeof row[7] === 'number') {
-                      adsSpend += Math.abs(row[7])
-                    }
-                  })
-                }
-              } catch(e) {}
-              resolve()
+        // Step 3: Parse SKU costs
+        const skuCosts = {}
+        const skuText = await readFileAsText(window.uploadedFiles.sku)
+        const skuRows = parseCSVText(skuText)
+        skuRows.forEach(row => {
+          const keys = Object.keys(row)
+          if (keys.length >= 2) {
+            const sku = (row[keys[0]] || '').trim()
+            const cost = parseFloat(row[keys[1]])
+            if (sku && !isNaN(cost) && cost > 0) {
+              skuCosts[sku] = cost
             }
-            reader.readAsArrayBuffer(file)
-          })
-        }
+          }
+        })
+
+        document.getElementById('progressText').textContent = `Loaded ${Object.keys(skuCosts).length} SKU costs. Ads: ₹${totalAds.toFixed(0)}`
         setStep('ps3', 'done')
         setStep('ps4', 'active')
 
-        // Step 4: Parse SKU costs
-        const skuCosts = await parseSkuCosts(window.uploadedFiles.sku)
+        // Step 4 & 5: Calculate P&L in browser
+        let totalRevenue = 0, totalSkuCost = 0, totalPackaging = 0
+        let totalReturnShipping = 0, totalTcsTds = 0, totalProfit = 0
+        let delivered = 0, rto = 0, returns = 0, exchange = 0, cancelled = 0, pending = 0
+        let pendingValue = 0
+
+        const skuPerf = {}
+
         setStep('ps4', 'done')
         setStep('ps5', 'active')
 
-        // Step 5: Call Edge Function
+        for (const order of orders) {
+          const { sub_order_no, sku, quantity, listed_price } = order
+          const skuCost = (skuCosts[sku] || 0) * quantity
+
+          // Init SKU performance
+          if (!skuPerf[sku]) {
+            skuPerf[sku] = { sku, total_orders:0, delivered:0, rto:0, returns:0, exchange:0, revenue:0, sku_cost:0, return_shipping:0, profit:0 }
+          }
+          skuPerf[sku].total_orders++
+
+          if (settlementMap[sub_order_no]) {
+            const s = settlementMap[sub_order_no]
+            const settlement = s.settlement
+            const retShip = s.return_shipping
+            const tcsTds = s.tcs + s.tds
+            const status = s.status
+            totalTcsTds += tcsTds
+
+            let profit = 0
+
+            if (status === 'Delivered') {
+              profit = settlement - skuCost - PACKAGING
+              totalRevenue += Math.max(settlement, 0)
+              totalSkuCost += skuCost
+              totalPackaging += PACKAGING
+              delivered++
+              skuPerf[sku].delivered++
+              skuPerf[sku].revenue += Math.max(settlement, 0)
+              skuPerf[sku].sku_cost += skuCost
+
+            } else if (status === 'Exchange') {
+              profit = settlement - skuCost - PACKAGING
+              totalRevenue += Math.max(settlement, 0)
+              totalSkuCost += skuCost
+              totalPackaging += PACKAGING
+              exchange++
+              skuPerf[sku].exchange++
+
+            } else if (status === 'RTO') {
+              profit = -PACKAGING
+              totalPackaging += PACKAGING
+              rto++
+              skuPerf[sku].rto++
+
+            } else if (status === 'Return') {
+              profit = settlement - PACKAGING
+              totalRevenue += Math.max(settlement, 0)
+              totalPackaging += PACKAGING
+              totalReturnShipping += retShip
+              returns++
+              skuPerf[sku].returns++
+              skuPerf[sku].return_shipping += retShip
+
+            } else if (status === 'Cancelled') {
+              profit = 0
+              cancelled++
+            }
+
+            totalProfit += profit
+            skuPerf[sku].profit += profit
+
+          } else {
+            pending++
+            pendingValue += listed_price
+          }
+        }
+
+        const netProfit = totalProfit - totalAds
+        const netMargin = totalRevenue > 0 ? (netProfit / totalRevenue) * 100 : 0
+        const rtoRate = orders.length > 0 ? (rto / orders.length) * 100 : 0
+        const settlePct = orders.length > 0 ? ((orders.length - pending) / orders.length) * 100 : 0
+
+        const summary = {
+          total_orders: orders.length,
+          delivered_count: delivered,
+          rto_count: rto,
+          return_count: returns,
+          exchange_count: exchange,
+          cancelled_count: cancelled,
+          pending_count: pending,
+          gross_revenue: Math.round(totalRevenue * 100) / 100,
+          total_sku_cost: Math.round(totalSkuCost * 100) / 100,
+          total_packaging: Math.round(totalPackaging * 100) / 100,
+          total_return_shipping: Math.round(totalReturnShipping * 100) / 100,
+          total_tcs_tds: Math.round(totalTcsTds * 100) / 100,
+          total_ads: Math.round(totalAds * 100) / 100,
+          net_profit: Math.round(netProfit * 100) / 100,
+          net_margin: Math.round(netMargin * 100) / 100,
+          pending_value: Math.round(pendingValue * 100) / 100,
+          rto_rate: Math.round(rtoRate * 100) / 100,
+          settlement_percentage: Math.round(settlePct * 100) / 100
+        }
+
+        document.getElementById('progressText').textContent = 
+          `✅ Calculated! Revenue: ₹${summary.gross_revenue.toLocaleString('en-IN')} | SKU Cost: ₹${summary.total_sku_cost.toLocaleString('en-IN')} | Profit: ₹${summary.net_profit.toLocaleString('en-IN')}`
+
+        setStep('ps5', 'done')
+        setStep('ps6', 'active')
+
+        // Step 6: Save to database via edge function
+        const skuPerfArray = Object.values(skuPerf).map(s => ({
+          ...s,
+          margin: s.revenue > 0 ? (s.profit / s.revenue) * 100 : 0,
+          rto_rate: s.total_orders > 0 ? (s.rto / s.total_orders) * 100 : 0
+        }))
+
         const { data: { session } } = await window._supabase.auth.getSession()
 
         const response = await fetch(
@@ -621,32 +557,27 @@ for (let i = 1; i < lines.length; i++) {
             },
             body: JSON.stringify({
               business_id: bizId,
-              month: month,
-              orders: orders,
-              settlements: relevantSettlements,
-              sku_costs: skuCosts,
-              ads_spend: adsSpend
+              month,
+              summary,
+              sku_performance: skuPerfArray
             })
           }
         )
 
         const result = await response.json()
-        setStep('ps5', 'done')
-        setStep('ps6', 'active')
-
-        if (!result.success) throw new Error(result.error || 'Calculation failed')
+        if (!result.success) throw new Error(result.error || 'Save failed')
 
         setStep('ps6', 'done')
-
-        // Redirect to profit page
-        await new Promise(r => setTimeout(r, 800))
+        await new Promise(r => setTimeout(r, 1000))
         window.location.href = '/profit'
 
       } catch (error) {
         document.getElementById('processingSection').classList.remove('show')
         document.getElementById('submitSection').style.display = 'block'
+        const errorMsg = document.getElementById('errorMsg')
         errorMsg.textContent = 'Error: ' + error.message
         errorMsg.style.display = 'block'
+        console.error(error)
       }
     }
   </script>
