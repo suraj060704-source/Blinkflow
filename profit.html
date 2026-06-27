@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profit Reports — BlinkFlow</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue: #2563EB; --blue-dark: #1D4ED8; --blue-light: #EFF6FF;
+      --ink: #0F172A; --muted: #64748B; --border: #E2E8F0;
+      --surface: #F8FAFC; --white: #FFFFFF;
+      --green: #16A34A; --green-light: #F0FDF4;
+      --red: #DC2626; --red-light: #FEF2F2;
+      --yellow: #D97706; --yellow-light: #FFFBEB;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--surface); min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    nav {
+      background: var(--white); border-bottom: 1px solid var(--border);
+      padding: 0 24px; position: sticky; top: 0; z-index: 100;
+    }
+    .nav-inner {
+      max-width: 1120px; margin: 0 auto;
+      display: flex; align-items: center;
+      justify-content: space-between; height: 64px;
+    }
+    .logo {
+      display: flex; align-items: center; gap: 8px;
+      font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 800;
+      color: var(--ink); text-decoration: none;
+    }
+    .logo-icon {
+      width: 32px; height: 32px; background: var(--blue);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    }
+    .logo-icon svg { width: 18px; height: 18px; }
+    .logo span { color: var(--blue); }
+    .nav-back {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 14px; color: var(--muted); text-decoration: none;
+      transition: color .2s;
+    }
+    .nav-back:hover { color: var(--ink); }
+    main { max-width: 1120px; margin: 0 auto; padding: 48px 24px; }
+    .page-header {
+      display: flex; align-items: center;
+      justify-content: space-between; margin-bottom: 32px;
+    }
+    .page-header h1 {
+      font-family: 'Sora', sans-serif;
+      font-size: 28px; font-weight: 800; color: var(--ink);
+    }
+    .page-header p { font-size: 14px; color: var(--muted); margin-top: 4px; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 20px; background: var(--blue); color: white;
+      border: none; border-radius: 10px; font-size: 14px; font-weight: 600;
+      cursor: pointer; text-decoration: none; transition: .2s;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-primary:hover { background: var(--blue-dark); transform: translateY(-1px); }
+
+    /* MONTH TABS */
+    .months-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 16px; margin-bottom: 40px;
+    }
+    .month-card {
+      background: var(--white); border: 1.5px solid var(--border);
+      border-radius: 16px; padding: 24px;
+      cursor: pointer; transition: .2s; text-decoration: none;
+    }
+    .month-card:hover {
+      border-color: var(--blue);
+      box-shadow: 0 4px 16px rgba(37,99,235,.1);
+      transform: translateY(-2px);
+    }
+    .month-card.active { border-color: var(--blue); background: var(--blue-light); }
+    .month-name {
+      font-family: 'Sora', sans-serif;
+      font-size: 18px; font-weight: 800; color: var(--ink);
+      margin-bottom: 4px;
+    }
+    .month-year { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+    .month-status {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 11px; font-weight: 600;
+      padding: 3px 8px; border-radius: 100px;
+    }
+    .status-confirmed { background: var(--green-light); color: var(--green); }
+    .status-partial { background: var(--yellow-light); color: var(--yellow); }
+    .status-pending { background: var(--surface); color: var(--muted); }
+    .month-profit {
+      font-size: 20px; font-weight: 700; margin-top: 12px;
+    }
+    .month-profit.pos { color: var(--green); }
+    .month-profit.neg { color: var(--red); }
+    .month-orders { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+    /* EMPTY STATE */
+    .empty-state {
+      text-align: center; padding: 80px 24px;
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 16px;
+    }
+    .empty-icon { font-size: 48px; margin-bottom: 16px; }
+    .empty-state h3 {
+      font-family: 'Sora', sans-serif;
+      font-size: 22px; font-weight: 800; color: var(--ink);
+      margin-bottom: 8px;
+    }
+    .empty-state p { font-size: 15px; color: var(--muted); margin-bottom: 24px; }
+
+    /* P&L REPORT */
+    .report-section { display: none; }
+    .report-section.visible { display: block; }
+    .report-header {
+      display: flex; align-items: center;
+      justify-content: space-between; margin-bottom: 24px;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .report-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 22px; font-weight: 800; color: var(--ink);
+    }
+    .report-actions { display: flex; gap: 8px; }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 9px 16px; border: 1.5px solid var(--border);
+      border-radius: 8px; font-size: 13px; font-weight: 600;
+      color: var(--ink); background: var(--white);
+      cursor: pointer; transition: .2s; text-decoration: none;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-outline:hover { border-color: var(--blue); color: var(--blue); }
+    .kpi-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 16px; margin-bottom: 24px;
+    }
+    .kpi-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 14px; padding: 20px;
+    }
+    .kpi-label {
+      font-size: 11px; color: var(--muted); font-weight: 500;
+      text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px;
+    }
+    .kpi-value {
+      font-family: 'Sora', sans-serif;
+      font-size: 26px; font-weight: 800; color: var(--ink);
+    }
+    .kpi-value.green { color: var(--green); }
+    .kpi-value.red { color: var(--red); }
+    .kpi-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+    .detail-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+    }
+    .detail-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 14px; padding: 24px;
+    }
+    .detail-card h3 {
+      font-size: 14px; font-weight: 700; color: var(--ink);
+      margin-bottom: 16px;
+    }
+    .detail-row {
+      display: flex; justify-content: space-between;
+      align-items: center; padding: 8px 0;
+      border-bottom: 1px solid var(--surface);
+      font-size: 13px;
+    }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-row .label { color: var(--muted); }
+    .detail-row .value { font-weight: 600; color: var(--ink); }
+    .detail-row .value.red { color: var(--red); }
+    .detail-row .value.green { color: var(--green); }
+    .detail-row.total {
+      border-top: 2px solid var(--border);
+      border-bottom: none; margin-top: 8px;
+      padding-top: 12px;
+    }
+    .detail-row.total .label { font-weight: 700; color: var(--ink); }
+    .detail-row.total .value { font-size: 16px; }
+    .pending-banner {
+      background: var(--yellow-light); border: 1px solid #FED7AA;
+      border-radius: 12px; padding: 16px 20px;
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 20px; font-size: 13px; color: var(--yellow);
+    }
+    .pending-banner strong { color: #92400E; }
+
+    .loading-screen {
+      position: fixed; inset: 0; background: white;
+      display: flex; align-items: center; justify-content: center; z-index: 999;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+    .loading-logo {
+      font-family: 'Sora', sans-serif; font-size: 24px;
+      font-weight: 800; color: var(--ink);
+      animation: pulse 1s infinite;
+    }
+
+    @media (max-width: 768px) {
+      .months-grid { grid-template-columns: repeat(2, 1fr); }
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .detail-grid { grid-template-columns: 1fr; }
+      .page-header { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-logo">⚡ BlinkFlow</div>
+  </div>
+
+  <nav>
+    <div class="nav-inner">
+      <a href="dashboard.html" class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+          </svg>
+        </div>
+        Blink<span>Flow</span>
+      </a>
+      <a href="dashboard.html" class="nav-back">← Back to Dashboard</a>
+    </div>
+  </nav>
+
+  <main>
+    <div class="page-header">
+      <div>
+        <h1>📊 Profit Reports</h1>
+        <p>Select a month to view your complete P&L breakdown</p>
+      </div>
+      <a href="upload.html" class="btn-primary">+ Upload New Month</a>
+    </div>
+
+    <!-- Month Cards -->
+    <div class="months-grid" id="monthsGrid">
+      <!-- Populated by JS -->
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" id="emptyState" style="display:none">
+      <div class="empty-icon">📂</div>
+      <h3>No reports yet</h3>
+      <p>Upload your first month's data to see your real Meesho profit</p>
+      <a href="upload.html" class="btn-primary">Upload Your First Month →</a>
+    </div>
+
+    <!-- P&L Report -->
+    <div class="report-section" id="reportSection">
+      <div class="report-header">
+        <div class="report-title" id="reportTitle">February 2026 — P&L Report</div>
+        <div class="report-actions">
+          <button class="btn-outline" onclick="downloadExcel()">📥 Excel</button>
+          <button class="btn-outline" onclick="downloadPDF()">📄 PDF</button>
+        </div>
+      </div>
+
+      <!-- Pending Banner -->
+      <div class="pending-banner" id="pendingBanner" style="display:none">
+        ⏳ <span><strong id="pendingCount">277</strong> orders still pending settlement. Upload next month's file to complete this report. Estimated additional profit: <strong id="pendingProfit">₹3,739</strong></span>
+      </div>
+
+      <!-- KPIs -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Gross Revenue</div>
+          <div class="kpi-value" id="kpiRevenue">—</div>
+          <div class="kpi-sub" id="kpiOrders">— orders</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Net Profit</div>
+          <div class="kpi-value green" id="kpiProfit">—</div>
+          <div class="kpi-sub" id="kpiMargin">— margin</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">RTO Loss</div>
+          <div class="kpi-value red" id="kpiRtoLoss">—</div>
+          <div class="kpi-sub" id="kpiRtoCount">— RTOs</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Settlement</div>
+          <div class="kpi-value" id="kpiSettled">—</div>
+          <div class="kpi-sub" id="kpiPending">— pending</div>
+        </div>
+      </div>
+
+      <!-- Detail Grid -->
+      <div class="detail-grid">
+        <div class="detail-card">
+          <h3>💰 Financial Breakdown</h3>
+          <div class="detail-row">
+            <span class="label">Gross Revenue</span>
+            <span class="value green" id="dRevenue">—</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">SKU Cost</span>
+            <span class="value red" id="dSkuCost">—</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Packaging</span>
+            <span class="value red" id="dPackaging">—</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Return Shipping</span>
+            <span class="value red" id="dReturnShipping">—</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">TCS + TDS</span>
+            <span class="value red" id="dTcsTds">—</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Ad Spend</span>
+            <span class="value red" id="dAds">—</span>
+          </div>
+          <div class="detail-row total">
+            <span class="label">NET PROFIT</span>
+            <span class="value green" id="dNetProfit">—</span>
+          </div>
+        </div>
+        <div class="detail-card">
+          <h3>📦 Order Breakdown</h3>
+          <div class="detail-row">
+            <span class="label">Total Orders</span>
+            <span class="value" id="dTotal">—</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">✅ Delivered</span>
+            <span class="value green" id="dDelivered">—</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">📦 RTO</span>
+            <span class="value red" id="dRto">—</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">🔄 Returns</span>
+            <span class="value red" id="dReturns">—</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">🔃 Exchange</span>
+            <span class="value" id="dExchange">—</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">❌ Cancelled</span>
+            <span class="value" id="dCancelled">—</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">⏳ Pending</span>
+            <span class="value" id="dPending">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+
+    const SUPABASE_URL = ' https://yrehpzsajltpinqdjqge.supabase.co
+'
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlyZWhwenNhamx0cGlucWRqcWdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1MDIzNTEsImV4cCI6MjA5ODA3ODM1MX0.T4gyFGHdNg4xQOQoHf02XUHz2Nkapb7ybW9Ln2BC7Ts'
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+    const fmt = (n) => '₹' + Math.abs(n).toLocaleString('en-IN')
+
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) { window.location.href = 'login.html'; }
+
+    document.getElementById('loadingScreen').style.display = 'none'
+
+    // Load businesses and reports
+    const { data: businesses } = await supabase
+      .from('businesses')
+      .select('id, name')
+      .eq('user_id', session.user.id)
+
+    if (!businesses || businesses.length === 0) {
+      document.getElementById('emptyState').style.display = 'block'
+      document.getElementById('monthsGrid').style.display = 'none'
+      return
+    }
+
+    const businessIds = businesses.map(b => b.id)
+    const { data: reports } = await supabase
+      .from('pnl_summary')
+      .select('*')
+      .in('business_id', businessIds)
+      .order('month', { ascending: false })
+
+    if (!reports || reports.length === 0) {
+      document.getElementById('emptyState').style.display = 'block'
+      document.getElementById('monthsGrid').style.display = 'none'
+      return
+    }
+
+    // Render month cards
+    const grid = document.getElementById('monthsGrid')
+    reports.forEach((r, i) => {
+      const [year, month] = r.month.split('-')
+      const monthName = new Date(year, month-1).toLocaleString('en-IN', { month: 'long' })
+      const statusClass = r.settlement_status === 'confirmed' ? 'status-confirmed' :
+                          r.settlement_status === 'partial' ? 'status-partial' : 'status-pending'
+      const statusText = r.settlement_status === 'confirmed' ? '✅ Confirmed' :
+                         r.settlement_status === 'partial' ? '🟡 Partial' : '⏳ Pending'
+      const profitClass = r.net_profit >= 0 ? 'pos' : 'neg'
+      const profitText = (r.net_profit >= 0 ? '+' : '-') + fmt(r.net_profit)
+
+      const card = document.createElement('div')
+      card.className = `month-card${i === 0 ? ' active' : ''}`
+      card.innerHTML = `
+        <div class="month-name">${monthName}</div>
+        <div class="month-year">${year}</div>
+        <span class="month-status ${statusClass}">${statusText}</span>
+        <div class="month-profit ${profitClass}">${profitText}</div>
+        <div class="month-orders">${r.total_orders.toLocaleString()} orders</div>
+      `
+      card.onclick = () => showReport(r, `${monthName} ${year}`)
+      grid.appendChild(card)
+    })
+
+    // Show first report by default
+    if (reports.length > 0) {
+      const [year, month] = reports[0].month.split('-')
+      const monthName = new Date(year, month-1).toLocaleString('en-IN', { month: 'long' })
+      showReport(reports[0], `${monthName} ${year}`)
+    }
+
+    window.showReport = function(r, title) {
+      document.querySelectorAll('.month-card').forEach(c => c.classList.remove('active'))
+      document.getElementById('reportSection').classList.add('visible')
+      document.getElementById('reportTitle').textContent = `${title} — P&L Report`
+
+      // KPIs
+      document.getElementById('kpiRevenue').textContent = fmt(r.gross_revenue)
+      document.getElementById('kpiOrders').textContent = `${r.total_orders.toLocaleString()} total orders`
+      document.getElementById('kpiProfit').textContent = (r.net_profit >= 0 ? '+' : '') + fmt(r.net_profit)
+      document.getElementById('kpiProfit').className = `kpi-value ${r.net_profit >= 0 ? 'green' : 'red'}`
+      document.getElementById('kpiMargin').textContent = `${r.net_margin?.toFixed(1)}% margin`
+      document.getElementById('kpiRtoLoss').textContent = fmt(r.rto_loss)
+      document.getElementById('kpiRtoCount').textContent = `${r.rto_count} RTOs (${r.rto_rate?.toFixed(1)}%)`
+      document.getElementById('kpiSettled').textContent = (r.total_orders - r.pending_count).toLocaleString()
+      document.getElementById('kpiPending').textContent = `${r.pending_count} pending`
+
+      // Financials
+      document.getElementById('dRevenue').textContent = fmt(r.gross_revenue)
+      document.getElementById('dSkuCost').textContent = '-' + fmt(r.total_sku_cost)
+      document.getElementById('dPackaging').textContent = '-' + fmt(r.total_packaging)
+      document.getElementById('dReturnShipping').textContent = '-' + fmt(r.total_return_shipping)
+      document.getElementById('dTcsTds').textContent = '-' + fmt(r.total_tcs_tds)
+      document.getElementById('dAds').textContent = '-' + fmt(r.total_ads)
+      document.getElementById('dNetProfit').textContent = (r.net_profit >= 0 ? '+' : '') + fmt(r.net_profit)
+
+      // Orders
+      document.getElementById('dTotal').textContent = r.total_orders.toLocaleString()
+      document.getElementById('dDelivered').textContent = r.delivered_count.toLocaleString()
+      document.getElementById('dRto').textContent = r.rto_count.toLocaleString()
+      document.getElementById('dReturns').textContent = r.return_count.toLocaleString()
+      document.getElementById('dExchange').textContent = r.exchange_count.toLocaleString()
+      document.getElementById('dCancelled').textContent = r.cancelled_count.toLocaleString()
+      document.getElementById('dPending').textContent = r.pending_count.toLocaleString()
+
+      // Pending banner
+      if (r.pending_count > 0) {
+        document.getElementById('pendingBanner').style.display = 'flex'
+        document.getElementById('pendingCount').textContent = r.pending_count
+        document.getElementById('pendingProfit').textContent = fmt(r.estimated_final_profit - r.net_profit)
+      }
+    }
+
+    window.downloadExcel = () => alert('Excel export coming in next update! Upgrade to Starter plan to unlock.')
+    window.downloadPDF = () => alert('PDF export coming in next update! Upgrade to Starter plan to unlock.')
+  </script>
+</body>
+</html>

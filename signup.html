@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up — BlinkFlow</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue: #2563EB; --blue-dark: #1D4ED8; --blue-light: #EFF6FF;
+      --ink: #0F172A; --muted: #64748B; --border: #E2E8F0;
+      --surface: #F8FAFC; --white: #FFFFFF; --red: #DC2626;
+      --green: #16A34A;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #EFF6FF 0%, #F8FAFC 100%);
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+      -webkit-font-smoothing: antialiased;
+    }
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 48px;
+      width: 100%; max-width: 440px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.08);
+    }
+    .logo {
+      display: flex; align-items: center; gap: 8px;
+      font-family: 'Sora', sans-serif;
+      font-size: 22px; font-weight: 800;
+      color: var(--ink); text-decoration: none;
+      margin-bottom: 32px; justify-content: center;
+    }
+    .logo-icon {
+      width: 36px; height: 36px;
+      background: var(--blue); border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .logo-icon svg { width: 20px; height: 20px; }
+    .logo span { color: var(--blue); }
+    h1 {
+      font-family: 'Sora', sans-serif;
+      font-size: 26px; font-weight: 800;
+      color: var(--ink); text-align: center;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      font-size: 14px; color: var(--muted);
+      text-align: center; margin-bottom: 32px;
+    }
+    .form-group { margin-bottom: 18px; }
+    label {
+      display: block; font-size: 13px;
+      font-weight: 600; color: var(--ink);
+      margin-bottom: 6px;
+    }
+    input {
+      width: 100%; padding: 12px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px; font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      color: var(--ink); background: var(--white);
+      transition: border-color .2s, box-shadow .2s;
+      outline: none;
+    }
+    input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+    }
+    input::placeholder { color: #94A3B8; }
+    .btn {
+      width: 100%; padding: 14px;
+      background: var(--blue); color: var(--white);
+      border: none; border-radius: 10px;
+      font-size: 15px; font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer; transition: .2s;
+      margin-top: 8px;
+    }
+    .btn:hover { background: var(--blue-dark); transform: translateY(-1px); }
+    .btn:disabled { opacity: .7; cursor: not-allowed; transform: none; }
+    .terms {
+      font-size: 12px; color: var(--muted);
+      text-align: center; margin-top: 12px; line-height: 1.6;
+    }
+    .terms a { color: var(--blue); text-decoration: none; }
+    .divider {
+      display: flex; align-items: center; gap: 12px;
+      margin: 24px 0; color: var(--muted); font-size: 12px;
+    }
+    .divider::before, .divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+    .login-link {
+      text-align: center; font-size: 14px; color: var(--muted);
+    }
+    .login-link a { color: var(--blue); font-weight: 600; text-decoration: none; }
+    .login-link a:hover { text-decoration: underline; }
+    .error-msg {
+      background: #FEF2F2; border: 1px solid #FECACA;
+      color: var(--red); font-size: 13px;
+      padding: 10px 14px; border-radius: 8px;
+      margin-bottom: 16px; display: none;
+    }
+    .success-msg {
+      background: #F0FDF4; border: 1px solid #BBF7D0;
+      color: var(--green); font-size: 13px;
+      padding: 10px 14px; border-radius: 8px;
+      margin-bottom: 16px; display: none;
+    }
+    .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,.3);
+      border-top-color: white; border-radius: 50%;
+      animation: spin .6s linear infinite;
+      display: inline-block; vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .perks {
+      display: flex; flex-direction: column; gap: 8px;
+      margin-bottom: 28px;
+    }
+    .perk {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--muted);
+    }
+    .perk-icon { color: var(--green); font-weight: 700; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+        </svg>
+      </div>
+      Blink<span>Flow</span>
+    </a>
+
+    <h1>Start for free</h1>
+    <p class="subtitle">Know your real Meesho profit in minutes</p>
+
+    <div class="perks">
+      <div class="perk"><span class="perk-icon">✓</span> Free forever — no credit card needed</div>
+      <div class="perk"><span class="perk-icon">✓</span> Works with your real Meesho CSV files</div>
+      <div class="perk"><span class="perk-icon">✓</span> 10 free image optimizer credits</div>
+    </div>
+
+    <div class="error-msg" id="errorMsg"></div>
+    <div class="success-msg" id="successMsg"></div>
+
+    <div class="form-group">
+      <label for="fullname">Full name</label>
+      <input type="text" id="fullname" placeholder="Your name" autocomplete="name" />
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email address</label>
+      <input type="email" id="email" placeholder="you@example.com" autocomplete="email" />
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="Min 8 characters" autocomplete="new-password" />
+    </div>
+
+    <div class="form-group">
+      <label for="confirmPassword">Confirm password</label>
+      <input type="password" id="confirmPassword" placeholder="Repeat your password" autocomplete="new-password" />
+    </div>
+
+    <button class="btn" id="signupBtn" onclick="handleSignup()">
+      Create Free Account →
+    </button>
+
+    <p class="terms">
+      By signing up you agree to our
+      <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+    </p>
+
+    <div class="divider">or</div>
+
+    <div class="login-link">
+      Already have an account? <a href="login.html">Login</a>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+
+    const SUPABASE_URL = 'https://yrehpzsajltpinqdjqge.supabase.co'
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlyZWhwenNhamx0cGlucWRqcWdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1MDIzNTEsImV4cCI6MjA5ODA3ODM1MX0.T4gyFGHdNg4xQOQoHf02XUHz2Nkapb7ybW9Ln2BC7Ts'
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+    // Check if already logged in
+    const { data: { session } } = await supabase.auth.getSession()
+    if (session) window.location.href = 'dashboard.html'
+
+    window.handleSignup = async function() {
+      const fullname = document.getElementById('fullname').value.trim()
+      const email = document.getElementById('email').value.trim()
+      const password = document.getElementById('password').value
+      const confirmPassword = document.getElementById('confirmPassword').value
+      const btn = document.getElementById('signupBtn')
+      const errorMsg = document.getElementById('errorMsg')
+      const successMsg = document.getElementById('successMsg')
+
+      errorMsg.style.display = 'none'
+      successMsg.style.display = 'none'
+
+      // Validate
+      if (!fullname || !email || !password || !confirmPassword) {
+        errorMsg.textContent = 'Please fill in all fields.'
+        errorMsg.style.display = 'block'
+        return
+      }
+      if (password.length < 8) {
+        errorMsg.textContent = 'Password must be at least 8 characters.'
+        errorMsg.style.display = 'block'
+        return
+      }
+      if (password !== confirmPassword) {
+        errorMsg.textContent = 'Passwords do not match.'
+        errorMsg.style.display = 'block'
+        return
+      }
+
+      btn.disabled = true
+      btn.innerHTML = '<span class="spinner"></span> Creating account...'
+
+      try {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: { full_name: fullname }
+          }
+        })
+
+        if (error) throw error
+
+        successMsg.textContent = '✅ Account created! Check your email to verify then login.'
+        successMsg.style.display = 'block'
+        btn.innerHTML = 'Account Created!'
+
+        setTimeout(() => {
+          window.location.href = 'login.html'
+        }, 3000)
+
+      } catch (error) {
+        errorMsg.textContent = error.message || 'Signup failed. Please try again.'
+        errorMsg.style.display = 'block'
+        btn.disabled = false
+        btn.innerHTML = 'Create Free Account →'
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') window.handleSignup()
+    })
+  </script>
+</body>
+</html>
