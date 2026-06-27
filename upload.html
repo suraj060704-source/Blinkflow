@@ -239,33 +239,57 @@
 
     window.uploadedFiles = { orders: null, settlements: [], sku: null }
 
-    window.fileSelected = function(type, input) {
-      const file = input.files[0]
-      if (!file) return
-      if (type === 'orders') {
-        window.uploadedFiles.orders = file
-        document.getElementById('ordersAdded').classList.add('show')
-        document.getElementById('ordersFileName').textContent = file.name
-        document.getElementById('ordersZone').style.display = 'none'
-      } else if (type === 'sku') {
-        window.uploadedFiles.sku = file
-        document.getElementById('skuAdded').classList.add('show')
-        document.getElementById('skuFileName').textContent = file.name
-        document.getElementById('skuZone').style.display = 'none'
-      }
+   window.fileSelected = async function(type, input) {
+  const file = input.files[0]
+  if (!file) return
+  if (type === 'orders') {
+    const check = await validateOrdersFile(file)
+    if (!check.ok) {
+      showFileError('ordersZone', 'ordersAdded', check.msg)
+      input.value = ''
+      return
     }
+    clearFileError('ordersZone')
+    window.uploadedFiles.orders = file
+    document.getElementById('ordersAdded').classList.add('show')
+    document.getElementById('ordersFileName').textContent = file.name
+    document.getElementById('ordersZone').style.display = 'none'
+  } else if (type === 'sku') {
+    const check = await validateSKUFile(file)
+    if (!check.ok) {
+      showFileError('skuZone', 'skuAdded', check.msg)
+      input.value = ''
+      return
+    }
+    clearFileError('skuZone')
+    window.uploadedFiles.sku = file
+    document.getElementById('skuAdded').classList.add('show')
+    document.getElementById('skuFileName').textContent = file.name
+    document.getElementById('skuZone').style.display = 'none'
+  }
+}
 
-    window.addSettlementFiles = function(input) {
-      const files = Array.from(input.files)
-      const list = document.getElementById('settlementFilesList')
-      files.forEach(file => {
-        window.uploadedFiles.settlements.push(file)
-        const row = document.createElement('div')
-        row.className = 'settlement-file-row'
-        row.innerHTML = `<span>✅ ${file.name}</span><button class="btn-remove" onclick="removeSettlement(this,'${file.name}')">✕</button>`
-        list.appendChild(row)
-      })
+   window.addSettlementFiles = async function(input) {
+  const files = Array.from(input.files)
+  const list = document.getElementById('settlementFilesList')
+  for (const file of files) {
+    const check = await validateSettlementFile(file)
+    if (!check.ok) {
+      const errDiv = document.createElement('div')
+      errDiv.style.cssText = 'background:#FEF2F2;border:1px solid #FECACA;color:#DC2626;font-size:13px;padding:12px 14px;border-radius:8px;white-space:pre-line;line-height:1.6'
+      errDiv.textContent = check.msg
+      list.appendChild(errDiv)
+      setTimeout(() => errDiv.remove(), 6000)
+      continue
     }
+    window.uploadedFiles.settlements.push(file)
+    const row = document.createElement('div')
+    row.className = 'settlement-file-row'
+    row.innerHTML = `<span>✅ ${file.name}</span><button class="btn-remove" onclick="removeSettlement(this,'${file.name}')">✕</button>`
+    list.appendChild(row)
+  }
+  input.value = ''
+}
 
     window.removeSettlement = function(btn, name) {
       window.uploadedFiles.settlements = window.uploadedFiles.settlements.filter(f => f.name !== name)
@@ -337,6 +361,85 @@
         reader.readAsArrayBuffer(file)
       })
     }
+
+    // ─── FILE VALIDATION ───────────────────────────────────────────
+async function validateOrdersFile(file) {
+  if (!file.name.toLowerCase().endsWith('.csv')) {
+    return { ok: false, msg: '❌ Wrong file type. Orders must be a CSV file.\n\nIn Meesho: Reports → Order Report → Download → choose CSV format.' }
+  }
+  const text = await readFileAsText(file)
+  const rows = parseCSVText(text)
+  if (rows.length < 2) {
+    return { ok: false, msg: '❌ This file looks empty. Please download a fresh Order Report from Meesho.' }
+  }
+  const headers = Object.keys(rows[0])
+  if (!headers.includes('Sub Order No')) {
+    return { ok: false, msg: '❌ Wrong file uploaded. This doesn\'t look like a Meesho Order Report.\n\nGo to: Meesho Seller Panel → Reports → Order Report → Download CSV' }
+  }
+  if (!headers.includes('SKU')) {
+    return { ok: false, msg: '❌ SKU column missing. Make sure you\'re downloading the full Order Report, not a summary.' }
+  }
+  return { ok: true, msg: `✅ Valid orders file — ${rows.length.toLocaleString()} orders found` }
+}
+
+async function validateSettlementFile(file) {
+  const name = file.name.toLowerCase()
+  if (!name.endsWith('.xlsx') && !name.endsWith('.xls')) {
+    return { ok: false, msg: '❌ Wrong file type. Settlement file must be an Excel file (.xlsx).\n\nIn Meesho: Reports → Payment Reports → Download (it will be an Excel file).' }
+  }
+  const buffer = await readFileAsArrayBuffer(file)
+  const wb = XLSX.read(buffer, { type: 'array' })
+  if (!wb.Sheets['Order Payments']) {
+    return { ok: false, msg: '❌ Wrong file uploaded. This doesn\'t look like a Meesho Settlement file.\n\nGo to: Meesho Seller Panel → Reports → Payment Reports → Download' }
+  }
+  const allRows = XLSX.utils.sheet_to_json(wb.Sheets['Order Payments'], { header: 1 })
+  const headers = allRows[1] || []
+  if (!headers.includes('Sub Order No') || !headers.includes('Live Order Status')) {
+    return { ok: false, msg: '❌ This settlement file format is not recognised. Please download a fresh copy from Meesho.' }
+  }
+  return { ok: true, msg: `✅ Valid settlement file` }
+}
+
+async function validateSKUFile(file) {
+  if (!file.name.toLowerCase().endsWith('.csv')) {
+    return { ok: false, msg: '❌ Wrong file type. SKU Cost sheet must be a CSV file.\n\nHow to make one:\n1. Open Excel or Google Sheets\n2. Column A = SKU code (copy from Meesho)\n3. Column B = your purchase price (just the number)\n4. Save as CSV' }
+  }
+  const text = await readFileAsText(file)
+  const rows = parseCSVText(text)
+  if (rows.length < 1) {
+    return { ok: false, msg: '❌ SKU Cost file is empty. Please add your SKU codes and prices.' }
+  }
+  const firstRow = rows[0]
+  const keys = Object.keys(firstRow)
+  if (keys.length < 2) {
+    return { ok: false, msg: '❌ SKU Cost file must have 2 columns — SKU code in column A, purchase price in column B.' }
+  }
+  const sampleCost = parseFloat(firstRow[keys[1]])
+  if (isNaN(sampleCost)) {
+    return { ok: false, msg: '❌ Column B should contain only numbers (your purchase price). Make sure there are no headers or extra text in that column.' }
+  }
+  return { ok: true, msg: `✅ Valid SKU file — ${rows.length} SKUs loaded` }
+}
+
+function showFileError(zoneId, addedId, message) {
+  const zone = document.getElementById(zoneId)
+  const added = document.getElementById(addedId)
+  added.classList.remove('show')
+  if (zone) zone.style.display = ''
+  const old = document.getElementById(zoneId + '_err')
+  if (old) old.remove()
+  const div = document.createElement('div')
+  div.id = zoneId + '_err'
+  div.style.cssText = 'background:#FEF2F2;border:1px solid #FECACA;color:#DC2626;font-size:13px;padding:12px 14px;border-radius:8px;margin-top:8px;white-space:pre-line;line-height:1.6'
+  div.textContent = message
+  added.after(div)
+}
+
+function clearFileError(zoneId) {
+  const old = document.getElementById(zoneId + '_err')
+  if (old) old.remove()
+}
+// ─── END VALIDATION ────────────────────────────────────────────
 
     async function parseSettlementXLSX(file, readAds = false) {
       const buffer = await readFileAsArrayBuffer(file)
