@@ -338,7 +338,7 @@
       })
     }
 
-    async function parseSettlementXLSX(file) {
+    async function parseSettlementXLSX(file, readAds = false) {
       const buffer = await readFileAsArrayBuffer(file)
       const wb = XLSX.read(buffer, { type: 'array' })
       const ws = wb.Sheets['Order Payments']
@@ -360,17 +360,19 @@
 }
 
       // Parse ads
-      let ads = 0
-     // REPLACE with:
-const wsAds = wb.Sheets['Ads Cost']
-if (wsAds) {
-  const adsRows = XLSX.utils.sheet_to_json(wsAds, { header: 1 })
-  adsRows.slice(3).forEach(row => {  // slice(3) skips title + header + formula rows
-    const val = parseFloat(row[3])   // col 3 = "Ad Cost" (excl. GST)
-    if (!isNaN(val) && val !== 0) {
-      ads += Math.abs(val)
-    }
-  })
+   // Parse ads — only from current month's file
+let ads = 0
+if (readAds) {
+  const wsAds = wb.Sheets['Ads Cost']
+  if (wsAds) {
+    const adsRows = XLSX.utils.sheet_to_json(wsAds, { header: 1 })
+    adsRows.slice(3).forEach(row => {
+      const val = parseFloat(row[7])
+      if (!isNaN(val) && val !== 0) {
+        ads += Math.abs(val)
+      }
+    })
+  }
 }
       return { orders, ads }
     }
@@ -413,8 +415,9 @@ if (wsAds) {
         const settlementMap = {}
         let totalAds = 0
 
-        for (const file of window.uploadedFiles.settlements) {
-          const { orders: sOrders, ads } = await parseSettlementXLSX(file)
+       for (let i = 0; i < window.uploadedFiles.settlements.length; i++) {
+  const file = window.uploadedFiles.settlements[i]
+  const { orders: sOrders, ads } = await parseSettlementXLSX(file, i === 0)
           totalAds += ads
           sOrders.forEach(row => {
             const orderId = String(row['Sub Order No'] || '').trim()
