@@ -435,12 +435,12 @@
         const reader = new FileReader()
         reader.onload = (e) => {
           const text = e.target.result
-          const lines = text.split('\n').filter(l => l.trim())
-          const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''))
-          const rows = []
-          for (let i = 1; i < lines.length; i++) {
-            const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''))
-            if (values.length < 3) continue
+        const lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n').filter(l => l.trim())
+const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''))
+const rows = []
+for (let i = 1; i < lines.length; i++) {
+  const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''))
+  if (values.length < 2) continue
             const row = {}
             headers.forEach((h, idx) => { row[h] = values[idx] || '' })
             rows.push(row)
