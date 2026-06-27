@@ -46,159 +46,134 @@
     main { max-width: 800px; margin: 0 auto; padding: 48px 24px; }
     h1 {
       font-family: 'Sora', sans-serif;
-      font-size: 28px; font-weight: 800; color: var(--ink);
-      margin-bottom: 8px;
+      font-size: 28px; font-weight: 800; color: var(--ink); margin-bottom: 8px;
     }
     .subtitle { font-size: 15px; color: var(--muted); margin-bottom: 40px; }
-
-    /* STEPS */
-    .steps-indicator {
-      display: flex; align-items: center; gap: 0;
-      margin-bottom: 40px;
-    }
-    .step-dot {
-      display: flex; align-items: center; gap: 8px;
-      font-size: 13px; font-weight: 600;
-    }
-    .step-num {
-      width: 28px; height: 28px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 700;
-    }
-    .step-dot.active .step-num { background: var(--blue); color: white; }
-    .step-dot.done .step-num { background: var(--green); color: white; }
-    .step-dot.inactive .step-num { background: var(--border); color: var(--muted); }
-    .step-dot.active .step-label { color: var(--ink); }
-    .step-dot.inactive .step-label { color: var(--muted); }
-    .step-line { flex: 1; height: 1px; background: var(--border); margin: 0 8px; }
-
-    /* UPLOAD SECTIONS */
     .upload-section {
       background: var(--white); border: 1.5px solid var(--border);
-      border-radius: 16px; padding: 32px; margin-bottom: 20px;
+      border-radius: 16px; padding: 28px; margin-bottom: 16px;
     }
     .upload-section.completed { border-color: var(--green); }
     .section-header {
-      display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+      display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
     }
     .section-num {
-      width: 36px; height: 36px; border-radius: 10px;
+      width: 32px; height: 32px; border-radius: 8px;
       background: var(--blue); color: white;
       display: flex; align-items: center; justify-content: center;
-      font-size: 16px; font-weight: 700; flex-shrink: 0;
+      font-size: 14px; font-weight: 700; flex-shrink: 0;
     }
     .section-num.done { background: var(--green); }
-    .section-title { font-size: 16px; font-weight: 700; color: var(--ink); }
-    .section-desc { font-size: 13px; color: var(--muted); margin-top: 2px; }
-
-    /* DROP ZONE */
+    .section-title { font-size: 15px; font-weight: 700; color: var(--ink); }
+    .section-desc { font-size: 12px; color: var(--muted); margin-top: 2px; }
     .drop-zone {
-      border: 2px dashed var(--border); border-radius: 12px;
-      padding: 32px; text-align: center; cursor: pointer;
+      border: 2px dashed var(--border); border-radius: 10px;
+      padding: 24px; text-align: center; cursor: pointer;
       transition: .2s; position: relative;
     }
-    .drop-zone:hover, .drop-zone.dragover {
-      border-color: var(--blue); background: var(--blue-light);
-    }
+    .drop-zone:hover { border-color: var(--blue); background: var(--blue-light); }
     .drop-zone input[type="file"] {
-      position: absolute; inset: 0; opacity: 0; cursor: pointer;
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
     }
-    .drop-icon { font-size: 32px; margin-bottom: 8px; }
-    .drop-text { font-size: 14px; color: var(--muted); }
+    .drop-icon { font-size: 28px; margin-bottom: 6px; }
+    .drop-text { font-size: 13px; color: var(--muted); }
     .drop-text strong { color: var(--blue); }
-    .drop-hint { font-size: 12px; color: #94A3B8; margin-top: 4px; }
+    .drop-hint { font-size: 11px; color: #94A3B8; margin-top: 4px; }
     .file-added {
-      display: none; align-items: center; gap: 10px;
+      display: none; align-items: center; gap: 8px;
       background: var(--green-light); border: 1px solid #BBF7D0;
-      border-radius: 10px; padding: 12px 16px;
+      border-radius: 8px; padding: 10px 14px;
       font-size: 13px; color: var(--green); font-weight: 600;
+      margin-top: 8px;
     }
     .file-added.show { display: flex; }
-
-    /* SETTLEMENT FILES */
-    .settlement-files { display: flex; flex-direction: column; gap: 10px; }
+    .settlement-files { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
     .settlement-file-row {
       display: flex; align-items: center; justify-content: space-between;
       background: var(--green-light); border: 1px solid #BBF7D0;
-      border-radius: 10px; padding: 10px 14px;
+      border-radius: 8px; padding: 8px 12px;
       font-size: 13px; color: var(--green); font-weight: 600;
     }
     .btn-remove {
       background: none; border: none; color: var(--red);
-      cursor: pointer; font-size: 16px; padding: 0 4px;
+      cursor: pointer; font-size: 14px; padding: 0 4px;
     }
     .btn-add-more {
       display: flex; align-items: center; gap: 6px;
       background: none; border: 1.5px dashed var(--border);
-      border-radius: 10px; padding: 10px 16px;
+      border-radius: 8px; padding: 8px 14px;
       font-size: 13px; color: var(--muted); cursor: pointer;
       transition: .2s; font-family: 'Inter', sans-serif;
-      position: relative; overflow: hidden;
+      position: relative; width: 100%;
     }
     .btn-add-more input {
-      position: absolute; inset: 0; opacity: 0; cursor: pointer;
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
     }
     .btn-add-more:hover { border-color: var(--blue); color: var(--blue); }
-
-    /* MONTH SELECT */
-    .month-select-row {
-      display: flex; gap: 12px;
-    }
     select {
-      flex: 1; padding: 11px 14px;
-      border: 1.5px solid var(--border); border-radius: 10px;
+      width: 100%; padding: 10px 14px;
+      border: 1.5px solid var(--border); border-radius: 8px;
       font-size: 14px; font-family: 'Inter', sans-serif;
       color: var(--ink); background: var(--white); outline: none;
       cursor: pointer; transition: border-color .2s;
     }
     select:focus { border-color: var(--blue); }
-
-    /* SUBMIT */
+    .select-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .submit-section {
       background: var(--white); border: 1px solid var(--border);
-      border-radius: 16px; padding: 32px; text-align: center;
+      border-radius: 16px; padding: 28px; text-align: center;
     }
     .btn-calculate {
-      width: 100%; padding: 16px;
+      width: 100%; padding: 15px;
       background: var(--blue); color: white;
-      border: none; border-radius: 12px;
-      font-size: 16px; font-weight: 700;
+      border: none; border-radius: 10px;
+      font-size: 15px; font-weight: 700;
       font-family: 'Inter', sans-serif;
       cursor: pointer; transition: .2s;
     }
-    .btn-calculate:hover { background: var(--blue-dark); transform: translateY(-2px); }
+    .btn-calculate:hover { background: var(--blue-dark); transform: translateY(-1px); }
     .btn-calculate:disabled { opacity: .6; cursor: not-allowed; transform: none; }
-    .submit-note { font-size: 13px; color: var(--muted); margin-top: 10px; }
-
-    /* PROCESSING */
-    .processing {
-      display: none; text-align: center; padding: 48px 24px;
-    }
+    .submit-note { font-size: 12px; color: var(--muted); margin-top: 8px; }
+    .processing { display: none; text-align: center; padding: 40px 24px; }
     .processing.show { display: block; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .process-spinner {
-      width: 48px; height: 48px;
-      border: 4px solid var(--blue-light);
-      border-top-color: var(--blue);
-      border-radius: 50%;
-      animation: spin .8s linear infinite;
+      width: 44px; height: 44px;
+      border: 4px solid var(--blue-light); border-top-color: var(--blue);
+      border-radius: 50%; animation: spin .8s linear infinite;
       margin: 0 auto 16px;
     }
-    .process-steps { list-style: none; text-align: left; max-width: 300px; margin: 24px auto 0; }
+    .process-steps { list-style: none; text-align: left; max-width: 300px; margin: 20px auto 0; }
     .process-step {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 13px; color: var(--muted); padding: 6px 0;
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--muted); padding: 5px 0;
     }
     .process-step.done { color: var(--green); }
     .process-step.active { color: var(--ink); font-weight: 600; }
-
     .error-msg {
       background: var(--red-light); border: 1px solid #FECACA;
       color: var(--red); font-size: 13px;
-      padding: 12px 16px; border-radius: 10px;
+      padding: 10px 14px; border-radius: 8px;
       margin-bottom: 16px; display: none;
     }
-
+    .new-biz-form {
+      display: none; margin-top: 12px;
+      padding: 16px; background: var(--blue-light);
+      border-radius: 10px; border: 1px solid #BFDBFE;
+    }
+    .new-biz-form.show { display: block; }
+    .new-biz-form input {
+      width: 100%; padding: 10px 14px; margin-bottom: 8px;
+      border: 1.5px solid var(--border); border-radius: 8px;
+      font-size: 14px; font-family: 'Inter', sans-serif;
+      color: var(--ink); background: var(--white); outline: none;
+    }
+    .new-biz-form input:focus { border-color: var(--blue); }
+    .btn-save-biz {
+      padding: 9px 18px; background: var(--blue); color: white;
+      border: none; border-radius: 8px; font-size: 13px; font-weight: 600;
+      cursor: pointer; font-family: 'Inter', sans-serif;
+    }
     .loading-screen {
       position: fixed; inset: 0; background: white;
       display: flex; align-items: center; justify-content: center; z-index: 999;
@@ -208,10 +183,9 @@
       font-family: 'Sora', sans-serif; font-size: 24px;
       font-weight: 800; color: var(--ink); animation: pulse 1s infinite;
     }
-
     @media (max-width: 600px) {
       main { padding: 24px 16px; }
-      .upload-section { padding: 20px; }
+      .select-row { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -223,7 +197,7 @@
 
   <nav>
     <div class="nav-inner">
-      <a href="dashboard.html" class="logo">
+      <a href="/dashboard" class="logo">
         <div class="logo-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
             <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
@@ -231,7 +205,7 @@
         </div>
         Blink<span>Flow</span>
       </a>
-      <a href="profit.html" class="nav-back">← Back to Reports</a>
+      <a href="/profit" class="nav-back">← Back to Reports</a>
     </div>
   </nav>
 
@@ -241,16 +215,16 @@
 
     <div class="error-msg" id="errorMsg"></div>
 
-    <!-- Step 1: Select Month -->
+    <!-- Step 1: Select Month + Account -->
     <div class="upload-section" id="step1">
       <div class="section-header">
         <div class="section-num" id="num1">1</div>
         <div>
-          <div class="section-title">Select Month</div>
-          <div class="section-desc">Which month are you calculating P&L for?</div>
+          <div class="section-title">Select Month & Account</div>
+          <div class="section-desc">Which month and which Meesho account?</div>
         </div>
       </div>
-      <div class="month-select-row">
+      <div class="select-row">
         <select id="selectMonth">
           <option value="">Select month</option>
           <option value="2026-06">June 2026</option>
@@ -260,11 +234,16 @@
           <option value="2026-02">February 2026</option>
           <option value="2026-01">January 2026</option>
           <option value="2025-12">December 2025</option>
-          <option value="2025-11">November 2025</option>
         </select>
-        <select id="selectBusiness">
+        <select id="selectBusiness" onchange="handleBizChange(this)">
           <option value="">Select account</option>
+          <option value="new">+ Add New Account</option>
         </select>
+      </div>
+      <div class="new-biz-form" id="newBizForm">
+        <input type="text" id="bizName" placeholder="Account name (e.g. Geeta Traders)" />
+        <input type="text" id="bizMeeshoId" placeholder="Meesho Seller ID (e.g. 3537454)" />
+        <button class="btn-save-biz" onclick="saveNewBusiness()">Save Account</button>
       </div>
     </div>
 
@@ -274,14 +253,14 @@
         <div class="section-num" id="num2">2</div>
         <div>
           <div class="section-title">Orders Report</div>
-          <div class="section-desc">Download from Meesho → Reports → Order Report</div>
+          <div class="section-desc">Meesho Seller Panel → Reports → Order Report → Download CSV</div>
         </div>
       </div>
       <div class="drop-zone" id="ordersZone">
         <input type="file" accept=".csv" id="ordersFile" onchange="fileSelected('orders', this)" />
         <div class="drop-icon">📋</div>
         <div class="drop-text">Drop your <strong>Orders CSV</strong> here or click to browse</div>
-        <div class="drop-hint">File name: Orders_YYYY-MM-DD_....csv</div>
+        <div class="drop-hint">File name starts with: Orders_YYYY-MM...</div>
       </div>
       <div class="file-added" id="ordersAdded">
         ✅ <span id="ordersFileName">Orders file added</span>
@@ -298,12 +277,12 @@
         </div>
       </div>
       <div class="settlement-files" id="settlementFilesList"></div>
-      <button class="btn-add-more" onclick="">
+      <div class="btn-add-more">
         <input type="file" accept=".xlsx,.xls" multiple onchange="addSettlementFiles(this)" />
         + Add Settlement File
-      </button>
-      <p style="font-size:12px;color:#94A3B8;margin-top:8px">
-        💡 Tip: Add both current month and next month's file for complete results
+      </div>
+      <p style="font-size:11px;color:#94A3B8;margin-top:6px">
+        💡 Add both current month and next month's file for complete results
       </p>
     </div>
 
@@ -313,21 +292,21 @@
         <div class="section-num" id="num4">4</div>
         <div>
           <div class="section-title">SKU Cost Sheet</div>
-          <div class="section-desc">Upload your product costs (SKU code + purchase price)</div>
+          <div class="section-desc">Two columns: SKU Code | Your purchase price</div>
         </div>
       </div>
       <div class="drop-zone" id="skuZone">
         <input type="file" accept=".csv,.xlsx" id="skuFile" onchange="fileSelected('sku', this)" />
         <div class="drop-icon">💰</div>
         <div class="drop-text">Drop your <strong>SKU Cost Sheet</strong> here or click to browse</div>
-        <div class="drop-hint">Two columns: SKU Code | Cost Price</div>
+        <div class="drop-hint">CSV or Excel with SKU and cost columns</div>
       </div>
       <div class="file-added" id="skuAdded">
         ✅ <span id="skuFileName">SKU cost file added</span>
       </div>
     </div>
 
-    <!-- Calculate -->
+    <!-- Calculate Button -->
     <div class="submit-section" id="submitSection">
       <button class="btn-calculate" id="calculateBtn" onclick="calculatePnL()">
         ⚡ Calculate My P&L
@@ -335,40 +314,46 @@
       <p class="submit-note">Takes 10-30 seconds depending on order volume</p>
     </div>
 
-    <!-- Processing -->
+    <!-- Processing Screen -->
     <div class="processing" id="processingSection">
       <div class="process-spinner"></div>
       <h3 style="font-family:'Sora',sans-serif;font-size:20px;font-weight:800;margin-bottom:8px">
         Calculating your P&L...
       </h3>
-      <p style="font-size:14px;color:#64748B">Please don't close this window</p>
+      <p style="font-size:13px;color:#64748B">Please don't close this window</p>
       <ul class="process-steps">
-        <li class="process-step" id="ps1">⏳ Reading orders file...</li>
+        <li class="process-step active" id="ps1">⏳ Reading orders file...</li>
         <li class="process-step" id="ps2">⏳ Reading settlement files...</li>
         <li class="process-step" id="ps3">⏳ Matching Order IDs...</li>
         <li class="process-step" id="ps4">⏳ Applying SKU costs...</li>
         <li class="process-step" id="ps5">⏳ Calculating profit per order...</li>
-        <li class="process-step" id="ps6">⏳ Generating report...</li>
+        <li class="process-step" id="ps6">⏳ Saving to database...</li>
       </ul>
     </div>
   </main>
+
+  <!-- SheetJS for reading Excel files -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
 
     const SUPABASE_URL = 'https://yrehpzsajltpinqdjqge.supabase.co'
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlyZWhwenNhamx0cGlucWRqcWdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1MDIzNTEsImV4cCI6MjA5ODA3ODM1MX0.T4gyFGHdNg4xQOQoHf02XUHz2Nkapb7ybW9Ln2BC7Ts'
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlyZWhwenNhamx0cGlucWRqcWdlIiwicm9sZSI6ImFub24iLCJpYXQiOj'
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
+    // Check auth
     const { data: { session } } = await supabase.auth.getSession()
-    if (!session) { window.location.href = 'login.html' }
+    if (!session) { window.location.href = '/login' }
 
     document.getElementById('loadingScreen').style.display = 'none'
+    window._session = session
+    window._supabase = supabase
 
-    // Load businesses into dropdown
+    // Load businesses
     const { data: businesses } = await supabase
       .from('businesses')
-      .select('id, name')
+      .select('id, name, meesho_id')
       .eq('user_id', session.user.id)
 
     const bizSelect = document.getElementById('selectBusiness')
@@ -376,28 +361,39 @@
       businesses.forEach(b => {
         const opt = document.createElement('option')
         opt.value = b.id
-        opt.textContent = b.name
-        bizSelect.appendChild(opt)
+        opt.textContent = `${b.name} (${b.meesho_id || 'No ID'})`
+        bizSelect.insertBefore(opt, bizSelect.lastElementChild)
       })
-    } else {
-      // Add option to create new business
+    }
+
+    // Save new business
+    window.saveNewBusiness = async function() {
+      const name = document.getElementById('bizName').value.trim()
+      const meeshoId = document.getElementById('bizMeeshoId').value.trim()
+      if (!name) { alert('Please enter account name'); return }
+
+      const { data, error } = await supabase
+        .from('businesses')
+        .insert({ user_id: session.user.id, name, meesho_id: meeshoId })
+        .select()
+        .single()
+
+      if (error) { alert('Error saving: ' + error.message); return }
+
       const opt = document.createElement('option')
-      opt.value = 'new'
-      opt.textContent = '+ Add New Account'
-      bizSelect.appendChild(opt)
+      opt.value = data.id
+      opt.textContent = `${name} (${meeshoId})`
+      bizSelect.insertBefore(opt, bizSelect.lastElementChild)
+      bizSelect.value = data.id
+      document.getElementById('newBizForm').classList.remove('show')
     }
 
     // File storage
-    window.uploadedFiles = {
-      orders: null,
-      settlements: [],
-      sku: null
-    }
+    window.uploadedFiles = { orders: null, settlements: [], sku: null }
 
     window.fileSelected = function(type, input) {
       const file = input.files[0]
       if (!file) return
-
       if (type === 'orders') {
         window.uploadedFiles.orders = file
         document.getElementById('ordersAdded').classList.add('show')
@@ -414,15 +410,12 @@
     window.addSettlementFiles = function(input) {
       const files = Array.from(input.files)
       const list = document.getElementById('settlementFilesList')
-
       files.forEach(file => {
         window.uploadedFiles.settlements.push(file)
         const row = document.createElement('div')
         row.className = 'settlement-file-row'
-        row.innerHTML = `
-          <span>✅ ${file.name}</span>
-          <button class="btn-remove" onclick="removeSettlement(this, '${file.name}')">✕</button>
-        `
+        row.innerHTML = `<span>✅ ${file.name}</span>
+          <button class="btn-remove" onclick="removeSettlement(this, '${file.name}')">✕</button>`
         list.appendChild(row)
       })
     }
@@ -432,58 +425,229 @@
       btn.parentElement.remove()
     }
 
+    window.handleBizChange = function(select) {
+      document.getElementById('newBizForm').classList.toggle('show', select.value === 'new')
+    }
+
+    // Parse CSV file
+    async function parseCSV(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader()
+        reader.onload = (e) => {
+          const text = e.target.result
+          const lines = text.split('\n').filter(l => l.trim())
+          const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''))
+          const rows = []
+          for (let i = 1; i < lines.length; i++) {
+            const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''))
+            if (values.length < 3) continue
+            const row = {}
+            headers.forEach((h, idx) => { row[h] = values[idx] || '' })
+            rows.push(row)
+          }
+          resolve(rows)
+        }
+        reader.readAsText(file)
+      })
+    }
+
+    // Parse Excel file
+    async function parseExcel(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader()
+        reader.onload = (e) => {
+          const wb = XLSX.read(e.target.result, { type: 'array' })
+          const ws = wb.Sheets['Order Payments']
+          if (!ws) { resolve([]); return }
+          const rows = XLSX.utils.sheet_to_json(ws, { header: 1 })
+          if (rows.length < 4) { resolve([]); return }
+          const headers = rows[1]
+          const data = []
+          for (let i = 3; i < rows.length; i++) {
+            const row = rows[i]
+            if (!row[0]) continue
+            const obj = {}
+            headers.forEach((h, idx) => { if (h) obj[h] = row[idx] })
+            data.push(obj)
+          }
+          resolve(data)
+        }
+        reader.readAsArrayBuffer(file)
+      })
+    }
+
+    // Parse SKU cost file
+    async function parseSkuCosts(file) {
+      const costs = {}
+      if (file.name.endsWith('.csv')) {
+        const rows = await parseCSV(file)
+        rows.forEach(row => {
+          const keys = Object.keys(row)
+          if (keys.length >= 2) {
+            const sku = row[keys[0]]?.trim()
+            const cost = parseFloat(row[keys[1]])
+            if (sku && !isNaN(cost)) costs[sku] = cost
+          }
+        })
+      } else {
+        const reader = new FileReader()
+        await new Promise(resolve => {
+          reader.onload = (e) => {
+            const wb = XLSX.read(e.target.result, { type: 'array' })
+            const ws = wb.Sheets[wb.SheetNames[0]]
+            const rows = XLSX.utils.sheet_to_json(ws, { header: 1 })
+            rows.slice(1).forEach(row => {
+              if (row[0] && row[1]) {
+                const sku = String(row[0]).trim()
+                const cost = parseFloat(row[1])
+                if (sku && !isNaN(cost)) costs[sku] = cost
+              }
+            })
+            resolve()
+          }
+          reader.readAsArrayBuffer(file)
+        })
+      }
+      return costs
+    }
+
+    // Step indicator
+    function setStep(stepId, state) {
+      const el = document.getElementById(stepId)
+      if (!el) return
+      el.className = `process-step ${state}`
+      if (state === 'done') el.textContent = el.textContent.replace('⏳', '✅')
+      if (state === 'active') el.textContent = el.textContent.replace('⏳', '🔄')
+    }
+
+    // Main calculate function
     window.calculatePnL = async function() {
       const month = document.getElementById('selectMonth').value
       const bizId = document.getElementById('selectBusiness').value
       const errorMsg = document.getElementById('errorMsg')
       errorMsg.style.display = 'none'
 
-      if (!month) {
-        errorMsg.textContent = 'Please select a month.'
-        errorMsg.style.display = 'block'
-        return
-      }
-      if (!bizId) {
-        errorMsg.textContent = 'Please select an account.'
-        errorMsg.style.display = 'block'
-        return
-      }
-      if (!window.uploadedFiles.orders) {
-        errorMsg.textContent = 'Please upload your Orders CSV file.'
-        errorMsg.style.display = 'block'
-        return
-      }
-      if (window.uploadedFiles.settlements.length === 0) {
-        errorMsg.textContent = 'Please upload at least one Settlement file.'
-        errorMsg.style.display = 'block'
-        return
-      }
-      if (!window.uploadedFiles.sku) {
-        errorMsg.textContent = 'Please upload your SKU Cost Sheet.'
-        errorMsg.style.display = 'block'
-        return
-      }
+      // Validate
+      if (!month) { errorMsg.textContent = 'Please select a month.'; errorMsg.style.display = 'block'; return }
+      if (!bizId || bizId === 'new') { errorMsg.textContent = 'Please select an account.'; errorMsg.style.display = 'block'; return }
+      if (!window.uploadedFiles.orders) { errorMsg.textContent = 'Please upload your Orders CSV.'; errorMsg.style.display = 'block'; return }
+      if (window.uploadedFiles.settlements.length === 0) { errorMsg.textContent = 'Please upload at least one Settlement file.'; errorMsg.style.display = 'block'; return }
+      if (!window.uploadedFiles.sku) { errorMsg.textContent = 'Please upload your SKU Cost Sheet.'; errorMsg.style.display = 'block'; return }
 
       // Show processing
       document.getElementById('submitSection').style.display = 'none'
       document.getElementById('processingSection').classList.add('show')
 
-      // Simulate processing steps
-      const steps = ['ps1','ps2','ps3','ps4','ps5','ps6']
-      for (let i = 0; i < steps.length; i++) {
-        await new Promise(r => setTimeout(r, 800))
-        document.getElementById(steps[i]).className = 'process-step done'
-        document.getElementById(steps[i]).textContent =
-          document.getElementById(steps[i]).textContent.replace('⏳', '✅')
-        if (i < steps.length - 1) {
-          document.getElementById(steps[i+1]).className = 'process-step active'
-        }
-      }
+      try {
+        // Step 1: Parse orders
+        setStep('ps1', 'active')
+        const rawOrders = await parseCSV(window.uploadedFiles.orders)
+        const orders = rawOrders.map(row => ({
+          sub_order_no: row['Sub Order No'] || '',
+          sku: row['SKU'] || '',
+          quantity: parseInt(row['Quantity']) || 1,
+          listed_price: parseFloat(row['Supplier Listed Price (Incl. GST + Commission)']) || 0,
+          order_status: row['Reason for Credit Entry'] || '',
+          order_date: row['Order Date'] || ''
+        })).filter(o => o.sub_order_no)
+        setStep('ps1', 'done')
+        setStep('ps2', 'active')
 
-      // For now redirect to profit page
-      // In next phase the real calculation engine will be called here
-      await new Promise(r => setTimeout(r, 500))
-      window.location.href = 'profit.html'
+        // Step 2: Parse settlement files
+        const allSettlements = []
+        for (const file of window.uploadedFiles.settlements) {
+          const rows = await parseExcel(file)
+          rows.forEach(row => {
+            if (!row['Sub Order No']) return
+            allSettlements.push({
+              sub_order_no: String(row['Sub Order No']).trim(),
+              status: row['Live Order Status'] || '',
+              settlement: parseFloat(row['Final Settlement Amount']) || 0,
+              order_date: row['Order Date'] ? String(row['Order Date']) : '',
+              return_shipping: Math.abs(parseFloat(row['Return Shipping Charge (Incl. GST)']) || 0),
+              tcs: Math.abs(parseFloat(row['TCS']) || 0),
+              tds: Math.abs(parseFloat(row['TDS']) || 0),
+            })
+          })
+        }
+
+        // Filter settlements to only this month's orders + cross-month
+        const orderIds = new Set(orders.map(o => o.sub_order_no))
+        const relevantSettlements = allSettlements.filter(s => orderIds.has(s.sub_order_no))
+        setStep('ps2', 'done')
+        setStep('ps3', 'active')
+
+        // Step 3: Calculate ads spend from settlement files
+        let adsSpend = 0
+        for (const file of window.uploadedFiles.settlements) {
+          await new Promise(resolve => {
+            const reader = new FileReader()
+            reader.onload = (e) => {
+              try {
+                const wb = XLSX.read(e.target.result, { type: 'array' })
+                const ws = wb.Sheets['Ads Cost']
+                if (ws) {
+                  const rows = XLSX.utils.sheet_to_json(ws, { header: 1 })
+                  rows.slice(2).forEach(row => {
+                    if (row[7] && typeof row[7] === 'number') {
+                      adsSpend += Math.abs(row[7])
+                    }
+                  })
+                }
+              } catch(e) {}
+              resolve()
+            }
+            reader.readAsArrayBuffer(file)
+          })
+        }
+        setStep('ps3', 'done')
+        setStep('ps4', 'active')
+
+        // Step 4: Parse SKU costs
+        const skuCosts = await parseSkuCosts(window.uploadedFiles.sku)
+        setStep('ps4', 'done')
+        setStep('ps5', 'active')
+
+        // Step 5: Call Edge Function
+        const { data: { session } } = await window._supabase.auth.getSession()
+
+        const response = await fetch(
+          `${SUPABASE_URL}/functions/v1/calculate-pnl`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${session.access_token}`
+            },
+            body: JSON.stringify({
+              business_id: bizId,
+              month: month,
+              orders: orders,
+              settlements: relevantSettlements,
+              sku_costs: skuCosts,
+              ads_spend: adsSpend
+            })
+          }
+        )
+
+        const result = await response.json()
+        setStep('ps5', 'done')
+        setStep('ps6', 'active')
+
+        if (!result.success) throw new Error(result.error || 'Calculation failed')
+
+        setStep('ps6', 'done')
+
+        // Redirect to profit page
+        await new Promise(r => setTimeout(r, 800))
+        window.location.href = '/profit'
+
+      } catch (error) {
+        document.getElementById('processingSection').classList.remove('show')
+        document.getElementById('submitSection').style.display = 'block'
+        errorMsg.textContent = 'Error: ' + error.message
+        errorMsg.style.display = 'block'
+      }
     }
   </script>
 </body>
