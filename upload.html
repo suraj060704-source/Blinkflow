@@ -349,13 +349,15 @@
       
       const headers = allRows[1]
       const orders = []
-      for (let i = 3; i < allRows.length; i++) {
-        const row = allRows[i]
-        if (!row[0]) continue
-        const obj = {}
-        headers.forEach((h, idx) => { if (h) obj[h] = row[idx] })
-        orders.push(obj)
-      }
+     for (let i = 3; i < allRows.length; i++) {
+  const row = allRows[i]
+  if (!row[0]) continue
+  const status = row[headers.indexOf('Live Order Status')]
+  if (!status) continue   // ← ADD THIS LINE: skip blank-status adjustment rows
+  const obj = {}
+  headers.forEach((h, idx) => { if (h) obj[h] = row[idx] })
+  orders.push(obj)
+}
 
       // Parse ads
       let ads = 0
