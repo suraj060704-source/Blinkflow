@@ -3,39 +3,55 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const GEMINI_API_KEY = process.env.GEMINI_API_KEY
-  if (!GEMINI_API_KEY) {
+  const OPENAI_API_KEY = process.env.OPENAI_API_KEY
+  if (!OPENAI_API_KEY) {
     return res.status(500).json({ error: 'API key not configured' })
   }
 
-  const models = [
-    'gemini-2.0-flash',
-    'gemini-1.5-flash',
-    'gemini-1.5-flash-latest',
-    'gemini-pro',
-    'gemini-1.0-pro'
-  ]
+  try {
+    const { prompt, imageBase64, imageMime } = req.body
 
-  for (const model of models) {
-    try {
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(req.body)
-        }
-      )
-      const data = await response.json()
-      
-      // If no error, this model works
-      if (!data.error) {
-        return res.status(200).json(data)
-      }
-    } catch (e) {
-      continue
+    const messages = [{ role: 'user', content: [] }]
+
+    if (imageBase64) {
+      messages[0].content.push({
+        type: 'image_url',
+        image_url: { url: `data:${imageMime};base64,${imageBase64}` }
+      })
     }
-  }
 
-  res.status(500).json({ error: 'No working model found' })
+    messages[0].content.push({ type: 'text', text: prompt })
+
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${OPENAI_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages,
+        max_tokens: 2000,
+        temperature: 0.7
+      })
+    })
+
+    const data = await response.json()
+    
+    if (data.error) {
+      return res.status(500).json({ error: data.error.message })
+    }
+
+    // Return in same format listing.html expects
+    res.status(200).json({
+      candidates: [{
+        content: {
+          parts: [{ text: data.choices[0].message.content }]
+        }
+      }]
+    })
+
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
 }
