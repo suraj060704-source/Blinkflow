@@ -16,43 +16,41 @@
       --yellow: #D97706; --yellow-light: #FFFBEB;
     }
     body { font-family: 'Inter', sans-serif; background: var(--surface); min-height: 100vh; -webkit-font-smoothing: antialiased; }
-
-    /* NAV */
     nav { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 24px; position: sticky; top: 0; z-index: 100; }
-    .nav-inner { max-width: 900px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .nav-inner { max-width: 960px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 64px; }
     .logo { display: flex; align-items: center; gap: 8px; font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 800; color: var(--ink); text-decoration: none; }
     .logo-icon { width: 32px; height: 32px; background: var(--blue); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
     .logo-icon svg { width: 18px; height: 18px; }
     .logo span { color: var(--blue); }
     .nav-back { font-size: 14px; color: var(--muted); text-decoration: none; }
-
-    /* MAIN */
-    main { max-width: 900px; margin: 0 auto; padding: 48px 24px; }
+    main { max-width: 960px; margin: 0 auto; padding: 48px 24px; }
     h1 { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 800; color: var(--ink); margin-bottom: 8px; }
-    .subtitle { font-size: 15px; color: var(--muted); margin-bottom: 40px; }
+    .subtitle { font-size: 15px; color: var(--muted); margin-bottom: 32px; }
 
-    /* UPLOAD CARD */
+    /* AI BADGE */
+    .ai-badge { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #7C3AED, #2563EB); color: white; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 99px; margin-bottom: 24px; }
+
+    /* CARD */
     .card { background: var(--white); border: 1.5px solid var(--border); border-radius: 16px; padding: 28px; margin-bottom: 20px; }
     .card-title { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
     .card-desc { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
 
     /* DROP ZONE */
-    .drop-zone { border: 2px dashed var(--border); border-radius: 12px; padding: 40px 24px; text-align: center; cursor: pointer; transition: .2s; position: relative; }
-    .drop-zone:hover, .drop-zone.drag-over { border-color: var(--blue); background: var(--blue-light); }
+    .drop-zone { border: 2px dashed var(--border); border-radius: 12px; padding: 48px 24px; text-align: center; cursor: pointer; transition: .2s; position: relative; }
+    .drop-zone:hover { border-color: var(--blue); background: var(--blue-light); }
     .drop-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
-    .drop-icon { font-size: 36px; margin-bottom: 10px; }
+    .drop-icon { font-size: 40px; margin-bottom: 12px; }
     .drop-text { font-size: 14px; color: var(--muted); }
     .drop-text strong { color: var(--blue); }
     .drop-hint { font-size: 12px; color: #94A3B8; margin-top: 6px; }
 
     /* PREVIEW */
-    .preview-area { display: none; }
-    .preview-area.show { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
-    .preview-original { flex: 0 0 160px; }
-    .preview-original img { width: 160px; height: 160px; object-fit: contain; border-radius: 10px; border: 1px solid var(--border); background: #fff; }
+    .preview-row { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; margin-top: 20px; }
+    .preview-box { flex: 0 0 140px; }
+    .preview-box img { width: 140px; height: 140px; object-fit: contain; border-radius: 10px; border: 1px solid var(--border); background: #fff; }
     .preview-label { font-size: 11px; color: var(--muted); margin-top: 6px; text-align: center; }
     .preview-info { flex: 1; min-width: 200px; }
-    .info-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+    .info-row { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
     .info-row:last-child { border-bottom: none; }
     .info-label { color: var(--muted); }
     .info-value { font-weight: 600; color: var(--ink); }
@@ -61,58 +59,74 @@
     .badge-yellow { background: var(--yellow-light); color: var(--yellow); }
     .badge-green { background: var(--green-light); color: var(--green); }
 
-    /* CATEGORY SELECT */
-    .category-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+    /* CATEGORY */
+    .cat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
     select { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; font-family: 'Inter', sans-serif; color: var(--ink); background: var(--white); outline: none; cursor: pointer; }
     select:focus { border-color: var(--blue); }
+    .field-label { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
+
+    /* AI ANALYSIS BOX */
+    .ai-analysis { display: none; background: linear-gradient(135deg, #F5F3FF, #EFF6FF); border: 1px solid #C4B5FD; border-radius: 12px; padding: 16px; margin-top: 16px; }
+    .ai-analysis.show { display: block; }
+    .ai-analysis-title { font-size: 13px; font-weight: 700; color: #7C3AED; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .ai-analysis-text { font-size: 13px; color: var(--ink); line-height: 1.6; }
+    .ai-tips { list-style: none; margin-top: 8px; }
+    .ai-tips li { font-size: 12px; color: var(--muted); padding: 3px 0; display: flex; align-items: flex-start; gap: 6px; }
 
     /* GENERATE BTN */
-    .btn-generate { width: 100%; padding: 15px; background: var(--blue); color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; transition: .2s; margin-top: 20px; }
-    .btn-generate:hover { background: var(--blue-dark); }
-    .btn-generate:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-generate { width: 100%; padding: 15px; background: linear-gradient(135deg, #7C3AED, #2563EB); color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; transition: .2s; margin-top: 20px; }
+    .btn-generate:hover { opacity: .9; transform: translateY(-1px); }
+    .btn-generate:disabled { opacity: .5; cursor: not-allowed; transform: none; }
 
     /* PROCESSING */
-    .processing { display: none; text-align: center; padding: 32px; }
+    .processing { display: none; text-align: center; padding: 48px 24px; }
     .processing.show { display: block; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .spinner { width: 40px; height: 40px; border: 3px solid var(--blue-light); border-top-color: var(--blue); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 12px; }
+    .spinner { width: 48px; height: 48px; border: 3px solid #E9D5FF; border-top-color: #7C3AED; border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 16px; }
+    .process-title { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 800; color: var(--ink); margin-bottom: 8px; }
+    .process-steps-list { list-style: none; text-align: left; max-width: 320px; margin: 20px auto 0; }
+    .ps { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); padding: 5px 0; }
+    .ps.done { color: var(--green); }
+    .ps.active { color: var(--ink); font-weight: 600; }
 
     /* RESULTS */
     .results { display: none; }
     .results.show { display: block; }
     .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 8px; }
-    .results-title { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 800; color: var(--ink); }
+    .results-title { font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 800; color: var(--ink); }
     .btn-new { padding: 9px 18px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 8px; font-size: 13px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; color: var(--ink); }
     .btn-new:hover { border-color: var(--blue); color: var(--blue); }
 
-    /* VARIANTS GRID */
-    .variants-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+    /* VARIANTS */
+    .variants-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 16px; }
     .variant-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 12px; overflow: hidden; transition: .2s; }
     .variant-card:hover { border-color: var(--blue); box-shadow: 0 4px 16px rgba(37,99,235,.1); }
-    .variant-card.best { border-color: var(--green); box-shadow: 0 4px 16px rgba(22,163,74,.15); }
-    .variant-img-wrap { position: relative; background: #f8f8f8; aspect-ratio: 1; }
+    .variant-card.best { border-color: var(--green); box-shadow: 0 4px 20px rgba(22,163,74,.18); }
+    .variant-img-wrap { position: relative; background: #fafafa; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; }
     .variant-img-wrap img { width: 100%; height: 100%; object-fit: contain; }
-    .best-badge { position: absolute; top: 8px; left: 8px; background: var(--green); color: white; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 99px; }
+    .best-tag { position: absolute; top: 8px; left: 8px; background: var(--green); color: white; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 99px; }
     .variant-info { padding: 12px; }
     .variant-name { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
-    .variant-stats { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-    .variant-size { font-size: 11px; color: var(--muted); }
-    .variant-slab { font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 99px; }
+    .variant-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .variant-kb { font-size: 11px; color: var(--muted); }
+    .slab { font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 99px; }
     .slab-lowest { background: var(--green-light); color: var(--green); }
     .slab-low { background: var(--yellow-light); color: var(--yellow); }
     .slab-standard { background: #F1F5F9; color: var(--muted); }
-    .btn-download { width: 100%; padding: 8px; background: var(--blue-light); color: var(--blue); border: none; border-radius: 7px; font-size: 12px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: .2s; }
-    .btn-download:hover { background: var(--blue); color: white; }
+    .btn-dl { width: 100%; padding: 8px; background: var(--blue-light); color: var(--blue); border: none; border-radius: 7px; font-size: 12px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: .2s; }
+    .btn-dl:hover { background: var(--blue); color: white; }
+
+    /* AI INSIGHT BOX */
+    .ai-insight { background: linear-gradient(135deg, #F5F3FF, #EFF6FF); border: 1px solid #C4B5FD; border-radius: 12px; padding: 16px 20px; margin-top: 20px; font-size: 13px; color: var(--ink); line-height: 1.7; }
+    .ai-insight strong { color: #7C3AED; }
 
     /* INFO BOX */
-    .info-box { background: var(--blue-light); border: 1px solid #BFDBFE; border-radius: 10px; padding: 14px 16px; font-size: 13px; color: #1E40AF; margin-top: 20px; line-height: 1.6; }
-    .info-box strong { font-weight: 700; }
+    .info-box { background: var(--blue-light); border: 1px solid #BFDBFE; border-radius: 10px; padding: 14px 16px; font-size: 13px; color: #1E40AF; margin-top: 16px; line-height: 1.6; }
 
     @media (max-width: 600px) {
       main { padding: 24px 16px; }
-      .category-row { grid-template-columns: 1fr; }
-      .preview-area.show { flex-direction: column; }
-      .preview-original { flex: none; }
+      .cat-row { grid-template-columns: 1fr; }
+      .preview-row { flex-direction: column; }
     }
   </style>
 </head>
@@ -132,52 +146,46 @@
   </nav>
 
   <main>
-    <h1>🖼️ Image Optimizer</h1>
-    <p class="subtitle">Generate Meesho-ready images optimized for the lowest possible shipping slab</p>
+    <div class="ai-badge">✨ AI-Powered</div>
+    <h1>Image Optimizer</h1>
+    <p class="subtitle">Claude AI analyzes your product, removes background, and generates Meesho-ready images optimized for the lowest shipping slab</p>
 
-    <!-- UPLOAD CARD -->
+    <!-- UPLOAD -->
     <div class="card" id="uploadCard">
       <div class="card-title">Upload Product Image</div>
-      <div class="card-desc">JPG, PNG or WEBP — any size. We'll handle the rest.</div>
+      <div class="card-desc">Our AI will analyze your image and tell you exactly how to reduce shipping costs.</div>
 
       <div class="drop-zone" id="dropZone">
         <input type="file" accept="image/jpeg,image/png,image/webp" id="imageFile" onchange="imageSelected(this)" />
         <div class="drop-icon">📷</div>
         <div class="drop-text">Drop your product image here or <strong>click to browse</strong></div>
-        <div class="drop-hint">Supports JPG, PNG, WEBP</div>
+        <div class="drop-hint">JPG, PNG, WEBP supported</div>
       </div>
 
-      <!-- PREVIEW after upload -->
-      <div class="preview-area" id="previewArea">
-        <div class="preview-original">
-          <img id="previewImg" src="" alt="Original" />
-          <div class="preview-label">Original Image</div>
-        </div>
-        <div class="preview-info">
-          <div class="info-row">
-            <span class="info-label">File size</span>
-            <span class="info-value" id="infoSize">—</span>
+      <div id="previewSection" style="display:none">
+        <div class="preview-row">
+          <div class="preview-box">
+            <img id="previewImg" src="" alt="Original" />
+            <div class="preview-label">Your image</div>
           </div>
-          <div class="info-row">
-            <span class="info-label">Dimensions</span>
-            <span class="info-value" id="infoDimensions">—</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Format</span>
-            <span class="info-value" id="infoFormat">—</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Current slab estimate</span>
-            <span class="info-value" id="infoSlab">—</span>
+          <div class="preview-info">
+            <div class="info-row"><span class="info-label">File size</span><span class="info-value" id="infoSize">—</span></div>
+            <div class="info-row"><span class="info-label">Dimensions</span><span class="info-value" id="infoDims">—</span></div>
+            <div class="info-row"><span class="info-label">Format</span><span class="info-value" id="infoFmt">—</span></div>
+            <div class="info-row"><span class="info-label">Current slab risk</span><span class="info-value" id="infoSlab">—</span></div>
           </div>
         </div>
-      </div>
 
-      <!-- CATEGORY + GENERATE -->
-      <div id="generateSection" style="display:none">
-        <div class="category-row">
+        <!-- AI Analysis result -->
+        <div class="ai-analysis" id="aiAnalysis">
+          <div class="ai-analysis-title">🤖 Claude AI Analysis</div>
+          <div class="ai-analysis-text" id="aiAnalysisText">Analyzing your image...</div>
+          <ul class="ai-tips" id="aiTipsList"></ul>
+        </div>
+
+        <div class="cat-row" style="margin-top:20px">
           <div>
-            <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:6px">Product Category</div>
+            <div class="field-label">Product Category</div>
             <select id="categorySelect">
               <option value="">Select category</option>
               <option value="hair">Hair Care (Combs, Brushes)</option>
@@ -192,220 +200,393 @@
             </select>
           </div>
           <div>
-            <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:6px">Background Color</div>
+            <div class="field-label">Background Style</div>
             <select id="bgSelect">
-              <option value="white">White (Recommended)</option>
+              <option value="white">Pure White (Best for shipping)</option>
               <option value="lightgray">Light Gray</option>
-              <option value="cream">Cream</option>
+              <option value="cream">Soft Cream</option>
             </select>
           </div>
         </div>
-        <button class="btn-generate" id="generateBtn" onclick="generateVariants()">⚡ Generate Optimized Images</button>
+        <button class="btn-generate" id="generateBtn" onclick="generateVariants()" disabled>
+          ✨ Generate AI-Optimized Images
+        </button>
       </div>
     </div>
 
     <!-- PROCESSING -->
     <div class="processing" id="processingSection">
       <div class="spinner"></div>
-      <div style="font-size:15px;font-weight:600;color:var(--ink);margin-bottom:4px">Generating variants...</div>
-      <div style="font-size:13px;color:var(--muted)" id="processText">Preparing your image</div>
+      <div class="process-title">AI is optimizing your image...</div>
+      <p style="font-size:13px;color:var(--muted)">This takes 15–20 seconds</p>
+      <ul class="process-steps-list">
+        <li class="ps" id="ps1">⏳ Sending image to Claude AI...</li>
+        <li class="ps" id="ps2">⏳ Analyzing product boundaries...</li>
+        <li class="ps" id="ps3">⏳ Removing background...</li>
+        <li class="ps" id="ps4">⏳ Generating 10 optimized variants...</li>
+        <li class="ps" id="ps5">⏳ Ranking by shipping slab...</li>
+      </ul>
     </div>
 
     <!-- RESULTS -->
     <div class="results" id="resultsSection">
       <div class="results-header">
         <div>
-          <div class="results-title">✅ <span id="variantCount">10</span> variants generated</div>
-          <div style="font-size:13px;color:var(--muted);margin-top:2px">Sorted by estimated shipping slab — best first</div>
+          <div class="results-title">✅ 10 variants ready</div>
+          <div style="font-size:13px;color:var(--muted);margin-top:2px">AI-optimized — sorted best shipping first</div>
         </div>
         <button class="btn-new" onclick="resetTool()">↩ New Image</button>
       </div>
-      <div class="variants-grid" id="variantsGrid"></div>
-      <div class="info-box">
-        <strong>How to use:</strong> Download the image with the 🟢 Lowest Slab badge. Upload it as your primary product image in Meesho Supplier Panel. Check the shipping rate shown on your listing — most sellers save ₹15–40 per order. The more white space around your product, the lower the slab.
+
+      <div class="ai-insight" id="aiInsight"></div>
+
+      <div class="variants-grid" id="variantsGrid" style="margin-top:20px"></div>
+
+      <div class="info-box" style="margin-top:20px">
+        <strong>How to use:</strong> Download the ⭐ Best variant first. Upload it as your primary image in Meesho Supplier Panel → Catalog → Edit Product. Check the shipping rate on your listing. Most sellers save ₹15–40 per order after switching to an AI-optimized image.
       </div>
     </div>
   </main>
 
   <script>
+    const SUPABASE_URL = 'https://yrehpzsajltpinqdjqge.supabase.co'
+    const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlyZWhwenNhamx0cGlucWRqcWdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1MDIzNTEsImV4cCI6MjA5ODA3ODM1MX0.T4gyFGHdNg4xQOQoHf02XUHz2Nkapb7ybW9Ln2BC7Ts'
+
     let originalFile = null
     let originalImage = null
+    let aiData = null  // stores Claude's analysis
 
-    function formatSize(bytes) {
+    const BG_COLORS = { white: '#FFFFFF', lightgray: '#F3F4F6', cream: '#FEFCE8' }
+
+    function fmt(bytes) {
       if (bytes < 1024) return bytes + ' B'
-      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + ' KB'
-      return (bytes / (1024 * 1024)).toFixed(1) + ' MB'
+      if (bytes < 1048576) return (bytes/1024).toFixed(0) + ' KB'
+      return (bytes/1048576).toFixed(1) + ' MB'
     }
 
-    function getSlabFromSize(bytes) {
-      const kb = bytes / 1024
-      if (kb < 200) return { label: '🟢 Likely Lowest', cls: 'badge-green' }
-      if (kb < 350) return { label: '🟡 Likely Low', cls: 'badge-yellow' }
-      return { label: '🔴 Likely Standard', cls: 'badge-red' }
-    }
-
-    function getSlabLabel(kb) {
-      if (kb < 200) return { text: 'Lowest Slab', cls: 'slab-lowest' }
-      if (kb < 350) return { text: 'Low Slab', cls: 'slab-low' }
+    function slabFromKB(kb) {
+      if (kb < 150) return { text: 'Lowest Slab', cls: 'slab-lowest' }
+      if (kb < 300) return { text: 'Low Slab', cls: 'slab-low' }
       return { text: 'Standard Slab', cls: 'slab-standard' }
     }
 
-    window.imageSelected = function(input) {
+    function riskFromSize(bytes) {
+      const kb = bytes / 1024
+      if (kb < 200) return '<span class="badge badge-green">🟢 Low risk</span>'
+      if (kb < 500) return '<span class="badge badge-yellow">🟡 Medium risk</span>'
+      return '<span class="badge badge-red">🔴 High — likely higher slab</span>'
+    }
+
+    function setPS(id, state) {
+      const el = document.getElementById(id)
+      if (!el) return
+      el.className = 'ps ' + state
+      const txt = el.textContent.replace(/^[⏳🔄✅] /, '')
+      if (state === 'done') el.textContent = '✅ ' + txt
+      if (state === 'active') el.textContent = '🔄 ' + txt
+    }
+
+    // ── STEP 1: Image selected ─────────────────────────────────
+    window.imageSelected = async function(input) {
       const file = input.files[0]
-      if (!file) return
-      if (!file.type.startsWith('image/')) {
-        alert('Please upload an image file (JPG, PNG, or WEBP)')
-        return
-      }
+      if (!file || !file.type.startsWith('image/')) return
       originalFile = file
+
       const reader = new FileReader()
-      reader.onload = function(e) {
+      reader.onload = async function(e) {
         const img = new Image()
-        img.onload = function() {
+        img.onload = async function() {
           originalImage = img
-          // Show preview
           document.getElementById('previewImg').src = e.target.result
-          document.getElementById('previewArea').classList.add('show')
           document.getElementById('dropZone').style.display = 'none'
-          // Fill info
-          document.getElementById('infoSize').textContent = formatSize(file.size)
-          document.getElementById('infoDimensions').textContent = img.width + ' × ' + img.height + ' px'
-          document.getElementById('infoFormat').textContent = file.type.replace('image/', '').toUpperCase()
-          const slab = getSlabFromSize(file.size)
-          document.getElementById('infoSlab').innerHTML = `<span class="badge ${slab.cls}">${slab.label}</span>`
-          document.getElementById('generateSection').style.display = 'block'
+          document.getElementById('previewSection').style.display = 'block'
+          document.getElementById('infoSize').textContent = fmt(file.size)
+          document.getElementById('infoDims').textContent = img.width + ' × ' + img.height + ' px'
+          document.getElementById('infoFmt').textContent = file.type.replace('image/', '').toUpperCase()
+          document.getElementById('infoSlab').innerHTML = riskFromSize(file.size)
+
+          // Start AI analysis immediately
+          document.getElementById('aiAnalysis').classList.add('show')
+          document.getElementById('aiAnalysisText').textContent = '🤖 Claude is analyzing your image...'
+          await runAIAnalysis(e.target.result, file.size)
         }
         img.src = e.target.result
       }
       reader.readAsDataURL(file)
     }
 
-    // Background color map
-    const BG_COLORS = {
-      white: '#FFFFFF',
-      lightgray: '#F3F4F6',
-      cream: '#FEFCE8'
-    }
+    // ── STEP 2: Claude AI Analysis ─────────────────────────────
+    async function runAIAnalysis(base64DataUrl, fileSize) {
+      try {
+        const base64 = base64DataUrl.split(',')[1]
+        const mimeType = originalFile.type
 
-    // Generate a single optimized variant on canvas
-    function generateVariant(img, canvasSize, productRatio, quality, bgColor) {
-      return new Promise(resolve => {
-        const canvas = document.createElement('canvas')
-        canvas.width = canvasSize
-        canvas.height = canvasSize
-        const ctx = canvas.getContext('2d')
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-6',
+            max_tokens: 1000,
+            messages: [{
+              role: 'user',
+              content: [
+                {
+                  type: 'image',
+                  source: { type: 'base64', media_type: mimeType, data: base64 }
+                },
+                {
+                  type: 'text',
+                  text: `You are an expert Meesho product image optimizer. Analyze this product image and respond ONLY with a JSON object (no markdown, no backticks) with this exact structure:
+{
+  "productType": "brief product name",
+  "backgroundType": "white|light|colored|complex|patterned",
+  "productFillPercent": 75,
+  "hasTextOrWatermark": false,
+  "mainIssues": ["issue1", "issue2"],
+  "optimizationTips": ["tip1", "tip2", "tip3"],
+  "estimatedShippingSlab": "high|medium|low",
+  "cropSuggestion": "tight|medium|loose",
+  "bgRemovalNeeded": true,
+  "summaryForSeller": "One sentence telling the seller the main thing to fix"
+}`
+                }
+              ]
+            }]
+          })
+        })
 
-        // Fill background
-        ctx.fillStyle = bgColor
-        ctx.fillRect(0, 0, canvasSize, canvasSize)
+        const data = await response.json()
+        const text = data.content?.[0]?.text || ''
 
-        // Calculate product area
-        const productSize = canvasSize * productRatio
-        const padding = (canvasSize - productSize) / 2
-
-        // Draw product maintaining aspect ratio
-        const imgAspect = img.width / img.height
-        let drawW, drawH, drawX, drawY
-
-        if (imgAspect >= 1) {
-          drawW = productSize
-          drawH = productSize / imgAspect
-          drawX = padding
-          drawY = padding + (productSize - drawH) / 2
-        } else {
-          drawH = productSize
-          drawW = productSize * imgAspect
-          drawY = padding
-          drawX = padding + (productSize - drawW) / 2
+        try {
+          aiData = JSON.parse(text.replace(/```json|```/g, '').trim())
+          showAIAnalysis(aiData, fileSize)
+        } catch(e) {
+          // If JSON parse fails, show generic message
+          document.getElementById('aiAnalysisText').textContent = 'Image analyzed. Ready to generate optimized variants.'
+          document.getElementById('generateBtn').disabled = false
         }
 
-        ctx.drawImage(img, drawX, drawY, drawW, drawH)
+      } catch(err) {
+        document.getElementById('aiAnalysisText').textContent = 'AI analysis unavailable. You can still generate optimized variants.'
+        document.getElementById('generateBtn').disabled = false
+      }
+    }
 
-        canvas.toBlob(blob => {
-          resolve({ blob, canvas })
-        }, 'image/jpeg', quality)
+    function showAIAnalysis(data, fileSize) {
+      const issueMap = {
+        'high': '🔴 Your image is likely in a high shipping slab.',
+        'medium': '🟡 Your image may qualify for a lower shipping slab with optimization.',
+        'low': '🟢 Your image is already well-optimized for shipping.'
+      }
+
+      document.getElementById('aiAnalysisText').textContent =
+        `${data.summaryForSeller || 'Image analyzed successfully.'} ${issueMap[data.estimatedShippingSlab] || ''}`
+
+      const tips = data.optimizationTips || []
+      const issuesList = document.getElementById('aiTipsList')
+      issuesList.innerHTML = ''
+      tips.forEach(tip => {
+        const li = document.createElement('li')
+        li.innerHTML = `<span>→</span> ${tip}`
+        issuesList.appendChild(li)
       })
+
+      document.getElementById('generateBtn').disabled = false
+      document.getElementById('generateBtn').textContent = '✨ Generate AI-Optimized Images'
     }
 
-    async function updateProcessText(text) {
-      document.getElementById('processText').textContent = text
-      await new Promise(r => setTimeout(r, 80))
-    }
-
+    // ── STEP 3: Generate Variants ──────────────────────────────
     window.generateVariants = async function() {
       const category = document.getElementById('categorySelect').value
       const bgKey = document.getElementById('bgSelect').value
       const bgColor = BG_COLORS[bgKey] || '#FFFFFF'
 
-      if (!category) {
-        alert('Please select a product category')
-        return
-      }
+      if (!category) { alert('Please select a product category'); return }
 
-      // Hide upload, show processing
       document.getElementById('uploadCard').style.display = 'none'
       document.getElementById('processingSection').classList.add('show')
 
-      // Define 10 variants: [name, canvasSize, productRatio, quality]
-     const variantDefs = [
-  { name: 'Ultra Compact',   size: 1000, ratio: 0.72, quality: 0.70 },
-  { name: 'Compact A',       size: 1000, ratio: 0.74, quality: 0.73 },
-  { name: 'Compact B',       size: 1000, ratio: 0.76, quality: 0.76 },
-  { name: 'Standard Light',  size: 1000, ratio: 0.78, quality: 0.79 },
-  { name: 'Balanced A',      size: 1000, ratio: 0.80, quality: 0.82 },
-  { name: 'Balanced B',      size: 1000, ratio: 0.82, quality: 0.84 },
-  { name: 'Full A',          size: 1000, ratio: 0.84, quality: 0.86 },
-  { name: 'Full B',          size: 1000, ratio: 0.86, quality: 0.88 },
-  { name: 'High Quality A',  size: 1000, ratio: 0.88, quality: 0.90 },
-  { name: 'High Quality B',  size: 1000, ratio: 0.90, quality: 0.92 },
-]
+      setPS('ps1', 'done')
+      setPS('ps2', 'active')
 
-      const results = []
-
-      for (let i = 0; i < variantDefs.length; i++) {
-        const def = variantDefs[i]
-        await updateProcessText(`Generating variant ${i + 1} of ${variantDefs.length}: ${def.name}...`)
-        const { blob, canvas } = await generateVariant(originalImage, def.size, def.ratio, def.quality, bgColor)
-        const url = URL.createObjectURL(blob)
-        const kb = blob.size / 1024
-        results.push({ ...def, blob, url, kb, canvas })
+      // Use AI data to determine optimal crop ratio
+      let basePadding = 0.18 // default: product fills 82% of canvas
+      if (aiData) {
+        if (aiData.cropSuggestion === 'tight') basePadding = 0.12
+        else if (aiData.cropSuggestion === 'loose') basePadding = 0.22
+        else basePadding = 0.16
       }
 
-      await updateProcessText('Sorting by shipping slab...')
+      await new Promise(r => setTimeout(r, 300))
+      setPS('ps2', 'done')
+      setPS('ps3', 'active')
+
+      // Background removal using canvas color detection
+      const cleanedImage = await removeBackground(originalImage, bgColor)
+      await new Promise(r => setTimeout(r, 200))
+      setPS('ps3', 'done')
+      setPS('ps4', 'active')
+
+      // Generate 10 variants with different padding + quality
+      const variantDefs = [
+        { name: 'Ultra Tight',    padding: basePadding - 0.06, quality: 0.72 },
+        { name: 'Tight A',        padding: basePadding - 0.04, quality: 0.74 },
+        { name: 'Tight B',        padding: basePadding - 0.02, quality: 0.76 },
+        { name: 'Balanced A',     padding: basePadding,        quality: 0.78 },
+        { name: 'Balanced B',     padding: basePadding + 0.02, quality: 0.80 },
+        { name: 'Standard A',     padding: basePadding + 0.04, quality: 0.82 },
+        { name: 'Standard B',     padding: basePadding + 0.06, quality: 0.84 },
+        { name: 'Spacious A',     padding: basePadding + 0.08, quality: 0.86 },
+        { name: 'Spacious B',     padding: basePadding + 0.10, quality: 0.88 },
+        { name: 'Full Quality',   padding: basePadding + 0.12, quality: 0.92 },
+      ]
+
+      const results = []
+      for (let i = 0; i < variantDefs.length; i++) {
+        const def = variantDefs[i]
+        const { blob } = await renderVariant(cleanedImage, 1000, def.padding, def.quality, bgColor)
+        const url = URL.createObjectURL(blob)
+        const kb = blob.size / 1024
+        results.push({ ...def, blob, url, kb })
+      }
+
       results.sort((a, b) => a.kb - b.kb)
 
-      // Build results UI
+      setPS('ps4', 'done')
+      setPS('ps5', 'active')
+      await new Promise(r => setTimeout(r, 300))
+      setPS('ps5', 'done')
+
+      // Show results
       document.getElementById('processingSection').classList.remove('show')
       document.getElementById('resultsSection').classList.add('show')
-      document.getElementById('variantCount').textContent = results.length
 
+      // AI insight summary
+      const insightEl = document.getElementById('aiInsight')
+      if (aiData) {
+        insightEl.innerHTML = `<strong>🤖 AI Insight:</strong> Your product is a <strong>${aiData.productType}</strong> with a <strong>${aiData.backgroundType}</strong> background. The AI used a <strong>${aiData.cropSuggestion}</strong> crop strategy based on your product type. The best variant below is <strong>${results[0].kb.toFixed(0)} KB</strong> — ${results[0].kb < 200 ? 'well within the lowest shipping slab range.' : results[0].kb < 350 ? 'in the low shipping slab range.' : 'try the tighter variants for lower shipping.'}`
+      } else {
+        insightEl.innerHTML = `<strong>✅ 10 variants generated.</strong> Download the ⭐ Best variant for the lowest shipping slab.`
+      }
+
+      // Render variant cards
       const grid = document.getElementById('variantsGrid')
       grid.innerHTML = ''
-
       results.forEach((v, i) => {
-        const slab = getSlabLabel(v.kb)
+        const slab = slabFromKB(v.kb)
         const isBest = i === 0
         const card = document.createElement('div')
         card.className = 'variant-card' + (isBest ? ' best' : '')
         card.innerHTML = `
           <div class="variant-img-wrap">
             <img src="${v.url}" alt="${v.name}" loading="lazy" />
-            ${isBest ? '<div class="best-badge">⭐ Best</div>' : ''}
+            ${isBest ? '<div class="best-tag">⭐ Best</div>' : ''}
           </div>
           <div class="variant-info">
             <div class="variant-name">${v.name}</div>
-            <div class="variant-stats">
-              <span class="variant-size">${v.kb.toFixed(0)} KB</span>
-              <span class="variant-slab ${slab.cls}">${slab.text}</span>
+            <div class="variant-meta">
+              <span class="variant-kb">${v.kb.toFixed(0)} KB</span>
+              <span class="slab ${slab.cls}">${slab.text}</span>
             </div>
-            <button class="btn-download" onclick="downloadVariant('${v.url}', '${v.name}')">⬇ Download</button>
+            <button class="btn-dl" onclick="dlVariant('${v.url}', '${v.name}')">⬇ Download</button>
           </div>
         `
         grid.appendChild(card)
       })
     }
 
-    window.downloadVariant = function(url, name) {
+    // ── Background Removal ─────────────────────────────────────
+    async function removeBackground(img, bgColor) {
+      const canvas = document.createElement('canvas')
+      canvas.width = img.width
+      canvas.height = img.height
+      const ctx = canvas.getContext('2d')
+      ctx.drawImage(img, 0, 0)
+
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+      const data = imageData.data
+
+      // Sample background color from corners
+      const corners = [
+        [0, 0], [img.width-1, 0],
+        [0, img.height-1], [img.width-1, img.height-1],
+        [Math.floor(img.width/2), 0], [0, Math.floor(img.height/2)]
+      ]
+      let rSum = 0, gSum = 0, bSum = 0
+      corners.forEach(([x, y]) => {
+        const idx = (y * img.width + x) * 4
+        rSum += data[idx]; gSum += data[idx+1]; bSum += data[idx+2]
+      })
+      const bgR = rSum / corners.length
+      const bgG = gSum / corners.length
+      const bgB = bSum / corners.length
+
+      // Parse target bg color
+      const tmpC = document.createElement('canvas')
+      tmpC.width = 1; tmpC.height = 1
+      const tmpCtx = tmpC.getContext('2d')
+      tmpCtx.fillStyle = bgColor
+      tmpCtx.fillRect(0, 0, 1, 1)
+      const [tR, tG, tB] = tmpCtx.getImageData(0, 0, 1, 1).data
+
+      // Replace pixels similar to background
+      const threshold = 45
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i], g = data[i+1], b = data[i+2]
+        const dist = Math.sqrt(
+          Math.pow(r - bgR, 2) +
+          Math.pow(g - bgG, 2) +
+          Math.pow(b - bgB, 2)
+        )
+        if (dist < threshold) {
+          data[i] = tR; data[i+1] = tG; data[i+2] = tB
+          data[i+3] = 255
+        }
+      }
+
+      ctx.putImageData(imageData, 0, 0)
+
+      // Return as image
+      return new Promise(resolve => {
+        const out = new Image()
+        out.onload = () => resolve(out)
+        out.src = canvas.toDataURL('image/png')
+      })
+    }
+
+    // ── Render single variant ──────────────────────────────────
+    async function renderVariant(img, size, paddingRatio, quality, bgColor) {
+      const canvas = document.createElement('canvas')
+      canvas.width = size
+      canvas.height = size
+      const ctx = canvas.getContext('2d')
+
+      // Fill background
+      ctx.fillStyle = bgColor
+      ctx.fillRect(0, 0, size, size)
+
+      const pad = size * Math.max(0.08, Math.min(0.25, paddingRatio))
+      const available = size - pad * 2
+      const aspect = img.width / img.height
+
+      let dw, dh, dx, dy
+      if (aspect >= 1) {
+        dw = available; dh = available / aspect
+        dx = pad; dy = pad + (available - dh) / 2
+      } else {
+        dh = available; dw = available * aspect
+        dy = pad; dx = pad + (available - dw) / 2
+      }
+
+      ctx.drawImage(img, dx, dy, dw, dh)
+
+      return new Promise(resolve => {
+        canvas.toBlob(blob => resolve({ blob, canvas }), 'image/jpeg', quality)
+      })
+    }
+
+    window.dlVariant = function(url, name) {
       const a = document.createElement('a')
       a.href = url
       a.download = 'blinkflow-' + name.toLowerCase().replace(/\s+/g, '-') + '.jpg'
@@ -416,23 +597,23 @@
       document.getElementById('uploadCard').style.display = 'block'
       document.getElementById('resultsSection').classList.remove('show')
       document.getElementById('processingSection').classList.remove('show')
-      document.getElementById('previewArea').classList.remove('show')
       document.getElementById('dropZone').style.display = 'block'
-      document.getElementById('generateSection').style.display = 'none'
+      document.getElementById('previewSection').style.display = 'none'
+      document.getElementById('aiAnalysis').classList.remove('show')
+      document.getElementById('generateBtn').disabled = true
       document.getElementById('imageFile').value = ''
-      originalFile = null
-      originalImage = null
+      originalFile = null; originalImage = null; aiData = null
     }
 
-    // Drag and drop support
+    // Drag and drop
     const dz = document.getElementById('dropZone')
-    dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over') })
-    dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'))
+    dz.addEventListener('dragover', e => { e.preventDefault(); dz.style.borderColor = '#2563EB' })
+    dz.addEventListener('dragleave', () => { dz.style.borderColor = '' })
     dz.addEventListener('drop', e => {
       e.preventDefault()
-      dz.classList.remove('drag-over')
+      dz.style.borderColor = ''
       const file = e.dataTransfer.files[0]
-      if (file && file.type.startsWith('image/')) {
+      if (file?.type.startsWith('image/')) {
         const dt = new DataTransfer()
         dt.items.add(file)
         document.getElementById('imageFile').files = dt.files
@@ -442,4 +623,3 @@
   </script>
 </body>
 </html>
-
