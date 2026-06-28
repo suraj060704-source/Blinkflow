@@ -1,13 +1,16 @@
 export default async function handler(req, res) {
   const GEMINI_API_KEY = process.env.GEMINI_API_KEY
-
-  // Test endpoint - lists available models
+  
+  // Debug: check if key exists
   if (req.method === 'GET') {
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models?key=${GEMINI_API_KEY}`
-    )
-    const data = await response.json()
-    return res.status(200).json(data)
+    return res.status(200).json({ 
+      keyExists: !!GEMINI_API_KEY,
+      keyStart: GEMINI_API_KEY ? GEMINI_API_KEY.substring(0, 8) : 'NOT FOUND'
+    })
+  }
+
+  if (!GEMINI_API_KEY) {
+    return res.status(500).json({ error: 'API key not configured in Vercel' })
   }
 
   if (req.method !== 'POST') {
