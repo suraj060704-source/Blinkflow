@@ -555,7 +555,7 @@ Respond ONLY with a valid JSON object (no markdown, no backticks, no explanation
       } catch(err) {
         document.getElementById('processingSection').classList.remove('show')
         document.getElementById('formSection').style.display = 'block'
-        alert('Error: ' + err.message + '\n\nMake sure your Gemini API key is correct.')
+        alert('Error: ' + err.message)
         console.error(err)
       }
     }
