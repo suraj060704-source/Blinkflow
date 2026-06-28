@@ -1,10 +1,9 @@
-{
-  "rewrites": [
-    { "source": "/login", "destination": "/login.html" },
-    { "source": "/signup", "destination": "/signup.html" },
-    { "source": "/dashboard", "destination": "/dashboard.html" },
-    { "source": "/profit", "destination": "/profit.html" },
-    { "source": "/upload", "destination": "/upload.html" }
-    ,{"source": "/optimizer", "destination": "/optimizer.html"}
-  ]
-}
+{"rewrites": [
+  {"source": "/login", "destination": "/login.html"},
+  {"source": "/signup", "destination": "/signup.html"},
+  {"source": "/dashboard", "destination": "/dashboard.html"},
+  {"source": "/profit", "destination": "/profit.html"},
+  {"source": "/upload", "destination": "/upload.html"},
+  {"source": "/optimizer", "destination": "/optimizer.html"},
+  {"source": "/listing", "destination": "/listing.html"}
+]}
