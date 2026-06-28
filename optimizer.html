@@ -1,1 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Optimizer — BlinkFlow</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue: #2563EB; --blue-dark: #1D4ED8; --blue-light: #EFF6FF;
+      --ink: #0F172A; --muted: #64748B; --border: #E2E8F0;
+      --surface: #F8FAFC; --white: #FFFFFF;
+      --green: #16A34A; --green-light: #F0FDF4;
+      --red: #DC2626; --red-light: #FEF2F2;
+      --yellow: #D97706; --yellow-light: #FFFBEB;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--surface); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+    /* NAV */
+    nav { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 24px; position: sticky; top: 0; z-index: 100; }
+    .nav-inner { max-width: 900px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .logo { display: flex; align-items: center; gap: 8px; font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 800; color: var(--ink); text-decoration: none; }
+    .logo-icon { width: 32px; height: 32px; background: var(--blue); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .logo-icon svg { width: 18px; height: 18px; }
+    .logo span { color: var(--blue); }
+    .nav-back { font-size: 14px; color: var(--muted); text-decoration: none; }
+
+    /* MAIN */
+    main { max-width: 900px; margin: 0 auto; padding: 48px 24px; }
+    h1 { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 800; color: var(--ink); margin-bottom: 8px; }
+    .subtitle { font-size: 15px; color: var(--muted); margin-bottom: 40px; }
+
+    /* UPLOAD CARD */
+    .card { background: var(--white); border: 1.5px solid var(--border); border-radius: 16px; padding: 28px; margin-bottom: 20px; }
+    .card-title { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .card-desc { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+
+    /* DROP ZONE */
+    .drop-zone { border: 2px dashed var(--border); border-radius: 12px; padding: 40px 24px; text-align: center; cursor: pointer; transition: .2s; position: relative; }
+    .drop-zone:hover, .drop-zone.drag-over { border-color: var(--blue); background: var(--blue-light); }
+    .drop-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .drop-icon { font-size: 36px; margin-bottom: 10px; }
+    .drop-text { font-size: 14px; color: var(--muted); }
+    .drop-text strong { color: var(--blue); }
+    .drop-hint { font-size: 12px; color: #94A3B8; margin-top: 6px; }
+
+    /* PREVIEW */
+    .preview-area { display: none; }
+    .preview-area.show { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+    .preview-original { flex: 0 0 160px; }
+    .preview-original img { width: 160px; height: 160px; object-fit: contain; border-radius: 10px; border: 1px solid var(--border); background: #fff; }
+    .preview-label { font-size: 11px; color: var(--muted); margin-top: 6px; text-align: center; }
+    .preview-info { flex: 1; min-width: 200px; }
+    .info-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+    .info-row:last-child { border-bottom: none; }
+    .info-label { color: var(--muted); }
+    .info-value { font-weight: 600; color: var(--ink); }
+    .badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 600; }
+    .badge-red { background: var(--red-light); color: var(--red); }
+    .badge-yellow { background: var(--yellow-light); color: var(--yellow); }
+    .badge-green { background: var(--green-light); color: var(--green); }
+
+    /* CATEGORY SELECT */
+    .category-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+    select { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; font-family: 'Inter', sans-serif; color: var(--ink); background: var(--white); outline: none; cursor: pointer; }
+    select:focus { border-color: var(--blue); }
+
+    /* GENERATE BTN */
+    .btn-generate { width: 100%; padding: 15px; background: var(--blue); color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; transition: .2s; margin-top: 20px; }
+    .btn-generate:hover { background: var(--blue-dark); }
+    .btn-generate:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* PROCESSING */
+    .processing { display: none; text-align: center; padding: 32px; }
+    .processing.show { display: block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner { width: 40px; height: 40px; border: 3px solid var(--blue-light); border-top-color: var(--blue); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 12px; }
+
+    /* RESULTS */
+    .results { display: none; }
+    .results.show { display: block; }
+    .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 8px; }
+    .results-title { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 800; color: var(--ink); }
+    .btn-new { padding: 9px 18px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 8px; font-size: 13px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; color: var(--ink); }
+    .btn-new:hover { border-color: var(--blue); color: var(--blue); }
+
+    /* VARIANTS GRID */
+    .variants-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+    .variant-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 12px; overflow: hidden; transition: .2s; }
+    .variant-card:hover { border-color: var(--blue); box-shadow: 0 4px 16px rgba(37,99,235,.1); }
+    .variant-card.best { border-color: var(--green); box-shadow: 0 4px 16px rgba(22,163,74,.15); }
+    .variant-img-wrap { position: relative; background: #f8f8f8; aspect-ratio: 1; }
+    .variant-img-wrap img { width: 100%; height: 100%; object-fit: contain; }
+    .best-badge { position: absolute; top: 8px; left: 8px; background: var(--green); color: white; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 99px; }
+    .variant-info { padding: 12px; }
+    .variant-name { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+    .variant-stats { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .variant-size { font-size: 11px; color: var(--muted); }
+    .variant-slab { font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 99px; }
+    .slab-lowest { background: var(--green-light); color: var(--green); }
+    .slab-low { background: var(--yellow-light); color: var(--yellow); }
+    .slab-standard { background: #F1F5F9; color: var(--muted); }
+    .btn-download { width: 100%; padding: 8px; background: var(--blue-light); color: var(--blue); border: none; border-radius: 7px; font-size: 12px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: .2s; }
+    .btn-download:hover { background: var(--blue); color: white; }
+
+    /* INFO BOX */
+    .info-box { background: var(--blue-light); border: 1px solid #BFDBFE; border-radius: 10px; padding: 14px 16px; font-size: 13px; color: #1E40AF; margin-top: 20px; line-height: 1.6; }
+    .info-box strong { font-weight: 700; }
+
+    @media (max-width: 600px) {
+      main { padding: 24px 16px; }
+      .category-row { grid-template-columns: 1fr; }
+      .preview-area.show { flex-direction: column; }
+      .preview-original { flex: none; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-inner">
+      <a href="/dashboard" class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+          </svg>
+        </div>
+        Blink<span>Flow</span>
+      </a>
+      <a href="/dashboard" class="nav-back">← Back to Dashboard</a>
+    </div>
+  </nav>
+
+  <main>
+    <h1>🖼️ Image Optimizer</h1>
+    <p class="subtitle">Generate Meesho-ready images optimized for the lowest possible shipping slab</p>
+
+    <!-- UPLOAD CARD -->
+    <div class="card" id="uploadCard">
+      <div class="card-title">Upload Product Image</div>
+      <div class="card-desc">JPG, PNG or WEBP — any size. We'll handle the rest.</div>
+
+      <div class="drop-zone" id="dropZone">
+        <input type="file" accept="image/jpeg,image/png,image/webp" id="imageFile" onchange="imageSelected(this)" />
+        <div class="drop-icon">📷</div>
+        <div class="drop-text">Drop your product image here or <strong>click to browse</strong></div>
+        <div class="drop-hint">Supports JPG, PNG, WEBP</div>
+      </div>
+
+      <!-- PREVIEW after upload -->
+      <div class="preview-area" id="previewArea">
+        <div class="preview-original">
+          <img id="previewImg" src="" alt="Original" />
+          <div class="preview-label">Original Image</div>
+        </div>
+        <div class="preview-info">
+          <div class="info-row">
+            <span class="info-label">File size</span>
+            <span class="info-value" id="infoSize">—</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Dimensions</span>
+            <span class="info-value" id="infoDimensions">—</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Format</span>
+            <span class="info-value" id="infoFormat">—</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Current slab estimate</span>
+            <span class="info-value" id="infoSlab">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CATEGORY + GENERATE -->
+      <div id="generateSection" style="display:none">
+        <div class="category-row">
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:6px">Product Category</div>
+            <select id="categorySelect">
+              <option value="">Select category</option>
+              <option value="hair">Hair Care (Combs, Brushes)</option>
+              <option value="nails">Nail Care (Glue, Polish)</option>
+              <option value="skincare">Skincare (Creams, Serums)</option>
+              <option value="apparel">Apparel (Clothing)</option>
+              <option value="jewellery">Jewellery & Accessories</option>
+              <option value="home">Home & Kitchen</option>
+              <option value="electronics">Electronics & Gadgets</option>
+              <option value="toys">Toys & Baby</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:6px">Background Color</div>
+            <select id="bgSelect">
+              <option value="white">White (Recommended)</option>
+              <option value="lightgray">Light Gray</option>
+              <option value="cream">Cream</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn-generate" id="generateBtn" onclick="generateVariants()">⚡ Generate Optimized Images</button>
+      </div>
+    </div>
+
+    <!-- PROCESSING -->
+    <div class="processing" id="processingSection">
+      <div class="spinner"></div>
+      <div style="font-size:15px;font-weight:600;color:var(--ink);margin-bottom:4px">Generating variants...</div>
+      <div style="font-size:13px;color:var(--muted)" id="processText">Preparing your image</div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="results" id="resultsSection">
+      <div class="results-header">
+        <div>
+          <div class="results-title">✅ <span id="variantCount">10</span> variants generated</div>
+          <div style="font-size:13px;color:var(--muted);margin-top:2px">Sorted by estimated shipping slab — best first</div>
+        </div>
+        <button class="btn-new" onclick="resetTool()">↩ New Image</button>
+      </div>
+      <div class="variants-grid" id="variantsGrid"></div>
+      <div class="info-box">
+        <strong>How to use:</strong> Download the image with the 🟢 Lowest Slab badge. Upload it as your primary product image in Meesho Supplier Panel. Check the shipping rate shown on your listing — most sellers save ₹15–40 per order. The more white space around your product, the lower the slab.
+      </div>
+    </div>
+  </main>
+
+  <script>
+    let originalFile = null
+    let originalImage = null
+
+    function formatSize(bytes) {
+      if (bytes < 1024) return bytes + ' B'
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + ' KB'
+      return (bytes / (1024 * 1024)).toFixed(1) + ' MB'
+    }
+
+    function getSlabFromSize(bytes) {
+      const kb = bytes / 1024
+      if (kb < 200) return { label: '🟢 Likely Lowest', cls: 'badge-green' }
+      if (kb < 350) return { label: '🟡 Likely Low', cls: 'badge-yellow' }
+      return { label: '🔴 Likely Standard', cls: 'badge-red' }
+    }
+
+    function getSlabLabel(kb) {
+      if (kb < 200) return { text: 'Lowest Slab', cls: 'slab-lowest' }
+      if (kb < 350) return { text: 'Low Slab', cls: 'slab-low' }
+      return { text: 'Standard Slab', cls: 'slab-standard' }
+    }
+
+    window.imageSelected = function(input) {
+      const file = input.files[0]
+      if (!file) return
+      if (!file.type.startsWith('image/')) {
+        alert('Please upload an image file (JPG, PNG, or WEBP)')
+        return
+      }
+      originalFile = file
+      const reader = new FileReader()
+      reader.onload = function(e) {
+        const img = new Image()
+        img.onload = function() {
+          originalImage = img
+          // Show preview
+          document.getElementById('previewImg').src = e.target.result
+          document.getElementById('previewArea').classList.add('show')
+          document.getElementById('dropZone').style.display = 'none'
+          // Fill info
+          document.getElementById('infoSize').textContent = formatSize(file.size)
+          document.getElementById('infoDimensions').textContent = img.width + ' × ' + img.height + ' px'
+          document.getElementById('infoFormat').textContent = file.type.replace('image/', '').toUpperCase()
+          const slab = getSlabFromSize(file.size)
+          document.getElementById('infoSlab').innerHTML = `<span class="badge ${slab.cls}">${slab.label}</span>`
+          document.getElementById('generateSection').style.display = 'block'
+        }
+        img.src = e.target.result
+      }
+      reader.readAsDataURL(file)
+    }
+
+    // Background color map
+    const BG_COLORS = {
+      white: '#FFFFFF',
+      lightgray: '#F3F4F6',
+      cream: '#FEFCE8'
+    }
+
+    // Generate a single optimized variant on canvas
+    function generateVariant(img, canvasSize, productRatio, quality, bgColor) {
+      return new Promise(resolve => {
+        const canvas = document.createElement('canvas')
+        canvas.width = canvasSize
+        canvas.height = canvasSize
+        const ctx = canvas.getContext('2d')
+
+        // Fill background
+        ctx.fillStyle = bgColor
+        ctx.fillRect(0, 0, canvasSize, canvasSize)
+
+        // Calculate product area
+        const productSize = canvasSize * productRatio
+        const padding = (canvasSize - productSize) / 2
+
+        // Draw product maintaining aspect ratio
+        const imgAspect = img.width / img.height
+        let drawW, drawH, drawX, drawY
+
+        if (imgAspect >= 1) {
+          drawW = productSize
+          drawH = productSize / imgAspect
+          drawX = padding
+          drawY = padding + (productSize - drawH) / 2
+        } else {
+          drawH = productSize
+          drawW = productSize * imgAspect
+          drawY = padding
+          drawX = padding + (productSize - drawW) / 2
+        }
+
+        ctx.drawImage(img, drawX, drawY, drawW, drawH)
+
+        canvas.toBlob(blob => {
+          resolve({ blob, canvas })
+        }, 'image/jpeg', quality)
+      })
+    }
+
+    async function updateProcessText(text) {
+      document.getElementById('processText').textContent = text
+      await new Promise(r => setTimeout(r, 80))
+    }
+
+    window.generateVariants = async function() {
+      const category = document.getElementById('categorySelect').value
+      const bgKey = document.getElementById('bgSelect').value
+      const bgColor = BG_COLORS[bgKey] || '#FFFFFF'
+
+      if (!category) {
+        alert('Please select a product category')
+        return
+      }
+
+      // Hide upload, show processing
+      document.getElementById('uploadCard').style.display = 'none'
+      document.getElementById('processingSection').classList.add('show')
+
+      // Define 10 variants: [name, canvasSize, productRatio, quality]
+      const variantDefs = [
+        { name: 'Ultra Compact',   size: 1000, ratio: 0.58, quality: 0.70 },
+        { name: 'Compact A',       size: 1000, ratio: 0.60, quality: 0.72 },
+        { name: 'Compact B',       size: 1000, ratio: 0.62, quality: 0.74 },
+        { name: 'Standard Light',  size: 1000, ratio: 0.63, quality: 0.75 },
+        { name: 'Balanced A',      size: 1000, ratio: 0.65, quality: 0.78 },
+        { name: 'Balanced B',      size: 1000, ratio: 0.66, quality: 0.80 },
+        { name: 'Full A',          size: 1000, ratio: 0.68, quality: 0.82 },
+        { name: 'Full B',          size: 1000, ratio: 0.70, quality: 0.84 },
+        { name: 'High Quality A',  size: 1000, ratio: 0.72, quality: 0.86 },
+        { name: 'High Quality B',  size: 1000, ratio: 0.75, quality: 0.88 },
+      ]
+
+      const results = []
+
+      for (let i = 0; i < variantDefs.length; i++) {
+        const def = variantDefs[i]
+        await updateProcessText(`Generating variant ${i + 1} of ${variantDefs.length}: ${def.name}...`)
+        const { blob, canvas } = await generateVariant(originalImage, def.size, def.ratio, def.quality, bgColor)
+        const url = URL.createObjectURL(blob)
+        const kb = blob.size / 1024
+        results.push({ ...def, blob, url, kb, canvas })
+      }
+
+      await updateProcessText('Sorting by shipping slab...')
+      results.sort((a, b) => a.kb - b.kb)
+
+      // Build results UI
+      document.getElementById('processingSection').classList.remove('show')
+      document.getElementById('resultsSection').classList.add('show')
+      document.getElementById('variantCount').textContent = results.length
+
+      const grid = document.getElementById('variantsGrid')
+      grid.innerHTML = ''
+
+      results.forEach((v, i) => {
+        const slab = getSlabLabel(v.kb)
+        const isBest = i === 0
+        const card = document.createElement('div')
+        card.className = 'variant-card' + (isBest ? ' best' : '')
+        card.innerHTML = `
+          <div class="variant-img-wrap">
+            <img src="${v.url}" alt="${v.name}" loading="lazy" />
+            ${isBest ? '<div class="best-badge">⭐ Best</div>' : ''}
+          </div>
+          <div class="variant-info">
+            <div class="variant-name">${v.name}</div>
+            <div class="variant-stats">
+              <span class="variant-size">${v.kb.toFixed(0)} KB</span>
+              <span class="variant-slab ${slab.cls}">${slab.text}</span>
+            </div>
+            <button class="btn-download" onclick="downloadVariant('${v.url}', '${v.name}')">⬇ Download</button>
+          </div>
+        `
+        grid.appendChild(card)
+      })
+    }
+
+    window.downloadVariant = function(url, name) {
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'blinkflow-' + name.toLowerCase().replace(/\s+/g, '-') + '.jpg'
+      a.click()
+    }
+
+    window.resetTool = function() {
+      document.getElementById('uploadCard').style.display = 'block'
+      document.getElementById('resultsSection').classList.remove('show')
+      document.getElementById('processingSection').classList.remove('show')
+      document.getElementById('previewArea').classList.remove('show')
+      document.getElementById('dropZone').style.display = 'block'
+      document.getElementById('generateSection').style.display = 'none'
+      document.getElementById('imageFile').value = ''
+      originalFile = null
+      originalImage = null
+    }
+
+    // Drag and drop support
+    const dz = document.getElementById('dropZone')
+    dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over') })
+    dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'))
+    dz.addEventListener('drop', e => {
+      e.preventDefault()
+      dz.classList.remove('drag-over')
+      const file = e.dataTransfer.files[0]
+      if (file && file.type.startsWith('image/')) {
+        const dt = new DataTransfer()
+        dt.items.add(file)
+        document.getElementById('imageFile').files = dt.files
+        window.imageSelected(document.getElementById('imageFile'))
+      }
+    })
+  </script>
+</body>
+</html>
 
