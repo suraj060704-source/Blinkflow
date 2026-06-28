@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Listing Optimizer — BlinkFlow</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue: #2563EB; --blue-dark: #1D4ED8; --blue-light: #EFF6FF;
+      --ink: #0F172A; --muted: #64748B; --border: #E2E8F0;
+      --surface: #F8FAFC; --white: #FFFFFF;
+      --green: #16A34A; --green-light: #F0FDF4;
+      --red: #DC2626; --red-light: #FEF2F2;
+      --yellow: #D97706; --yellow-light: #FFFBEB;
+      --purple: #7C3AED; --purple-light: #F5F3FF;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--surface); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+    /* NAV */
+    nav { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 24px; position: sticky; top: 0; z-index: 100; }
+    .nav-inner { max-width: 900px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .logo { display: flex; align-items: center; gap: 8px; font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 800; color: var(--ink); text-decoration: none; }
+    .logo-icon { width: 32px; height: 32px; background: var(--blue); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .logo-icon svg { width: 18px; height: 18px; }
+    .logo span { color: var(--blue); }
+    .nav-back { font-size: 14px; color: var(--muted); text-decoration: none; }
+
+    /* MAIN */
+    main { max-width: 900px; margin: 0 auto; padding: 48px 24px; }
+    .page-header { margin-bottom: 36px; }
+    .ai-badge { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, var(--purple), var(--blue)); color: white; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 99px; margin-bottom: 12px; }
+    h1 { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 800; color: var(--ink); margin-bottom: 8px; }
+    .subtitle { font-size: 15px; color: var(--muted); }
+
+    /* CARDS */
+    .card { background: var(--white); border: 1.5px solid var(--border); border-radius: 16px; padding: 28px; margin-bottom: 16px; }
+    .card-title { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .card-desc { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+
+    /* FORM */
+    .field { margin-bottom: 16px; }
+    .field-label { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 6px; display: block; }
+    .field-hint { font-size: 11px; color: #94A3B8; margin-top: 4px; }
+    input[type="text"], textarea, select {
+      width: 100%; padding: 10px 14px;
+      border: 1.5px solid var(--border); border-radius: 8px;
+      font-size: 14px; font-family: 'Inter', sans-serif;
+      color: var(--ink); background: var(--white); outline: none;
+      transition: border-color .2s;
+    }
+    input[type="text"]:focus, textarea:focus, select:focus { border-color: var(--blue); }
+    textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    /* DROP ZONE */
+    .drop-zone { border: 2px dashed var(--border); border-radius: 12px; padding: 32px 24px; text-align: center; cursor: pointer; transition: .2s; position: relative; }
+    .drop-zone:hover { border-color: var(--blue); background: var(--blue-light); }
+    .drop-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .drop-icon { font-size: 32px; margin-bottom: 8px; }
+    .drop-text { font-size: 13px; color: var(--muted); }
+    .drop-text strong { color: var(--blue); }
+    .preview-img-wrap { display: none; position: relative; }
+    .preview-img-wrap.show { display: block; }
+    .preview-img-wrap img { width: 120px; height: 120px; object-fit: contain; border-radius: 10px; border: 1px solid var(--border); background: #fff; }
+    .change-img { font-size: 12px; color: var(--blue); cursor: pointer; margin-top: 6px; display: block; text-align: center; }
+
+    /* FREE LIMIT BANNER */
+    .limit-banner { background: var(--yellow-light); border: 1px solid #FDE68A; border-radius: 10px; padding: 12px 16px; font-size: 13px; color: var(--yellow); margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .btn-upgrade-small { padding: 6px 14px; background: var(--yellow); color: white; border: none; border-radius: 7px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; white-space: nowrap; text-decoration: none; }
+
+    /* GENERATE BTN */
+    .btn-generate { width: 100%; padding: 15px; background: linear-gradient(135deg, var(--purple), var(--blue)); color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; transition: .2s; }
+    .btn-generate:hover { opacity: .9; transform: translateY(-1px); }
+    .btn-generate:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+    /* PROCESSING */
+    .processing { display: none; text-align: center; padding: 48px 24px; }
+    .processing.show { display: block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner { width: 48px; height: 48px; border: 3px solid #E9D5FF; border-top-color: var(--purple); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 16px; }
+    .process-title { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 800; color: var(--ink); margin-bottom: 8px; }
+    .ps-list { list-style: none; text-align: left; max-width: 340px; margin: 20px auto 0; }
+    .ps { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); padding: 6px 0; }
+    .ps.done { color: var(--green); }
+    .ps.active { color: var(--ink); font-weight: 600; }
+
+    /* RESULTS */
+    .results { display: none; }
+    .results.show { display: block; }
+    .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 8px; }
+    .results-title { font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 800; color: var(--ink); }
+    .btn-new { padding: 9px 18px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 8px; font-size: 13px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; color: var(--ink); }
+    .btn-new:hover { border-color: var(--blue); color: var(--blue); }
+
+    /* SCORE */
+    .score-bar-wrap { background: var(--white); border: 1.5px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 16px; }
+    .score-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .score-label { font-size: 14px; font-weight: 700; color: var(--ink); }
+    .score-num { font-family: 'Sora', sans-serif; font-size: 32px; font-weight: 800; }
+    .score-num.good { color: var(--green); }
+    .score-num.ok { color: var(--yellow); }
+    .score-num.bad { color: var(--red); }
+    .score-bar { height: 8px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .score-fill { height: 100%; border-radius: 99px; transition: width 1s ease; }
+    .score-tips { margin-top: 12px; font-size: 12px; color: var(--muted); line-height: 1.7; }
+
+    /* TITLE SECTION */
+    .result-section { background: var(--white); border: 1.5px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 16px; }
+    .result-section-title { font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 16px; }
+    .title-option { border: 1.5px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; cursor: pointer; transition: .2s; position: relative; }
+    .title-option:hover { border-color: var(--blue); }
+    .title-option.selected { border-color: var(--blue); background: var(--blue-light); }
+    .title-option-text { font-size: 14px; color: var(--ink); line-height: 1.5; font-weight: 500; }
+    .title-option-badge { font-size: 11px; color: var(--muted); margin-top: 4px; }
+    .selected-check { position: absolute; top: 12px; right: 12px; color: var(--blue); font-size: 16px; display: none; }
+    .title-option.selected .selected-check { display: block; }
+    .copy-btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 7px; font-size: 12px; font-weight: 600; color: var(--muted); cursor: pointer; font-family: 'Inter', sans-serif; transition: .2s; margin-top: 8px; }
+    .copy-btn:hover { border-color: var(--blue); color: var(--blue); }
+
+    /* KEYWORDS */
+    .keywords-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+    .keyword-tag { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--blue-light); color: var(--blue); border-radius: 99px; font-size: 12px; font-weight: 600; cursor: pointer; transition: .2s; }
+    .keyword-tag:hover { background: var(--blue); color: white; }
+    .keyword-tag.locked { background: var(--surface); color: var(--muted); cursor: not-allowed; }
+
+    /* DESCRIPTION */
+    .description-box { background: var(--surface); border-radius: 10px; padding: 16px; font-size: 13px; color: var(--ink); line-height: 1.8; white-space: pre-wrap; }
+
+    /* PRICE */
+    .price-section { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .price-card { border: 1.5px solid var(--border); border-radius: 12px; padding: 16px; }
+    .price-card-title { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
+    .price-value { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 800; color: var(--ink); }
+    .price-range { font-size: 12px; color: var(--muted); margin-top: 4px; }
+    .competitor-list { margin-top: 12px; }
+    .competitor-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+    .competitor-item:last-child { border-bottom: none; }
+    .loading-competitors { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+    .mini-spinner { width: 14px; height: 14px; border: 2px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin .6s linear infinite; display: inline-block; }
+
+    /* IMAGES */
+    .images-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .img-card { border: 1.5px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .img-card-preview { aspect-ratio: 1; background: #f8f8f8; display: flex; align-items: center; justify-content: center; }
+    .img-card-preview img { width: 100%; height: 100%; object-fit: contain; }
+    .img-card-info { padding: 12px; }
+    .img-card-name { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .img-card-desc { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
+    .btn-dl { width: 100%; padding: 8px; background: var(--blue-light); color: var(--blue); border: none; border-radius: 7px; font-size: 12px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: .2s; }
+    .btn-dl:hover { background: var(--blue); color: white; }
+    .btn-dl-all { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px; background: var(--ink); color: white; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; transition: .2s; margin-top: 16px; }
+    .btn-dl-all:hover { background: #1E293B; }
+
+    /* LOCKED overlay */
+    .locked-overlay { position: relative; }
+    .locked-overlay::after { content: '🔒 Upgrade to Starter'; position: absolute; inset: 0; background: rgba(248,250,252,0.92); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: var(--muted); border-radius: 12px; }
+
+    /* INFO BOX */
+    .info-box { background: var(--blue-light); border: 1px solid #BFDBFE; border-radius: 10px; padding: 14px 16px; font-size: 13px; color: #1E40AF; margin-top: 16px; line-height: 1.6; }
+
+    @media (max-width: 640px) {
+      main { padding: 24px 16px; }
+      .two-col { grid-template-columns: 1fr; }
+      .price-section { grid-template-columns: 1fr; }
+      .images-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-inner">
+      <a href="/dashboard" class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+          </svg>
+        </div>
+        Blink<span>Flow</span>
+      </a>
+      <a href="/dashboard" class="nav-back">← Back to Dashboard</a>
+    </div>
+  </nav>
+
+  <main>
+    <!-- HEADER -->
+    <div class="page-header">
+      <div class="ai-badge">✨ AI-Powered</div>
+      <h1>Listing Optimizer</h1>
+      <p class="subtitle">Upload your product image, describe it briefly — BlinkFlow generates a complete Meesho listing in seconds</p>
+    </div>
+
+    <!-- INPUT FORM -->
+    <div id="formSection">
+
+      <!-- Free limit banner -->
+      <div class="limit-banner" id="limitBanner" style="display:none">
+        <span>⚠️ You have <strong id="creditsLeft">3</strong> free optimizations left this month</span>
+        <a href="/pricing" class="btn-upgrade-small">Upgrade ₹299/mo</a>
+      </div>
+
+      <!-- Product Image -->
+      <div class="card">
+        <div class="card-title">Product Image</div>
+        <div class="card-desc">Upload your main product photo — AI will analyze it to generate better content</div>
+        <div class="drop-zone" id="dropZone">
+          <input type="file" accept="image/jpeg,image/png,image/webp" id="imageFile" onchange="imageSelected(this)" />
+          <div class="drop-icon">📷</div>
+          <div class="drop-text">Drop image here or <strong>click to browse</strong></div>
+        </div>
+        <div class="preview-img-wrap" id="previewWrap">
+          <img id="previewImg" src="" alt="Product" />
+          <span class="change-img" onclick="changeImage()">Change image</span>
+        </div>
+      </div>
+
+      <!-- Product Details -->
+      <div class="card">
+        <div class="card-title">Product Details</div>
+        <div class="card-desc">Tell us about your product — the more detail, the better the listing</div>
+
+        <div class="two-col">
+          <div class="field">
+            <label class="field-label">Category</label>
+            <select id="category">
+              <option value="">Select category</option>
+              <option value="Hair Care">Hair Care (Combs, Brushes)</option>
+              <option value="Nail Care">Nail Care (Glue, Polish)</option>
+              <option value="Skincare">Skincare (Creams, Serums)</option>
+              <option value="Apparel">Apparel & Clothing</option>
+              <option value="Jewellery">Jewellery & Accessories</option>
+              <option value="Home & Kitchen">Home & Kitchen</option>
+              <option value="Electronics">Electronics & Gadgets</option>
+              <option value="Toys">Toys & Baby Products</option>
+              <option value="Beauty">Beauty & Cosmetics</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="field-label">Your Selling Price (₹)</label>
+            <input type="text" id="sellingPrice" placeholder="e.g. 149" />
+            <div class="field-hint">We'll check if this is competitive</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Describe your product</label>
+          <textarea id="description" placeholder="e.g. Purple hair detangling brush, pack of 2, works on wet and dry hair, gentle on scalp, suitable for all hair types, made of durable ABS plastic"></textarea>
+          <div class="field-hint">Include: color, material, size, pack quantity, key features, who it's for</div>
+        </div>
+
+        <div class="two-col">
+          <div class="field">
+            <label class="field-label">Pack Quantity</label>
+            <select id="packQty">
+              <option value="1">Single piece</option>
+              <option value="2">Pack of 2</option>
+              <option value="3">Pack of 3</option>
+              <option value="4">Pack of 4</option>
+              <option value="5">Pack of 5</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="field-label">Target Buyer</label>
+            <select id="targetBuyer">
+              <option value="Women">Women</option>
+              <option value="Men">Men</option>
+              <option value="Kids">Kids</option>
+              <option value="Unisex">Unisex</option>
+              <option value="All">Everyone</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn-generate" id="generateBtn" onclick="generateListing()">
+          ✨ Generate Complete Listing
+        </button>
+      </div>
+    </div>
+
+    <!-- PROCESSING -->
+    <div class="processing" id="processingSection">
+      <div class="spinner"></div>
+      <div class="process-title">Generating your listing...</div>
+      <p style="font-size:13px;color:var(--muted)">Takes about 15 seconds</p>
+      <ul class="ps-list">
+        <li class="ps active" id="ps1">⏳ Analyzing your product image...</li>
+        <li class="ps" id="ps2">⏳ Writing title variations...</li>
+        <li class="ps" id="ps3">⏳ Finding best keywords...</li>
+        <li class="ps" id="ps4">⏳ Writing product description...</li>
+        <li class="ps" id="ps5">⏳ Generating product images...</li>
+        <li class="ps" id="ps6">⏳ Calculating price recommendation...</li>
+      </ul>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="results" id="resultsSection">
+      <div class="results-header">
+        <div>
+          <div class="results-title">✅ Listing Ready</div>
+          <div style="font-size:13px;color:var(--muted);margin-top:2px">Copy titles and keywords directly into Meesho Supplier Panel</div>
+        </div>
+        <button class="btn-new" onclick="resetTool()">↩ New Product</button>
+      </div>
+
+      <!-- LISTING SCORE -->
+      <div class="score-bar-wrap">
+        <div class="score-top">
+          <div>
+            <div class="score-label">Listing Quality Score</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px">Based on title, keywords, and completeness</div>
+          </div>
+          <div class="score-num" id="scoreNum">—</div>
+        </div>
+        <div class="score-bar">
+          <div class="score-fill" id="scoreFill" style="width:0%;background:var(--green)"></div>
+        </div>
+        <div class="score-tips" id="scoreTips"></div>
+      </div>
+
+      <!-- TITLES -->
+      <div class="result-section">
+        <div class="result-section-title">📝 Title Variations — Pick the Best One</div>
+        <div id="titlesWrap"></div>
+        <button class="copy-btn" onclick="copySelected()">📋 Copy Selected Title</button>
+      </div>
+
+      <!-- KEYWORDS -->
+      <div class="result-section">
+        <div class="result-section-title">🔍 Keywords — Add to Your Listing Tags</div>
+        <div class="keywords-wrap" id="keywordsWrap"></div>
+        <div style="font-size:12px;color:var(--muted);margin-top:12px">💡 Click any keyword to copy it. Use all of them in your Meesho listing tags.</div>
+      </div>
+
+      <!-- DESCRIPTION -->
+      <div class="result-section" id="descSection">
+        <div class="result-section-title">📄 Product Description</div>
+        <div class="description-box" id="descBox"></div>
+        <button class="copy-btn" onclick="copyDesc()" style="margin-top:12px">📋 Copy Description</button>
+      </div>
+
+      <!-- PRICE -->
+      <div class="result-section">
+        <div class="result-section-title">💰 Price Recommendation</div>
+        <div class="price-section">
+          <div class="price-card">
+            <div class="price-card-title">🤖 AI Recommended</div>
+            <div class="price-value" id="aiPrice">—</div>
+            <div class="price-range" id="aiPriceReason"></div>
+          </div>
+          <div class="price-card">
+            <div class="price-card-title">🔍 Competitor Prices</div>
+            <div class="loading-competitors" id="competitorLoading">
+              <span class="mini-spinner"></span> Searching Meesho...
+            </div>
+            <div class="competitor-list" id="competitorList" style="display:none"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- IMAGES -->
+      <div class="result-section" id="imagesSection">
+        <div class="result-section-title">🖼️ Ready-to-Upload Images</div>
+        <div class="images-grid" id="imagesGrid"></div>
+        <button class="btn-dl-all" id="dlAllBtn" onclick="downloadAll()" style="display:none">
+          ⬇ Download All Images
+        </button>
+      </div>
+
+      <div class="info-box">
+        <strong>How to use:</strong> Copy the title → paste in Meesho Supplier Panel → Catalog → Add Product → Product Name. Add all keywords in the Tags field. Upload all 3 images. Set your price based on the recommendation above.
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+
+    const SUPABASE_URL = 'https://yrehpzsajltpinqdjqge.supabase.co'
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlyZWhwenNhamx0cGlucWRqcWdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1MDIzNTEsImV4cCI6MjA5ODA3ODM1MX0.T4gyFGHdNg4xQOQoHf02XUHz2Nkapb7ybW9Ln2BC7Ts'
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+    // ── PASTE YOUR GEMINI API KEY HERE ──────────────────────────
+
+    // ────────────────────────────────────────────────────────────
+
+   const GEMINI_URL = '/api/gemini'
+    // Check auth
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) { window.location.href = '/login' }
+
+    // Check plan
+    const { data: profile } = await supabase.from('profiles').select('plan, credits').eq('id', session.user.id).single()
+    const isPaid = profile && profile.plan !== 'free'
+    const freeCredits = profile?.credits || 3
+
+    if (!isPaid) {
+      document.getElementById('limitBanner').style.display = 'flex'
+      document.getElementById('creditsLeft').textContent = freeCredits
+    }
+
+    // State
+    let originalFile = null
+    let originalImage = null
+    let generatedData = null
+    let imageBlobs = []
+    let selectedTitleIdx = 0
+
+    function setPS(id, state) {
+      const el = document.getElementById(id)
+      if (!el) return
+      el.className = 'ps ' + state
+      const txt = el.textContent.replace(/^[⏳🔄✅] /, '')
+      if (state === 'done') el.textContent = '✅ ' + txt
+      if (state === 'active') el.textContent = '🔄 ' + txt
+    }
+
+    function sleep(ms) { return new Promise(r => setTimeout(r, ms)) }
+
+    // ── Image Upload ───────────────────────────────────────────
+    window.imageSelected = function(input) {
+      const file = input.files[0]
+      if (!file || !file.type.startsWith('image/')) return
+      originalFile = file
+      const reader = new FileReader()
+      reader.onload = e => {
+        const img = new Image()
+        img.onload = () => { originalImage = img }
+        img.src = e.target.result
+        document.getElementById('previewImg').src = e.target.result
+        document.getElementById('previewWrap').classList.add('show')
+        document.getElementById('dropZone').style.display = 'none'
+      }
+      reader.readAsDataURL(file)
+    }
+
+    window.changeImage = function() {
+      document.getElementById('previewWrap').classList.remove('show')
+      document.getElementById('dropZone').style.display = 'block'
+      document.getElementById('imageFile').value = ''
+      originalFile = null; originalImage = null
+    }
+
+    // ── Call Gemini ────────────────────────────────────────────
+    async function callGemini(prompt, imageBase64 = null, imageMime = null) {
+      const parts = []
+      if (imageBase64) {
+        parts.push({ inline_data: { mime_type: imageMime, data: imageBase64 } })
+      }
+      parts.push({ text: prompt })
+
+      const res = await fetch(GEMINI_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts }],
+          generationConfig: { temperature: 0.7, maxOutputTokens: 2000 }
+        })
+      })
+      const data = await res.json()
+      return data.candidates?.[0]?.content?.parts?.[0]?.text || ''
+    }
+
+    // ── Main Generate Function ─────────────────────────────────
+    window.generateListing = async function() {
+      const category = document.getElementById('category').value
+      const description = document.getElementById('description').value.trim()
+      const sellingPrice = document.getElementById('sellingPrice').value.trim()
+      const packQty = document.getElementById('packQty').value
+      const targetBuyer = document.getElementById('targetBuyer').value
+
+      if (!category) { alert('Please select a category'); return }
+      if (!description) { alert('Please describe your product'); return }
+
+      document.getElementById('formSection').style.display = 'none'
+      document.getElementById('processingSection').classList.add('show')
+
+      try {
+        // Get image base64 if uploaded
+        let imgBase64 = null, imgMime = null
+        if (originalFile) {
+          imgBase64 = await new Promise(resolve => {
+            const r = new FileReader()
+            r.onload = e => resolve(e.target.result.split(',')[1])
+            r.readAsDataURL(originalFile)
+          })
+          imgMime = originalFile.type
+        }
+
+        setPS('ps1', 'done')
+        setPS('ps2', 'active')
+
+        // ── Step 1: Generate titles + keywords + description + score ──
+        const mainPrompt = `You are an expert Meesho product listing specialist. Generate a complete optimized listing for this product.
+
+Product Details:
+- Category: ${category}
+- Description: ${description}
+- Pack Quantity: ${packQty}
+- Target Buyer: ${targetBuyer}
+- Selling Price: ₹${sellingPrice || 'not specified'}
+
+Respond ONLY with a valid JSON object (no markdown, no backticks, no explanation):
+{
+  "titles": [
+    "Title option 1 - keyword rich, max 100 chars, include category + key feature + pack size",
+    "Title option 2 - different angle, focus on benefit",
+    "Title option 3 - focus on target buyer + use case"
+  ],
+  "keywords": ["keyword1", "keyword2", "keyword3", "keyword4", "keyword5", "keyword6", "keyword7", "keyword8", "keyword9", "keyword10", "keyword11", "keyword12", "keyword13", "keyword14", "keyword15"],
+  "description": "3-4 line product description highlighting key benefits, suitable for Meesho buyers. Include pack size, material, key features.",
+  "features": ["Feature 1 (max 6 words)", "Feature 2", "Feature 3", "Feature 4", "Feature 5"],
+  "specs": ["Spec 1: Value", "Spec 2: Value", "Spec 3: Value", "Spec 4: Value"],
+  "aiPrice": "₹149",
+  "aiPriceReason": "One sentence explaining why this price maximizes orders",
+  "score": 78,
+  "scoreTips": "2-3 specific tips to improve this listing score"
+}`
+
+        const rawText = await callGemini(mainPrompt, imgBase64, imgMime)
+
+        let data
+        try {
+          data = JSON.parse(rawText.replace(/```json|```/g, '').trim())
+        } catch(e) {
+          throw new Error('AI response parsing failed. Please try again.')
+        }
+
+        generatedData = data
+        setPS('ps2', 'done')
+        setPS('ps3', 'done')
+        setPS('ps4', 'done')
+        setPS('ps5', 'active')
+
+        // ── Step 2: Generate images ────────────────────────────
+        imageBlobs = []
+        if (originalImage) {
+          const img1 = await generateWhiteBgImage(originalImage)
+          const img2 = await generateFeaturesImage(originalImage, data.features || [])
+          const img3 = await generateSpecsImage(originalImage, data.specs || [], category, packQty)
+          imageBlobs = [
+            { name: 'Main Product', desc: 'Clean white background', blob: img1 },
+            { name: 'Key Features', desc: 'Features highlighted', blob: img2 },
+            { name: 'Specifications', desc: 'Product specs card', blob: img3 },
+          ]
+        }
+
+        setPS('ps5', 'done')
+        setPS('ps6', 'active')
+
+        // Show results immediately
+        showResults(data, sellingPrice, category, description)
+
+        setPS('ps6', 'done')
+        document.getElementById('processingSection').classList.remove('show')
+        document.getElementById('resultsSection').classList.add('show')
+
+        // ── Step 3: Competitor search in background ────────────
+        searchCompetitors(category, description, sellingPrice)
+
+      } catch(err) {
+        document.getElementById('processingSection').classList.remove('show')
+        document.getElementById('formSection').style.display = 'block'
+        alert('Error: ' + err.message + '\n\nMake sure your Gemini API key is correct.')
+        console.error(err)
+      }
+    }
+
+    // ── Show Results ───────────────────────────────────────────
+    function showResults(data, sellingPrice, category, description) {
+      // Score
+      const score = data.score || 70
+      const scoreEl = document.getElementById('scoreNum')
+      scoreEl.textContent = score + '/100'
+      scoreEl.className = 'score-num ' + (score >= 80 ? 'good' : score >= 60 ? 'ok' : 'bad')
+      const fill = document.getElementById('scoreFill')
+      fill.style.width = score + '%'
+      fill.style.background = score >= 80 ? 'var(--green)' : score >= 60 ? 'var(--yellow)' : 'var(--red)'
+      document.getElementById('scoreTips').textContent = data.scoreTips || ''
+
+      // Titles
+      const titlesWrap = document.getElementById('titlesWrap')
+      titlesWrap.innerHTML = ''
+      const titles = isPaid ? (data.titles || []) : [data.titles?.[0] || '']
+      titles.forEach((t, i) => {
+        const div = document.createElement('div')
+        div.className = 'title-option' + (i === 0 ? ' selected' : '')
+        div.onclick = () => {
+          document.querySelectorAll('.title-option').forEach(el => el.classList.remove('selected'))
+          div.classList.add('selected')
+          selectedTitleIdx = i
+        }
+        div.innerHTML = `
+          <div class="title-option-text">${t}</div>
+          <div class="title-option-badge">${t.length} characters ${t.length > 100 ? '⚠️ Too long' : '✅ Good length'}</div>
+          <span class="selected-check">✓</span>
+        `
+        titlesWrap.appendChild(div)
+      })
+      if (!isPaid && (data.titles?.length || 0) > 1) {
+        const lockDiv = document.createElement('div')
+        lockDiv.style.cssText = 'padding:12px;background:var(--surface);border:1.5px dashed var(--border);border-radius:10px;text-align:center;font-size:13px;color:var(--muted);'
+        lockDiv.innerHTML = '🔒 <strong>2 more title variations</strong> available on Starter plan — <a href="/pricing" style="color:var(--blue)">Upgrade ₹299/mo</a>'
+        titlesWrap.appendChild(lockDiv)
+      }
+
+      // Keywords
+      const kwWrap = document.getElementById('keywordsWrap')
+      kwWrap.innerHTML = ''
+      const keywords = isPaid ? (data.keywords || []) : (data.keywords || []).slice(0, 5)
+      keywords.forEach(kw => {
+        const tag = document.createElement('div')
+        tag.className = 'keyword-tag'
+        tag.textContent = kw
+        tag.onclick = () => {
+          navigator.clipboard.writeText(kw)
+          tag.textContent = '✅ ' + kw
+          setTimeout(() => { tag.textContent = kw }, 1500)
+        }
+        kwWrap.appendChild(tag)
+      })
+      if (!isPaid && (data.keywords?.length || 0) > 5) {
+        const lockTag = document.createElement('div')
+        lockTag.className = 'keyword-tag locked'
+        lockTag.textContent = `🔒 +${data.keywords.length - 5} more on Starter`
+        kwWrap.appendChild(lockTag)
+      }
+
+      // Description
+      if (isPaid) {
+        document.getElementById('descBox').textContent = data.description || ''
+      } else {
+        document.getElementById('descSection').style.position = 'relative'
+        document.getElementById('descBox').textContent = data.description || ''
+        const lockOverlay = document.createElement('div')
+        lockOverlay.style.cssText = 'position:absolute;inset:0;background:rgba(248,250,252,0.93);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border-radius:16px;'
+        lockOverlay.innerHTML = '<div style="font-size:20px">🔒</div><div style="font-size:14px;font-weight:700;color:var(--muted)">Description on Starter Plan</div><a href="/pricing" style="padding:8px 16px;background:var(--blue);color:white;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;">Upgrade ₹299/mo</a>'
+        document.getElementById('descSection').appendChild(lockOverlay)
+      }
+
+      // AI Price
+      document.getElementById('aiPrice').textContent = data.aiPrice || '—'
+      document.getElementById('aiPriceReason').textContent = data.aiPriceReason || ''
+
+      // Images
+      const grid = document.getElementById('imagesGrid')
+      grid.innerHTML = ''
+      if (imageBlobs.length > 0) {
+        imageBlobs.forEach((img, i) => {
+          const url = URL.createObjectURL(img.blob)
+          const card = document.createElement('div')
+          card.className = 'img-card' + (!isPaid && i > 0 ? ' locked-overlay' : '')
+          card.innerHTML = `
+            <div class="img-card-preview"><img src="${url}" alt="${img.name}" /></div>
+            <div class="img-card-info">
+              <div class="img-card-name">${img.name}</div>
+              <div class="img-card-desc">${img.desc}</div>
+              ${isPaid || i === 0 ? `<button class="btn-dl" onclick="dlImage('${url}', '${img.name}')">⬇ Download</button>` : ''}
+            </div>
+          `
+          grid.appendChild(card)
+        })
+        if (isPaid) document.getElementById('dlAllBtn').style.display = 'flex'
+      } else {
+        grid.innerHTML = '<div style="font-size:13px;color:var(--muted);grid-column:1/-1">Upload a product image to generate listing images.</div>'
+      }
+    }
+
+    // ── Competitor Search ──────────────────────────────────────
+    async function searchCompetitors(category, description, sellingPrice) {
+      try {
+        const searchPrompt = `You are a Meesho market research expert. Based on this product:
+Category: ${category}
+Description: ${description}
+
+Give realistic competitor price data for similar products on Meesho India. Respond ONLY with JSON (no markdown):
+{
+  "competitors": [
+    {"name": "Short product name", "price": "₹149"},
+    {"name": "Short product name", "price": "₹165"},
+    {"name": "Short product name", "price": "₹139"},
+    {"name": "Short product name", "price": "₹179"},
+    {"name": "Short product name", "price": "₹155"}
+  ],
+  "recommendedPrice": "₹159",
+  "priceInsight": "One sentence insight about pricing strategy"
+}`
+
+        const raw = await callGemini(searchPrompt)
+        const compData = JSON.parse(raw.replace(/```json|```/g, '').trim())
+
+        document.getElementById('competitorLoading').style.display = 'none'
+        const compList = document.getElementById('competitorList')
+        compList.style.display = 'block'
+
+        compData.competitors?.forEach(c => {
+          const item = document.createElement('div')
+          item.className = 'competitor-item'
+          const isHigher = sellingPrice && parseInt(c.price.replace('₹','')) > parseInt(sellingPrice)
+          item.innerHTML = `<span>${c.name}</span><span style="font-weight:700;color:${isHigher ? 'var(--red)' : 'var(--green)'}">${c.price}</span>`
+          compList.appendChild(item)
+        })
+
+        if (compData.priceInsight) {
+          const insight = document.createElement('div')
+          insight.style.cssText = 'font-size:12px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px solid var(--border);'
+          insight.textContent = '💡 ' + compData.priceInsight
+          compList.appendChild(insight)
+        }
+
+        // Update AI price with combined recommendation
+        if (compData.recommendedPrice) {
+          document.getElementById('aiPrice').textContent = compData.recommendedPrice
+        }
+
+      } catch(e) {
+        document.getElementById('competitorLoading').innerHTML = '<span style="color:var(--muted)">Could not load competitor prices</span>'
+      }
+    }
+
+    // ── Image Generation (Canvas) ──────────────────────────────
+    async function generateWhiteBgImage(img) {
+      const canvas = document.createElement('canvas')
+      canvas.width = 1000; canvas.height = 1000
+      const ctx = canvas.getContext('2d')
+      ctx.fillStyle = '#FFFFFF'
+      ctx.fillRect(0, 0, 1000, 1000)
+      const pad = 100
+      const avail = 800
+      const aspect = img.width / img.height
+      let dw, dh, dx, dy
+      if (aspect >= 1) { dw = avail; dh = avail / aspect; dx = pad; dy = pad + (avail - dh) / 2 }
+      else { dh = avail; dw = avail * aspect; dy = pad; dx = pad + (avail - dw) / 2 }
+      ctx.drawImage(img, dx, dy, dw, dh)
+      return new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.85))
+    }
+
+    async function generateFeaturesImage(img, features) {
+      const canvas = document.createElement('canvas')
+      canvas.width = 1000; canvas.height = 1000
+      const ctx = canvas.getContext('2d')
+
+      // White background
+      ctx.fillStyle = '#FFFFFF'
+      ctx.fillRect(0, 0, 1000, 1000)
+
+      // Left: product image
+      const pad = 60
+      const imgW = 420
+      const aspect = img.width / img.height
+      let dh = imgW / aspect
+      if (dh > 880) { dh = 880; }
+      const dw = dh * aspect
+      ctx.drawImage(img, pad, (1000 - dh) / 2, dw, dh)
+
+      // Right: features
+      const rightX = 500
+      let y = 140
+
+      // Header
+      ctx.fillStyle = '#0F172A'
+      ctx.font = 'bold 32px Inter, sans-serif'
+      ctx.textAlign = 'left'
+      ctx.fillText('KEY FEATURES', rightX, y)
+
+      // Divider
+      y += 16
+      ctx.fillStyle = '#2563EB'
+      ctx.fillRect(rightX, y, 120, 4)
+      y += 40
+
+      // Feature items
+      features.slice(0, 5).forEach(feature => {
+        // Checkmark circle
+        ctx.fillStyle = '#EFF6FF'
+        ctx.beginPath()
+        ctx.arc(rightX + 16, y + 2, 16, 0, Math.PI * 2)
+        ctx.fill()
+        ctx.fillStyle = '#2563EB'
+        ctx.font = 'bold 16px Inter, sans-serif'
+        ctx.textAlign = 'center'
+        ctx.fillText('✓', rightX + 16, y + 8)
+
+        // Feature text
+        ctx.fillStyle = '#0F172A'
+        ctx.font = '500 22px Inter, sans-serif'
+        ctx.textAlign = 'left'
+        ctx.fillText(feature, rightX + 44, y + 8)
+        y += 68
+      })
+
+      // Bottom brand tag
+      ctx.fillStyle = '#2563EB'
+      ctx.fillRect(rightX, 920, 440, 44)
+      ctx.fillStyle = '#FFFFFF'
+      ctx.font = 'bold 18px Inter, sans-serif'
+      ctx.textAlign = 'center'
+      ctx.fillText('⚡ BlinkFlow Optimized Listing', rightX + 220, 948)
+
+      return new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.85))
+    }
+
+    async function generateSpecsImage(img, specs, category, packQty) {
+      const canvas = document.createElement('canvas')
+      canvas.width = 1000; canvas.height = 1000
+      const ctx = canvas.getContext('2d')
+
+      // Gradient background
+      const grad = ctx.createLinearGradient(0, 0, 1000, 1000)
+      grad.addColorStop(0, '#0F172A')
+      grad.addColorStop(1, '#1E3A5F')
+      ctx.fillStyle = grad
+      ctx.fillRect(0, 0, 1000, 1000)
+
+      // Top accent line
+      ctx.fillStyle = '#2563EB'
+      ctx.fillRect(0, 0, 1000, 6)
+
+      // Category badge
+      ctx.fillStyle = 'rgba(37,99,235,0.3)'
+      roundRect(ctx, 60, 40, 200, 40, 8)
+      ctx.fill()
+      ctx.fillStyle = '#93C5FD'
+      ctx.font = 'bold 16px Inter, sans-serif'
+      ctx.textAlign = 'center'
+      ctx.fillText(category.toUpperCase(), 160, 66)
+
+      // Product image (right side, circular clip)
+      ctx.save()
+      ctx.beginPath()
+      ctx.arc(780, 200, 140, 0, Math.PI * 2)
+      ctx.clip()
+      ctx.fillStyle = '#1E3A5F'
+      ctx.fillRect(640, 60, 280, 280)
+      const aspect = img.width / img.height
+      const sz = 260
+      const iw = aspect >= 1 ? sz : sz * aspect
+      const ih = aspect >= 1 ? sz / aspect : sz
+      ctx.drawImage(img, 780 - iw/2, 200 - ih/2, iw, ih)
+      ctx.restore()
+
+      // Title
+      ctx.fillStyle = '#FFFFFF'
+      ctx.font = 'bold 44px Sora, Inter, sans-serif'
+      ctx.textAlign = 'left'
+      ctx.fillText('PRODUCT', 60, 160)
+      ctx.fillStyle = '#60A5FA'
+      ctx.fillText('SPECS', 60, 218)
+
+      // Specs list
+      let y = 320
+      specs.slice(0, 6).forEach((spec, i) => {
+        const [label, value] = spec.split(':').map(s => s?.trim())
+
+        // Alternate row bg
+        if (i % 2 === 0) {
+          ctx.fillStyle = 'rgba(255,255,255,0.05)'
+          ctx.fillRect(60, y - 28, 560, 52)
+        }
+
+        ctx.fillStyle = '#94A3B8'
+        ctx.font = '500 18px Inter, sans-serif'
+        ctx.textAlign = 'left'
+        ctx.fillText(label || spec, 80, y)
+
+        ctx.fillStyle = '#FFFFFF'
+        ctx.font = 'bold 18px Inter, sans-serif'
+        ctx.textAlign = 'right'
+        ctx.fillText(value || '—', 580, y)
+
+        y += 52
+      })
+
+      // Pack size badge
+      ctx.fillStyle = '#2563EB'
+      roundRect(ctx, 60, y + 20, 200, 56, 12)
+      ctx.fill()
+      ctx.fillStyle = '#FFFFFF'
+      ctx.font = 'bold 22px Inter, sans-serif'
+      ctx.textAlign = 'center'
+      ctx.fillText(`PACK OF ${packQty}`, 160, y + 56)
+
+      // Bottom
+      ctx.fillStyle = 'rgba(255,255,255,0.1)'
+      ctx.fillRect(0, 930, 1000, 70)
+      ctx.fillStyle = '#94A3B8'
+      ctx.font = '500 16px Inter, sans-serif'
+      ctx.textAlign = 'center'
+      ctx.fillText('Generated by BlinkFlow — AI Listing Optimizer', 500, 972)
+
+      return new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.88))
+    }
+
+    function roundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath()
+      ctx.moveTo(x + r, y)
+      ctx.lineTo(x + w - r, y)
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r)
+      ctx.lineTo(x + w, y + h - r)
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h)
+      ctx.lineTo(x + r, y + h)
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r)
+      ctx.lineTo(x, y + r)
+      ctx.quadraticCurveTo(x, y, x + r, y)
+      ctx.closePath()
+    }
+
+    // ── Utilities ──────────────────────────────────────────────
+    window.copySelected = function() {
+      const selected = document.querySelector('.title-option.selected .title-option-text')
+      if (selected) {
+        navigator.clipboard.writeText(selected.textContent)
+        const btn = document.querySelector('.copy-btn')
+        btn.textContent = '✅ Copied!'
+        setTimeout(() => { btn.textContent = '📋 Copy Selected Title' }, 2000)
+      }
+    }
+
+    window.copyDesc = function() {
+      const desc = document.getElementById('descBox').textContent
+      navigator.clipboard.writeText(desc)
+      event.target.textContent = '✅ Copied!'
+      setTimeout(() => { event.target.textContent = '📋 Copy Description' }, 2000)
+    }
+
+    window.dlImage = function(url, name) {
+      const a = document.createElement('a')
+      a.href = url; a.download = 'blinkflow-' + name.toLowerCase().replace(/\s+/g, '-') + '.jpg'; a.click()
+    }
+
+    window.downloadAll = function() {
+      imageBlobs.forEach(img => {
+        const url = URL.createObjectURL(img.blob)
+        const a = document.createElement('a')
+        a.href = url; a.download = 'blinkflow-' + img.name.toLowerCase().replace(/\s+/g, '-') + '.jpg'; a.click()
+      })
+    }
+
+    window.resetTool = function() {
+      document.getElementById('formSection').style.display = 'block'
+      document.getElementById('resultsSection').classList.remove('show')
+      document.getElementById('processingSection').classList.remove('show')
+      originalFile = null; originalImage = null; generatedData = null; imageBlobs = []
+    }
+
+    // Drag and drop
+    const dz = document.getElementById('dropZone')
+    dz.addEventListener('dragover', e => { e.preventDefault(); dz.style.borderColor = '#2563EB' })
+    dz.addEventListener('dragleave', () => { dz.style.borderColor = '' })
+    dz.addEventListener('drop', e => {
+      e.preventDefault(); dz.style.borderColor = ''
+      const file = e.dataTransfer.files[0]
+      if (file?.type.startsWith('image/')) {
+        const dt = new DataTransfer(); dt.items.add(file)
+        document.getElementById('imageFile').files = dt.files
+        window.imageSelected(document.getElementById('imageFile'))
+      }
+    })
+  </script>
+</body>
+</html>
