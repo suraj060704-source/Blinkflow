@@ -284,6 +284,27 @@
           </div>
         </div>
 
+        <div class="field" style="margin-top:8px">
+          <label style="display:flex; align-items:flex-start; gap:10px; cursor:pointer; padding:14px; background:var(--purple-light); border:1.5px solid #DDD6FE; border-radius:10px;">
+            <input type="checkbox" id="wantAiImage" onchange="toggleAiImageTile()" style="margin-top:3px; width:16px; height:16px; cursor:pointer;" />
+            <span>
+              <span style="font-size:13px; font-weight:700; color:var(--ink);">✨ Also generate an AI product image</span>
+              <span style="font-size:12px; color:var(--muted); display:block; margin-top:2px;" id="creditsRemainingText">Uses 1 image credit · you have <strong id="imgCreditsLeft">3</strong> left</span>
+            </span>
+          </label>
+        </div>
+
+        <div id="aiImageTile" style="display:none; margin-top:12px; padding:16px; background:var(--surface); border:1.5px solid var(--border); border-radius:10px;">
+          <div class="field-label">Image style</div>
+          <select id="aiImageType" style="margin-bottom:10px">
+            <option value="white_bg">Clean white background (catalog style)</option>
+            <option value="lifestyle">Lifestyle — someone using the product</option>
+            <option value="styled_bg">Styled background (matching product mood)</option>
+            <option value="angle">Different angle / close-up detail shot</option>
+          </select>
+          <div class="field-hint">We'll use your product description above to write the image prompt — no need to repeat it.</div>
+        </div>
+
         <button class="btn-generate" id="generateBtn" onclick="generateListing()">
           ✨ Generate Complete Listing
         </button>
@@ -379,6 +400,23 @@
         </button>
       </div>
 
+      <!-- AI GENERATED IMAGE -->
+      <div class="result-section" id="aiImageSection" style="display:none">
+        <div class="result-section-title">✨ AI-Generated Image</div>
+        <div id="aiImageStatus" style="font-size:13px;color:var(--muted)">Generating your image...</div>
+        <div id="aiImageResult" style="display:none">
+          <div style="max-width:340px;">
+            <div class="img-card">
+              <div class="img-card-preview"><img id="aiImagePreview" src="" alt="AI generated" /></div>
+              <div class="img-card-info">
+                <button class="btn-dl" onclick="dlAiImage()">⬇ Download</button>
+                <a href="/pricing" id="removeWatermarkLink" style="display:none; text-align:center; margin-top:8px; font-size:12px; font-weight:700; color:var(--purple); text-decoration:none;">🔓 Remove Watermark — Upgrade</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="info-box">
         <strong>How to use:</strong> Copy the title → paste in your seller panel's product name field. Add all keywords in the Tags/Keywords field. Upload the image(s). Set your price based on the recommendation above. Listing rules shown are tailored to the platform you selected.
       </div>
@@ -403,13 +441,25 @@
     if (!session) { window.location.href = '/login' }
 
     // Check plan
-    const { data: profile } = await supabase.from('profiles').select('plan, credits').eq('id', session.user.id).single()
+    const { data: profile } = await supabase.from('profiles').select('plan, credits, image_credits').eq('id', session.user.id).single()
     const isPaid = profile && profile.plan !== 'free'
     const freeCredits = profile?.credits || 3
+    let imageCreditsLeft = (profile && typeof profile.image_credits === 'number') ? profile.image_credits : 3
 
     if (!isPaid) {
       document.getElementById('limitBanner').style.display = 'flex'
       document.getElementById('creditsLeft').textContent = freeCredits
+    }
+
+    document.getElementById('imgCreditsLeft').textContent = isPaid ? '∞' : imageCreditsLeft
+    if (!isPaid && imageCreditsLeft <= 0) {
+      const cb = document.getElementById('wantAiImage')
+      cb.disabled = true
+      document.getElementById('creditsRemainingText').innerHTML = 'No image credits left — <a href="/pricing" style="color:var(--purple)">upgrade for more</a>'
+    }
+
+    window.toggleAiImageTile = function() {
+      document.getElementById('aiImageTile').style.display = document.getElementById('wantAiImage').checked ? 'block' : 'none'
     }
 
     // State
@@ -606,6 +656,11 @@ Respond ONLY with a valid JSON object (no markdown, no backticks, no explanation
         // ── Step 3: Competitor search in background ────────────
         searchCompetitors(category, description, sellingPrice, platform)
 
+        // ── Step 4: AI image generation in background, if requested ──
+        if (document.getElementById('wantAiImage').checked) {
+          generateAiImage(category, description, document.getElementById('aiImageType').value)
+        }
+
       } catch(err) {
         document.getElementById('processingSection').classList.remove('show')
         document.getElementById('formSection').style.display = 'block'
@@ -715,6 +770,102 @@ Respond ONLY with a valid JSON object (no markdown, no backticks, no explanation
     }
 
     // ── Competitor Search ──────────────────────────────────────
+    // ── AI Image Generation (Stability AI) ─────────────────────
+    const IMAGE_PROMPT_TEMPLATES = {
+      white_bg: (desc, cat) => `Professional e-commerce product photography of ${desc}, category: ${cat}. Centered on a pure white seamless background, studio lighting, sharp focus, high resolution, catalog style, no shadows, no text, no watermark.`,
+      lifestyle: (desc, cat) => `Lifestyle photograph of a person naturally using ${desc} (category: ${cat}), realistic indoor setting, soft natural lighting, candid feel, product clearly visible, no text, no watermark.`,
+      styled_bg: (desc, cat) => `Professional product photography of ${desc}, category: ${cat}, styled with a complementary soft-colored background and subtle props matching the product's mood, studio lighting, no text, no watermark.`,
+      angle_: (desc, cat) => `Close-up detail product photograph of ${desc}, category: ${cat}, shot from a dynamic angle highlighting texture and craftsmanship, soft studio lighting, shallow depth of field, no text, no watermark.`
+    }
+
+    async function generateAiImage(category, description, imageType) {
+      const section = document.getElementById('aiImageSection')
+      const statusEl = document.getElementById('aiImageStatus')
+      section.style.display = 'block'
+      statusEl.textContent = '✨ Generating your AI image — this can take 10-15 seconds...'
+
+      try {
+        if (!isPaid && imageCreditsLeft <= 0) {
+          statusEl.innerHTML = 'You\'re out of image credits — <a href="/pricing" style="color:var(--purple)">upgrade for more</a>'
+          return
+        }
+
+        const templateKey = imageType === 'angle' ? 'angle_' : imageType
+        const promptFn = IMAGE_PROMPT_TEMPLATES[templateKey] || IMAGE_PROMPT_TEMPLATES.white_bg
+        const prompt = promptFn(description, category)
+
+        const res = await fetch('/api/stability', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt, aspectRatio: '1:1' })
+        })
+        const data = await res.json()
+        if (data.error) throw new Error(typeof data.error === 'string' ? data.error : 'Image generation failed')
+
+        // Load into an Image element for watermark compositing
+        const img = new Image()
+        img.onload = async () => {
+          const finalBlob = await applyWatermarkIfNeeded(img, !isPaid)
+          const url = URL.createObjectURL(finalBlob)
+          window._aiImageUrl = url
+
+          document.getElementById('aiImagePreview').src = url
+          statusEl.style.display = 'none'
+          document.getElementById('aiImageResult').style.display = 'block'
+
+          if (!isPaid) {
+            document.getElementById('removeWatermarkLink').style.display = 'block'
+            imageCreditsLeft -= 1
+            document.getElementById('imgCreditsLeft').textContent = imageCreditsLeft
+            // Persist credit deduction
+            await supabase.from('profiles').update({ image_credits: imageCreditsLeft }).eq('id', session.user.id)
+          }
+        }
+        img.src = data.image
+
+      } catch (err) {
+        statusEl.textContent = '⚠️ Image generation failed: ' + err.message
+      }
+    }
+
+    function applyWatermarkIfNeeded(img, addWatermark) {
+      return new Promise(resolve => {
+        const canvas = document.createElement('canvas')
+        canvas.width = img.width
+        canvas.height = img.height
+        const ctx = canvas.getContext('2d')
+        ctx.drawImage(img, 0, 0)
+
+        if (addWatermark) {
+          const fontSize = Math.round(canvas.width * 0.045)
+          ctx.font = `bold ${fontSize}px Inter, sans-serif`
+          ctx.textAlign = 'center'
+          ctx.textBaseline = 'middle'
+
+          // Diagonal repeated watermark
+          ctx.save()
+          ctx.globalAlpha = 0.18
+          ctx.fillStyle = '#000000'
+          ctx.translate(canvas.width / 2, canvas.height / 2)
+          ctx.rotate(-Math.PI / 8)
+          for (let y = -canvas.height; y < canvas.height; y += fontSize * 3) {
+            ctx.fillText('BlinkFlow', 0, y)
+          }
+          ctx.restore()
+        }
+
+        canvas.toBlob(blob => resolve(blob), 'image/jpeg', 0.92)
+      })
+    }
+
+    window.dlAiImage = function() {
+      if (!window._aiImageUrl) return
+      const a = document.createElement('a')
+      a.href = window._aiImageUrl
+      a.download = 'blinkflow-ai-product-image.jpg'
+      a.click()
+    }
+
     async function searchCompetitors(category, description, sellingPrice, platform) {
       try {
         const platformName = { meesho: 'Meesho', flipkart: 'Flipkart', amazon: 'Amazon' }[platform] || 'Meesho'
@@ -990,6 +1141,13 @@ Give realistic competitor price data for similar products on ${platformName} Ind
       document.getElementById('resultsSection').classList.remove('show')
       document.getElementById('processingSection').classList.remove('show')
       originalFile = null; originalImage = null; generatedData = null; imageBlobs = []
+      document.getElementById('wantAiImage').checked = false
+      document.getElementById('aiImageTile').style.display = 'none'
+      document.getElementById('aiImageSection').style.display = 'none'
+      document.getElementById('aiImageResult').style.display = 'none'
+      document.getElementById('aiImageStatus').style.display = 'block'
+      document.getElementById('removeWatermarkLink').style.display = 'none'
+      window._aiImageUrl = null
     }
 
     // Drag and drop
