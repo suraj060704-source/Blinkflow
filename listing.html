@@ -430,11 +430,8 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlyZWhwenNhamx0cGlucWRqcWdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1MDIzNTEsImV4cCI6MjA5ODA3ODM1MX0.T4gyFGHdNg4xQOQoHf02XUHz2Nkapb7ybW9Ln2BC7Ts'
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
-    // ── PASTE YOUR GEMINI API KEY HERE ──────────────────────────
-    const GEMINI_API_KEY = 'PASTE_YOUR_GEMINI_KEY_HERE'
-    // ────────────────────────────────────────────────────────────
-
-    const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`
+    // AI calls go through our secure server-side proxy — no API key in the browser
+    const GEMINI_URL = '/api/gemini'
 
     // Check auth
     const { data: { session } } = await supabase.auth.getSession()
@@ -517,21 +514,13 @@
 
     // ── Call Gemini ────────────────────────────────────────────
     async function callGemini(prompt, imageBase64 = null, imageMime = null) {
-      const parts = []
-      if (imageBase64) {
-        parts.push({ inline_data: { mime_type: imageMime, data: imageBase64 } })
-      }
-      parts.push({ text: prompt })
-
       const res = await fetch(GEMINI_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts }],
-          generationConfig: { temperature: 0.7, maxOutputTokens: 2000 }
-        })
+        body: JSON.stringify({ prompt, imageBase64, imageMime })
       })
       const data = await res.json()
+      if (data.error) throw new Error(typeof data.error === 'string' ? data.error : 'AI request failed')
       return data.candidates?.[0]?.content?.parts?.[0]?.text || ''
     }
 
@@ -664,7 +653,7 @@ Respond ONLY with a valid JSON object (no markdown, no backticks, no explanation
       } catch(err) {
         document.getElementById('processingSection').classList.remove('show')
         document.getElementById('formSection').style.display = 'block'
-        alert('Error: ' + err.message + '\n\nMake sure your Gemini API key is correct.')
+        alert('Error: ' + err.message)
         console.error(err)
       }
     }
