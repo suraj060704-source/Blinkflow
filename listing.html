@@ -220,6 +220,16 @@
         <div class="card-title">Product Details</div>
         <div class="card-desc">Tell us about your product — the more detail, the better the listing</div>
 
+        <div class="field">
+          <label class="field-label">Platform</label>
+          <select id="platform" onchange="updatePlatformHint()">
+            <option value="meesho">Meesho</option>
+            <option value="flipkart">Flipkart</option>
+            <option value="amazon">Amazon</option>
+          </select>
+          <div class="field-hint" id="platformHint">Meesho buyers respond well to keyword-rich, benefit-led titles similar to top sellers in your category.</div>
+        </div>
+
         <div class="two-col">
           <div class="field">
             <label class="field-label">Category</label>
@@ -370,7 +380,7 @@
       </div>
 
       <div class="info-box">
-        <strong>How to use:</strong> Copy the title → paste in Meesho Supplier Panel → Catalog → Add Product → Product Name. Add all keywords in the Tags field. Upload all 3 images. Set your price based on the recommendation above.
+        <strong>How to use:</strong> Copy the title → paste in your seller panel's product name field. Add all keywords in the Tags/Keywords field. Upload the image(s). Set your price based on the recommendation above. Listing rules shown are tailored to the platform you selected.
       </div>
     </div>
   </main>
@@ -383,10 +393,11 @@
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
     // ── PASTE YOUR GEMINI API KEY HERE ──────────────────────────
-
+    const GEMINI_API_KEY = 'PASTE_YOUR_GEMINI_KEY_HERE'
     // ────────────────────────────────────────────────────────────
 
-   const GEMINI_URL = '/api/gemini'
+    const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`
+
     // Check auth
     const { data: { session } } = await supabase.auth.getSession()
     if (!session) { window.location.href = '/login' }
@@ -419,6 +430,17 @@
 
     function sleep(ms) { return new Promise(r => setTimeout(r, ms)) }
 
+    const PLATFORM_HINTS = {
+      meesho: 'Meesho buyers respond well to keyword-rich, benefit-led titles similar to top sellers in your category.',
+      flipkart: 'Flipkart requires original, policy-compliant titles and descriptions — copying other listings can get your catalog suppressed.',
+      amazon: 'Amazon enforces strict title formatting and prohibits promotional claims — content must be 100% original and follow Amazon\'s structure.'
+    }
+
+    window.updatePlatformHint = function() {
+      const platform = document.getElementById('platform').value
+      document.getElementById('platformHint').textContent = PLATFORM_HINTS[platform] || ''
+    }
+
     // ── Image Upload ───────────────────────────────────────────
     window.imageSelected = function(input) {
       const file = input.files[0]
@@ -444,19 +466,28 @@
     }
 
     // ── Call Gemini ────────────────────────────────────────────
-  async function callGemini(prompt, imageBase64 = null, imageMime = null) {
-  const res = await fetch('/api/gemini', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt, imageBase64, imageMime })
-  })
-  const data = await res.json()
-  if (data.error) throw new Error(data.error)
-  return data.candidates?.[0]?.content?.parts?.[0]?.text || ''
-}
+    async function callGemini(prompt, imageBase64 = null, imageMime = null) {
+      const parts = []
+      if (imageBase64) {
+        parts.push({ inline_data: { mime_type: imageMime, data: imageBase64 } })
+      }
+      parts.push({ text: prompt })
+
+      const res = await fetch(GEMINI_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts }],
+          generationConfig: { temperature: 0.7, maxOutputTokens: 2000 }
+        })
+      })
+      const data = await res.json()
+      return data.candidates?.[0]?.content?.parts?.[0]?.text || ''
+    }
 
     // ── Main Generate Function ─────────────────────────────────
     window.generateListing = async function() {
+      const platform = document.getElementById('platform').value
       const category = document.getElementById('category').value
       const description = document.getElementById('description').value.trim()
       const sellingPrice = document.getElementById('sellingPrice').value.trim()
@@ -484,8 +515,31 @@
         setPS('ps1', 'done')
         setPS('ps2', 'active')
 
+        // ── Platform-specific listing rules ──
+        const PLATFORM_RULES = {
+          meesho: `PLATFORM: Meesho
+- Titles may reference proven keyword patterns used by top-selling similar listings — Meesho buyers respond to familiar, search-heavy phrasing.
+- Casual, benefit-forward tone is fine. Emojis in description are acceptable but not in title.
+- Focus heavily on price-value framing since Meesho buyers are highly price-sensitive.
+- Pack size and "value for money" angle should be prominent.`,
+          flipkart: `PLATFORM: Flipkart
+- Titles and descriptions MUST be 100% original — do NOT mirror or closely resemble existing listings, as Flipkart actively suppresses catalogs with duplicate-pattern content.
+- Follow Flipkart's title structure: Brand/Type + Key Attribute + Use Case, no promotional words like "best", "sale", "free" in the title.
+- Description should be structured, factual, and highlight specifications clearly (material, dimensions, usage) rather than casual sales language.
+- Avoid superlative claims that cannot be verified (e.g. "world's best") — Flipkart's content policy can flag these.`,
+          amazon: `PLATFORM: Amazon
+- Title MUST follow Amazon's strict format: Brand + Product Type + Key Feature + Size/Quantity/Color, under 200 characters, NO promotional language (no "best", "sale", "% off", "free shipping", emojis, or ALL CAPS words).
+- Description must be written as scannable, benefit-driven bullet points (5 bullets), each starting with a capitalized key term, factual and specific — Amazon prohibits subjective superlative claims without substantiation.
+- Content must be entirely original. Do not reuse phrasing patterns from other listings — Amazon's catalog integrity policy can suspend listings for this.
+- Avoid any mention of competitors, pricing comparisons, or guarantees not backed by an actual warranty.`
+        }
+
+        const platformRules = PLATFORM_RULES[platform] || PLATFORM_RULES.meesho
+
         // ── Step 1: Generate titles + keywords + description + score ──
-        const mainPrompt = `You are an expert Meesho product listing specialist. Generate a complete optimized listing for this product.
+        const mainPrompt = `You are an expert e-commerce listing specialist generating a listing for the following platform. Follow the platform-specific rules below EXACTLY — they reflect real policy and ranking differences between platforms.
+
+${platformRules}
 
 Product Details:
 - Category: ${category}
@@ -497,18 +551,18 @@ Product Details:
 Respond ONLY with a valid JSON object (no markdown, no backticks, no explanation):
 {
   "titles": [
-    "Title option 1 - keyword rich, max 100 chars, include category + key feature + pack size",
-    "Title option 2 - different angle, focus on benefit",
-    "Title option 3 - focus on target buyer + use case"
+    "Title option 1 - follows the platform rules above exactly, max 100 chars unless platform allows more",
+    "Title option 2 - different angle, still compliant with platform rules",
+    "Title option 3 - focus on target buyer + use case, still compliant with platform rules"
   ],
   "keywords": ["keyword1", "keyword2", "keyword3", "keyword4", "keyword5", "keyword6", "keyword7", "keyword8", "keyword9", "keyword10", "keyword11", "keyword12", "keyword13", "keyword14", "keyword15"],
-  "description": "3-4 line product description highlighting key benefits, suitable for Meesho buyers. Include pack size, material, key features.",
+  "description": "Description following the platform's required style and structure exactly as specified above.",
   "features": ["Feature 1 (max 6 words)", "Feature 2", "Feature 3", "Feature 4", "Feature 5"],
   "specs": ["Spec 1: Value", "Spec 2: Value", "Spec 3: Value", "Spec 4: Value"],
   "aiPrice": "₹149",
-  "aiPriceReason": "One sentence explaining why this price maximizes orders",
+  "aiPriceReason": "One sentence explaining why this price maximizes orders on this specific platform",
   "score": 78,
-  "scoreTips": "2-3 specific tips to improve this listing score"
+  "scoreTips": "2-3 specific tips to improve this listing for this specific platform's ranking algorithm and policies"
 }`
 
         const rawText = await callGemini(mainPrompt, imgBase64, imgMime)
@@ -550,12 +604,12 @@ Respond ONLY with a valid JSON object (no markdown, no backticks, no explanation
         document.getElementById('resultsSection').classList.add('show')
 
         // ── Step 3: Competitor search in background ────────────
-        searchCompetitors(category, description, sellingPrice)
+        searchCompetitors(category, description, sellingPrice, platform)
 
       } catch(err) {
         document.getElementById('processingSection').classList.remove('show')
         document.getElementById('formSection').style.display = 'block'
-        alert('Error: ' + err.message)
+        alert('Error: ' + err.message + '\n\nMake sure your Gemini API key is correct.')
         console.error(err)
       }
     }
@@ -661,13 +715,14 @@ Respond ONLY with a valid JSON object (no markdown, no backticks, no explanation
     }
 
     // ── Competitor Search ──────────────────────────────────────
-    async function searchCompetitors(category, description, sellingPrice) {
+    async function searchCompetitors(category, description, sellingPrice, platform) {
       try {
-        const searchPrompt = `You are a Meesho market research expert. Based on this product:
+        const platformName = { meesho: 'Meesho', flipkart: 'Flipkart', amazon: 'Amazon' }[platform] || 'Meesho'
+        const searchPrompt = `You are a ${platformName} market research expert. Based on this product:
 Category: ${category}
 Description: ${description}
 
-Give realistic competitor price data for similar products on Meesho India. Respond ONLY with JSON (no markdown):
+Give realistic competitor price data for similar products on ${platformName} India. Respond ONLY with JSON (no markdown):
 {
   "competitors": [
     {"name": "Short product name", "price": "₹149"},
@@ -677,7 +732,7 @@ Give realistic competitor price data for similar products on Meesho India. Respo
     {"name": "Short product name", "price": "₹155"}
   ],
   "recommendedPrice": "₹159",
-  "priceInsight": "One sentence insight about pricing strategy"
+  "priceInsight": "One sentence insight about pricing strategy specific to ${platformName}"
 }`
 
         const raw = await callGemini(searchPrompt)
