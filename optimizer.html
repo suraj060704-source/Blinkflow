@@ -17,74 +17,94 @@
     }
     body { font-family: 'Inter', sans-serif; background: var(--surface); min-height: 100vh; -webkit-font-smoothing: antialiased; }
     nav { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 24px; position: sticky; top: 0; z-index: 100; }
-    .nav-inner { max-width: 960px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .nav-inner { max-width: 900px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 64px; }
     .logo { display: flex; align-items: center; gap: 8px; font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 800; color: var(--ink); text-decoration: none; }
     .logo-icon { width: 32px; height: 32px; background: var(--blue); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
     .logo-icon svg { width: 18px; height: 18px; }
     .logo span { color: var(--blue); }
     .nav-back { font-size: 14px; color: var(--muted); text-decoration: none; }
-    main { max-width: 960px; margin: 0 auto; padding: 48px 24px; }
+    main { max-width: 900px; margin: 0 auto; padding: 48px 24px; }
     h1 { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 800; color: var(--ink); margin-bottom: 8px; }
-    .subtitle { font-size: 15px; color: var(--muted); margin-bottom: 32px; }
-    .ai-badge { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #7C3AED, #2563EB); color: white; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 99px; margin-bottom: 16px; }
+    .subtitle { font-size: 15px; color: var(--muted); margin-bottom: 16px; }
+    .honesty-note { background: var(--blue-light); border: 1px solid #BFDBFE; border-radius: 10px; padding: 12px 16px; font-size: 12.5px; color: #1E40AF; line-height: 1.6; margin-bottom: 32px; }
+
     .card { background: var(--white); border: 1.5px solid var(--border); border-radius: 16px; padding: 28px; margin-bottom: 20px; }
     .card-title { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
     .card-desc { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
-    .drop-zone { border: 2px dashed var(--border); border-radius: 12px; padding: 48px 24px; text-align: center; cursor: pointer; transition: .2s; position: relative; }
-    .drop-zone:hover { border-color: var(--blue); background: var(--blue-light); }
+
+    .drop-zone { border: 2px dashed var(--border); border-radius: 12px; padding: 40px 24px; text-align: center; cursor: pointer; transition: .2s; position: relative; }
+    .drop-zone:hover, .drop-zone.drag-over { border-color: var(--blue); background: var(--blue-light); }
     .drop-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
-    .drop-icon { font-size: 40px; margin-bottom: 12px; }
+    .drop-icon { font-size: 36px; margin-bottom: 10px; }
     .drop-text { font-size: 14px; color: var(--muted); }
     .drop-text strong { color: var(--blue); }
     .drop-hint { font-size: 12px; color: #94A3B8; margin-top: 6px; }
-    .preview-row { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; margin-top: 20px; }
-    .preview-box { flex: 0 0 140px; }
-    .preview-box img { width: 140px; height: 140px; object-fit: contain; border-radius: 10px; border: 1px solid var(--border); background: #fff; }
+
+    .preview-area { display: none; }
+    .preview-area.show { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+    .preview-original { flex: 0 0 140px; }
+    .preview-original img { width: 140px; height: 140px; object-fit: contain; border-radius: 10px; border: 1px solid var(--border); background: #fff; }
     .preview-label { font-size: 11px; color: var(--muted); margin-top: 6px; text-align: center; }
     .preview-info { flex: 1; min-width: 200px; }
-    .info-row { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+    .info-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
     .info-row:last-child { border-bottom: none; }
     .info-label { color: var(--muted); }
     .info-value { font-weight: 600; color: var(--ink); }
-    .cat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+    .badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 600; }
+    .badge-red { background: var(--red-light); color: var(--red); }
+    .badge-yellow { background: var(--yellow-light); color: var(--yellow); }
+    .badge-green { background: var(--green-light); color: var(--green); }
+
+    .cat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
     select { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; font-family: 'Inter', sans-serif; color: var(--ink); background: var(--white); outline: none; cursor: pointer; }
     select:focus { border-color: var(--blue); }
     .field-label { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
-    .ai-analysis { display: none; background: linear-gradient(135deg, #F5F3FF, #EFF6FF); border: 1px solid #C4B5FD; border-radius: 12px; padding: 16px; margin-top: 16px; }
-    .ai-analysis.show { display: block; }
-    .ai-analysis-title { font-size: 13px; font-weight: 700; color: #7C3AED; margin-bottom: 8px; }
-    .ai-analysis-text { font-size: 13px; color: var(--ink); line-height: 1.6; }
-    .btn-generate { width: 100%; padding: 15px; background: linear-gradient(135deg, #7C3AED, #2563EB); color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; transition: .2s; margin-top: 20px; }
-    .btn-generate:hover { opacity: .9; transform: translateY(-1px); }
-    .btn-generate:disabled { opacity: .5; cursor: not-allowed; transform: none; }
-    .processing { display: none; text-align: center; padding: 48px 24px; }
+
+    .btn-generate { width: 100%; padding: 15px; background: var(--blue); color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; transition: .2s; margin-top: 20px; }
+    .btn-generate:hover { background: var(--blue-dark); }
+    .btn-generate:disabled { opacity: .5; cursor: not-allowed; }
+
+    .processing { display: none; text-align: center; padding: 40px 24px; }
     .processing.show { display: block; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .spinner { width: 48px; height: 48px; border: 3px solid #E9D5FF; border-top-color: #7C3AED; border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 16px; }
-    .process-title { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 800; color: var(--ink); margin-bottom: 8px; }
-    .ps-list { list-style: none; text-align: left; max-width: 320px; margin: 20px auto 0; }
-    .ps { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); padding: 5px 0; }
-    .ps.done { color: var(--green); }
-    .ps.active { color: var(--ink); font-weight: 600; }
+    .spinner { width: 44px; height: 44px; border: 4px solid var(--blue-light); border-top-color: var(--blue); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 16px; }
+    .process-title { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+
     .results { display: none; }
     .results.show { display: block; }
     .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 8px; }
-    .results-title { font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 800; color: var(--ink); }
+    .results-title { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 800; color: var(--ink); }
     .btn-new { padding: 9px 18px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 8px; font-size: 13px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; color: var(--ink); }
     .btn-new:hover { border-color: var(--blue); color: var(--blue); }
-    .variants-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+
+    .variants-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 16px; }
     .variant-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 12px; overflow: hidden; transition: .2s; }
-    .variant-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.1); transform: translateY(-2px); }
+    .variant-card:hover { border-color: var(--blue); box-shadow: 0 4px 16px rgba(37,99,235,.1); }
+    .variant-card.best { border-color: var(--green); box-shadow: 0 4px 16px rgba(22,163,74,.15); }
     .variant-img-wrap { position: relative; background: #f8f8f8; aspect-ratio: 1; }
     .variant-img-wrap img { width: 100%; height: 100%; object-fit: contain; }
+    .best-badge { position: absolute; top: 8px; left: 8px; background: var(--green); color: white; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 99px; }
     .variant-info { padding: 12px; }
     .variant-name { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
-    .variant-kb { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
-    .btn-dl { width: 100%; padding: 8px; background: var(--blue-light); color: var(--blue); border: none; border-radius: 7px; font-size: 12px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: .2s; }
-    .btn-dl:hover { background: var(--blue); color: white; }
-    .ai-insight { background: linear-gradient(135deg, #F5F3FF, #EFF6FF); border: 1px solid #C4B5FD; border-radius: 12px; padding: 16px 20px; margin-bottom: 20px; font-size: 13px; color: var(--ink); line-height: 1.7; }
-    .info-box { background: var(--blue-light); border: 1px solid #BFDBFE; border-radius: 10px; padding: 14px 16px; font-size: 13px; color: #1E40AF; margin-top: 16px; line-height: 1.6; }
-    @media (max-width: 600px) { main { padding: 24px 16px; } .cat-row { grid-template-columns: 1fr; } .preview-row { flex-direction: column; } }
+    .variant-stats { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 6px; }
+    .variant-size { font-size: 11px; color: var(--muted); }
+    .variant-fill { font-size: 11px; color: var(--muted); }
+    .variant-slab { font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 99px; white-space: nowrap; }
+    .slab-lowest { background: var(--green-light); color: var(--green); }
+    .slab-low { background: var(--yellow-light); color: var(--yellow); }
+    .slab-standard { background: #F1F5F9; color: var(--muted); }
+    .btn-download { width: 100%; padding: 8px; background: var(--blue-light); color: var(--blue); border: none; border-radius: 7px; font-size: 12px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: .2s; }
+    .btn-download:hover { background: var(--blue); color: white; }
+
+    .info-box { background: var(--blue-light); border: 1px solid #BFDBFE; border-radius: 10px; padding: 14px 16px; font-size: 13px; color: #1E40AF; margin-top: 20px; line-height: 1.6; }
+    .info-box strong { font-weight: 700; }
+
+    @media (max-width: 600px) {
+      main { padding: 24px 16px; }
+      .cat-row { grid-template-columns: 1fr; }
+      .preview-area.show { flex-direction: column; }
+      .preview-original { flex: none; }
+    }
   </style>
 </head>
 <body>
@@ -103,39 +123,49 @@
   </nav>
 
   <main>
-    <div class="ai-badge">✨ AI-Powered</div>
-    <h1>Image Optimizer</h1>
-    <p class="subtitle">Upload your product image — Claude AI adds marketing stickers and optimizes for Meesho's lowest shipping slab</p>
+    <h1>🖼️ Image Optimizer</h1>
+    <p class="subtitle">Generate clean, tightly-cropped product images to reduce your estimated Meesho shipping slab</p>
+    <div class="honesty-note">
+      <strong>How this works:</strong> Meesho estimates shipping weight partly from how much visual space your product takes up in the listing image. Tighter crops and clean backgrounds tend to read as lower volume. These are <strong>estimates based on file size and crop ratio</strong> — always confirm the actual rate in your Meesho Supplier Panel after uploading.
+    </div>
 
     <div class="card" id="uploadCard">
       <div class="card-title">Upload Product Image</div>
-      <div class="card-desc">We'll generate 5 ready-to-upload variants with different borders and stickers.</div>
+      <div class="card-desc">JPG, PNG or WEBP — any size. We'll generate several tightly-cropped variants.</div>
 
       <div class="drop-zone" id="dropZone">
         <input type="file" accept="image/jpeg,image/png,image/webp" id="imageFile" onchange="imageSelected(this)" />
         <div class="drop-icon">📷</div>
         <div class="drop-text">Drop your product image here or <strong>click to browse</strong></div>
-        <div class="drop-hint">JPG, PNG, WEBP supported</div>
+        <div class="drop-hint">Supports JPG, PNG, WEBP</div>
       </div>
 
-      <div id="previewSection" style="display:none">
-        <div class="preview-row">
-          <div class="preview-box">
-            <img id="previewImg" src="" alt="Original" />
-            <div class="preview-label">Your image</div>
+      <div class="preview-area" id="previewArea">
+        <div class="preview-original">
+          <img id="previewImg" src="" alt="Original" />
+          <div class="preview-label">Original Image</div>
+        </div>
+        <div class="preview-info">
+          <div class="info-row">
+            <span class="info-label">File size</span>
+            <span class="info-value" id="infoSize">—</span>
           </div>
-          <div class="preview-info">
-            <div class="info-row"><span class="info-label">File size</span><span class="info-value" id="infoSize">—</span></div>
-            <div class="info-row"><span class="info-label">Dimensions</span><span class="info-value" id="infoDims">—</span></div>
-            <div class="info-row"><span class="info-label">Format</span><span class="info-value" id="infoFmt">—</span></div>
+          <div class="info-row">
+            <span class="info-label">Dimensions</span>
+            <span class="info-value" id="infoDimensions">—</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Format</span>
+            <span class="info-value" id="infoFormat">—</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Current slab estimate</span>
+            <span class="info-value" id="infoSlab">—</span>
           </div>
         </div>
+      </div>
 
-        <div class="ai-analysis" id="aiAnalysis">
-          <div class="ai-analysis-title">🤖 Claude AI is analyzing your image...</div>
-          <div class="ai-analysis-text" id="aiAnalysisText">Please wait</div>
-        </div>
-
+      <div id="generateSection" style="display:none">
         <div class="cat-row">
           <div>
             <div class="field-label">Product Category</div>
@@ -153,47 +183,35 @@
             </select>
           </div>
           <div>
-            <div class="field-label">Sticker Style</div>
-            <select id="stickerStyle">
-              <option value="auto">Auto (AI picks best)</option>
-              <option value="sale">HOT SALE focus</option>
-              <option value="quality">BEST QUALITY focus</option>
-              <option value="delivery">FREE DELIVERY focus</option>
+            <div class="field-label">Background Color</div>
+            <select id="bgSelect">
+              <option value="white">White (Recommended)</option>
+              <option value="lightgray">Light Gray</option>
+              <option value="cream">Cream</option>
             </select>
           </div>
         </div>
-
-        <button class="btn-generate" id="generateBtn" onclick="generateVariants()" disabled>
-          ✨ Generate 5 Optimized Images
-        </button>
+        <button class="btn-generate" id="generateBtn" onclick="generateVariants()">⚡ Generate Optimized Images</button>
       </div>
     </div>
 
     <div class="processing" id="processingSection">
       <div class="spinner"></div>
-      <div class="process-title">Generating your images...</div>
-      <p style="font-size:13px;color:var(--muted)">Claude AI is picking the best stickers for your product</p>
-      <ul class="ps-list">
-        <li class="ps active" id="ps1">⏳ Sending image to Claude AI...</li>
-        <li class="ps" id="ps2">⏳ AI analyzing product type...</li>
-        <li class="ps" id="ps3">⏳ Adding borders and stickers...</li>
-        <li class="ps" id="ps4">⏳ Compressing for lowest slab...</li>
-        <li class="ps" id="ps5">⏳ Preparing downloads...</li>
-      </ul>
+      <div class="process-title">Generating variants...</div>
+      <p style="font-size:13px;color:var(--muted)" id="processText">Preparing your image</p>
     </div>
 
     <div class="results" id="resultsSection">
       <div class="results-header">
         <div>
-          <div class="results-title">✅ 5 variants ready</div>
-          <div style="font-size:13px;color:var(--muted);margin-top:2px">Test each in Meesho panel to find your lowest shipping rate</div>
+          <div class="results-title">✅ <span id="variantCount">8</span> variants generated</div>
+          <div style="font-size:13px;color:var(--muted);margin-top:2px">Sorted by tightest crop first — likely lowest estimated slab</div>
         </div>
         <button class="btn-new" onclick="resetTool()">↩ New Image</button>
       </div>
-      <div class="ai-insight" id="aiInsight"></div>
       <div class="variants-grid" id="variantsGrid"></div>
       <div class="info-box">
-        <strong>How to use:</strong> Upload each variant to your Meesho listing one by one. Check the shipping rate shown — the one with the lowest rate is your winner. Most sellers save ₹15–40 per order by switching to an optimized image.
+        <strong>How to use:</strong> Try the 🟢 tightest-crop variant first — upload it as your primary product image in Meesho Supplier Panel and check the shipping rate shown on your listing. If it doesn't improve, try the next variant down. Results vary by category, pincode, and Meesho's own dynamic pricing — there's no way to guarantee an exact rate from outside the platform.
       </div>
     </div>
   </main>
@@ -201,311 +219,173 @@
   <script>
     let originalFile = null
     let originalImage = null
-    let aiData = null
 
-    function fmt(bytes) {
+    function formatSize(bytes) {
       if (bytes < 1024) return bytes + ' B'
-      if (bytes < 1048576) return (bytes/1024).toFixed(0) + ' KB'
-      return (bytes/1048576).toFixed(1) + ' MB'
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + ' KB'
+      return (bytes / (1024 * 1024)).toFixed(1) + ' MB'
     }
 
-    function setPS(id, state) {
-      const el = document.getElementById(id)
-      if (!el) return
-      el.className = 'ps ' + state
-      const txt = el.textContent.replace(/^[⏳🔄✅] /, '')
-      if (state === 'done') el.textContent = '✅ ' + txt
-      if (state === 'active') el.textContent = '🔄 ' + txt
+    function getSlabFromSize(bytes) {
+      const kb = bytes / 1024
+      if (kb < 200) return { label: '🟢 Likely Lowest', cls: 'badge-green' }
+      if (kb < 500) return { label: '🟡 Likely Medium', cls: 'badge-yellow' }
+      return { label: '🔴 Likely Higher', cls: 'badge-red' }
     }
 
-    // ── Image selected ─────────────────────────────────────────
-    window.imageSelected = async function(input) {
+    function getSlabLabel(kb, fillPercent) {
+      const tightCrop = fillPercent <= 55
+      if (kb < 150 && tightCrop) return { text: 'Lowest Est.', cls: 'slab-lowest' }
+      if (kb < 300) return { text: 'Low Est.', cls: 'slab-low' }
+      return { text: 'Standard Est.', cls: 'slab-standard' }
+    }
+
+    window.imageSelected = function(input) {
       const file = input.files[0]
-      if (!file || !file.type.startsWith('image/')) return
+      if (!file) return
+      if (!file.type.startsWith('image/')) {
+        alert('Please upload an image file (JPG, PNG, or WEBP)')
+        return
+      }
       originalFile = file
-
       const reader = new FileReader()
-      reader.onload = async function(e) {
+      reader.onload = function(e) {
         const img = new Image()
-        img.onload = async function() {
+        img.onload = function() {
           originalImage = img
           document.getElementById('previewImg').src = e.target.result
+          document.getElementById('previewArea').classList.add('show')
           document.getElementById('dropZone').style.display = 'none'
-          document.getElementById('previewSection').style.display = 'block'
-          document.getElementById('infoSize').textContent = fmt(file.size)
-          document.getElementById('infoDims').textContent = img.width + ' × ' + img.height + ' px'
-          document.getElementById('infoFmt').textContent = file.type.replace('image/', '').toUpperCase()
-          document.getElementById('aiAnalysis').classList.add('show')
-          await runAIAnalysis(e.target.result)
+          document.getElementById('infoSize').textContent = formatSize(file.size)
+          document.getElementById('infoDimensions').textContent = img.width + ' × ' + img.height + ' px'
+          document.getElementById('infoFormat').textContent = file.type.replace('image/', '').toUpperCase()
+          const slab = getSlabFromSize(file.size)
+          document.getElementById('infoSlab').innerHTML = `<span class="badge ${slab.cls}">${slab.label}</span>`
+          document.getElementById('generateSection').style.display = 'block'
         }
         img.src = e.target.result
       }
       reader.readAsDataURL(file)
     }
 
-    // ── Claude AI Analysis ─────────────────────────────────────
-    async function runAIAnalysis(base64DataUrl) {
-      try {
-        const base64 = base64DataUrl.split(',')[1]
-        const mimeType = originalFile.type
-
-        const response = await fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            model: 'claude-sonnet-4-6',
-            max_tokens: 800,
-            messages: [{
-              role: 'user',
-              content: [
-                { type: 'image', source: { type: 'base64', media_type: mimeType, data: base64 } },
-                { type: 'text', text: `You are a Meesho product image expert. Analyze this product image and respond ONLY with a JSON object (no markdown, no backticks):
-{
-  "productType": "short product name e.g. Hair Brush Set",
-  "mainSticker": "HOT SALE|BEST SELLER|FREE DELIVERY|BEST QUALITY|COMBO OFFER",
-  "secondSticker": "HOT SALE|BEST SELLER|FREE DELIVERY|BEST QUALITY|COMBO OFFER",
-  "isCombo": true or false,
-  "hasComplexBackground": true or false,
-  "sellerTip": "One short tip for this specific product to reduce shipping cost on Meesho"
-}
-Pick stickers that make most sense for the product shown.` }
-              ]
-            }]
-          })
-        })
-
-        const data = await response.json()
-        const text = data.content?.[0]?.text || ''
-        try {
-          aiData = JSON.parse(text.replace(/```json|```/g, '').trim())
-          document.getElementById('aiAnalysisText').textContent =
-            `✅ Detected: ${aiData.productType}. Best stickers for this product: ${aiData.mainSticker} + ${aiData.secondSticker}. Tip: ${aiData.sellerTip}`
-        } catch(e) {
-          aiData = { mainSticker: 'HOT SALE', secondSticker: 'BEST SELLER', productType: 'Product', sellerTip: '' }
-          document.getElementById('aiAnalysisText').textContent = 'Analysis complete. Ready to generate.'
-        }
-        document.getElementById('aiAnalysis').querySelector('.ai-analysis-title').textContent = '🤖 Claude AI Analysis'
-      } catch(err) {
-        aiData = { mainSticker: 'HOT SALE', secondSticker: 'BEST SELLER', productType: 'Product', sellerTip: '' }
-        document.getElementById('aiAnalysisText').textContent = 'Ready to generate optimized images.'
-        document.getElementById('aiAnalysis').querySelector('.ai-analysis-title').textContent = '🤖 AI Analysis'
-      }
-      document.getElementById('generateBtn').disabled = false
+    const BG_COLORS = {
+      white: '#FFFFFF',
+      lightgray: '#F3F4F6',
+      cream: '#FEFCE8'
     }
 
-    // ── Variant definitions ────────────────────────────────────
-    // 5 variants: different border colors + sticker combos
-    function getVariantDefs(aiD) {
-      const s1 = aiD?.mainSticker || 'HOT SALE'
-      const s2 = aiD?.secondSticker || 'BEST SELLER'
-      return [
-        {
-          name: 'Red Hot',
-          borderColors: ['#FF0000', '#FF6B00'],
-          stickers: [s1, s2],
-          quality: 0.80
-        },
-        {
-          name: 'Green Fresh',
-          borderColors: ['#00C853', '#00BCD4'],
-          stickers: [s1, 'FREE DELIVERY'],
-          quality: 0.78
-        },
-        {
-          name: 'Purple Pro',
-          borderColors: ['#7C3AED', '#2563EB'],
-          stickers: ['BEST QUALITY', s2],
-          quality: 0.76
-        },
-        {
-          name: 'Orange Bold',
-          borderColors: ['#FF6B00', '#FFD600'],
-          stickers: [s1, 'BEST QUALITY'],
-          quality: 0.74
-        },
-        {
-          name: 'Blue Clean',
-          borderColors: ['#1565C0', '#00BCD4'],
-          stickers: ['FREE DELIVERY', s2],
-          quality: 0.72
+    function generateVariant(img, canvasSize, fillPercent, quality, bgColor) {
+      return new Promise(resolve => {
+        const canvas = document.createElement('canvas')
+        canvas.width = canvasSize
+        canvas.height = canvasSize
+        const ctx = canvas.getContext('2d')
+
+        ctx.fillStyle = bgColor
+        ctx.fillRect(0, 0, canvasSize, canvasSize)
+
+        const productSize = canvasSize * (fillPercent / 100)
+        const padding = (canvasSize - productSize) / 2
+
+        const imgAspect = img.width / img.height
+        let drawW, drawH, drawX, drawY
+
+        if (imgAspect >= 1) {
+          drawW = productSize
+          drawH = productSize / imgAspect
+          drawX = padding
+          drawY = padding + (productSize - drawH) / 2
+        } else {
+          drawH = productSize
+          drawW = productSize * imgAspect
+          drawY = padding
+          drawX = padding + (productSize - drawW) / 2
         }
-      ]
+
+        ctx.drawImage(img, drawX, drawY, drawW, drawH)
+
+        canvas.toBlob(blob => {
+          resolve({ blob, canvas })
+        }, 'image/jpeg', quality)
+      })
     }
 
-    // ── Generate variants ──────────────────────────────────────
+    async function updateProcessText(text) {
+      document.getElementById('processText').textContent = text
+      await new Promise(r => setTimeout(r, 80))
+    }
+
     window.generateVariants = async function() {
       const category = document.getElementById('categorySelect').value
-      if (!category) { alert('Please select a product category'); return }
+      const bgKey = document.getElementById('bgSelect').value
+      const bgColor = BG_COLORS[bgKey] || '#FFFFFF'
+
+      if (!category) {
+        alert('Please select a product category')
+        return
+      }
 
       document.getElementById('uploadCard').style.display = 'none'
       document.getElementById('processingSection').classList.add('show')
 
-      setPS('ps1', 'done')
-      setPS('ps2', 'active')
-      await sleep(400)
-      setPS('ps2', 'done')
-      setPS('ps3', 'active')
+      const variantDefs = [
+        { name: 'Ultra Tight',     size: 1000, fillPercent: 42, quality: 0.68 },
+        { name: 'Very Tight',      size: 1000, fillPercent: 48, quality: 0.70 },
+        { name: 'Tight',           size: 1000, fillPercent: 54, quality: 0.73 },
+        { name: 'Balanced A',      size: 1000, fillPercent: 60, quality: 0.76 },
+        { name: 'Balanced B',      size: 1000, fillPercent: 65, quality: 0.79 },
+        { name: 'Standard',        size: 1000, fillPercent: 70, quality: 0.82 },
+        { name: 'Full Frame',      size: 1000, fillPercent: 76, quality: 0.85 },
+        { name: 'High Quality',    size: 1000, fillPercent: 82, quality: 0.90 },
+      ]
 
-      const defs = getVariantDefs(aiData)
       const results = []
 
-      for (let i = 0; i < defs.length; i++) {
-        const def = defs[i]
-        const { blob, url } = await renderVariant(originalImage, def)
+      for (let i = 0; i < variantDefs.length; i++) {
+        const def = variantDefs[i]
+        await updateProcessText(`Generating ${def.name} crop (${def.fillPercent}% fill)...`)
+        const { blob } = await generateVariant(originalImage, def.size, def.fillPercent, def.quality, bgColor)
+        const url = URL.createObjectURL(blob)
         const kb = blob.size / 1024
         results.push({ ...def, blob, url, kb })
-        await sleep(100)
       }
 
-      setPS('ps3', 'done')
-      setPS('ps4', 'active')
-      await sleep(300)
-      setPS('ps4', 'done')
-      setPS('ps5', 'active')
-      await sleep(200)
-      setPS('ps5', 'done')
+      await updateProcessText('Sorting by tightest crop + smallest size...')
+      results.sort((a, b) => (a.fillPercent - b.fillPercent) || (a.kb - b.kb))
 
-      // Show results
       document.getElementById('processingSection').classList.remove('show')
       document.getElementById('resultsSection').classList.add('show')
+      document.getElementById('variantCount').textContent = results.length
 
-      // AI insight
-      document.getElementById('aiInsight').innerHTML = aiData
-        ? `<strong>🤖 AI Insight for ${aiData.productType}:</strong> Claude recommended <strong>${aiData.mainSticker}</strong> and <strong>${aiData.secondSticker}</strong> stickers as the best fit for this product. ${aiData.sellerTip ? '<br><strong>💡 Tip:</strong> ' + aiData.sellerTip : ''}`
-        : `<strong>✅ 5 variants generated.</strong> Test each in your Meesho panel to find the lowest shipping rate.`
-
-      // Render cards
       const grid = document.getElementById('variantsGrid')
       grid.innerHTML = ''
+
       results.forEach((v, i) => {
+        const slab = getSlabLabel(v.kb, v.fillPercent)
+        const isBest = i === 0
         const card = document.createElement('div')
-        card.className = 'variant-card'
+        card.className = 'variant-card' + (isBest ? ' best' : '')
         card.innerHTML = `
           <div class="variant-img-wrap">
             <img src="${v.url}" alt="${v.name}" loading="lazy" />
+            ${isBest ? '<div class="best-badge">⭐ Try First</div>' : ''}
           </div>
           <div class="variant-info">
             <div class="variant-name">${v.name}</div>
-            <div class="variant-kb">${v.kb.toFixed(0)} KB · Stickers: ${v.stickers.join(', ')}</div>
-            <button class="btn-dl" onclick="dlVariant('${v.url}', '${v.name}')">⬇ Download</button>
+            <div class="variant-stats">
+              <span class="variant-fill">${v.fillPercent}% fill · ${v.kb.toFixed(0)} KB</span>
+            </div>
+            <div class="variant-stats">
+              <span class="variant-slab ${slab.cls}">${slab.text}</span>
+            </div>
+            <button class="btn-download" onclick="downloadVariant('${v.url}', '${v.name}')" style="margin-top:8px">⬇ Download</button>
           </div>
         `
         grid.appendChild(card)
       })
     }
 
-    // ── Canvas renderer ────────────────────────────────────────
-    async function renderVariant(img, def) {
-      const SIZE = 1000
-      const BORDER = 22        // border thickness in px
-      const canvas = document.createElement('canvas')
-      canvas.width = SIZE
-      canvas.height = SIZE
-      const ctx = canvas.getContext('2d')
-
-      // 1. Draw gradient border
-      const grad = ctx.createLinearGradient(0, 0, SIZE, SIZE)
-      grad.addColorStop(0, def.borderColors[0])
-      grad.addColorStop(1, def.borderColors[1])
-      ctx.fillStyle = grad
-      ctx.fillRect(0, 0, SIZE, SIZE)
-
-      // 2. White inner area
-      ctx.fillStyle = '#FFFFFF'
-      ctx.fillRect(BORDER, BORDER, SIZE - BORDER*2, SIZE - BORDER*2)
-
-      // 3. Draw product image centered in inner area
-      const inner = SIZE - BORDER * 2
-      const padding = inner * 0.10  // 10% padding inside white area
-      const available = inner - padding * 2
-      const aspect = img.width / img.height
-      let dw, dh, dx, dy
-      if (aspect >= 1) {
-        dw = available; dh = available / aspect
-        dx = BORDER + padding; dy = BORDER + padding + (available - dh) / 2
-      } else {
-        dh = available; dw = available * aspect
-        dy = BORDER + padding; dx = BORDER + padding + (available - dw) / 2
-      }
-      ctx.drawImage(img, dx, dy, dw, dh)
-
-      // 4. Draw stickers
-      def.stickers.forEach((sticker, idx) => {
-        drawSticker(ctx, sticker, idx, SIZE, BORDER, def.borderColors)
-      })
-
-      return new Promise(resolve => {
-        canvas.toBlob(blob => {
-          resolve({ blob, url: URL.createObjectURL(blob) })
-        }, 'image/jpeg', def.quality)
-      })
-    }
-
-    function drawSticker(ctx, text, idx, SIZE, BORDER, colors) {
-      // Position: bottom-right corner stickers, stacked
-      const W = 160, H = 52
-      const margin = BORDER + 10
-      const x = SIZE - margin - W
-      const y = SIZE - margin - H - (idx * (H + 8))
-
-      // Sticker background - gradient matching border
-      const grad = ctx.createLinearGradient(x, y, x+W, y+H)
-      grad.addColorStop(0, colors[0])
-      grad.addColorStop(1, colors[1])
-
-      // Burst/badge shape
-      ctx.save()
-      ctx.translate(x + W/2, y + H/2)
-
-      // Draw rounded rectangle background
-      roundRect(ctx, -W/2, -H/2, W, H, 10)
-      ctx.fillStyle = grad
-      ctx.fill()
-
-      // White stroke
-      ctx.strokeStyle = 'white'
-      ctx.lineWidth = 2.5
-      ctx.stroke()
-
-      // Emoji + text
-      ctx.fillStyle = 'white'
-      ctx.font = 'bold 13px Inter, sans-serif'
-      ctx.textAlign = 'center'
-      ctx.textBaseline = 'middle'
-
-      const emoji = getStickerEmoji(text)
-      ctx.font = 'bold 14px Inter, sans-serif'
-      ctx.fillText(emoji + ' ' + text, 0, 0)
-
-      ctx.restore()
-    }
-
-    function getStickerEmoji(text) {
-      const map = {
-        'HOT SALE': '🔥',
-        'BEST SELLER': '⭐',
-        'FREE DELIVERY': '🚚',
-        'BEST QUALITY': '✅',
-        'COMBO OFFER': '🎁'
-      }
-      return map[text] || '🏷️'
-    }
-
-    function roundRect(ctx, x, y, w, h, r) {
-      ctx.beginPath()
-      ctx.moveTo(x + r, y)
-      ctx.lineTo(x + w - r, y)
-      ctx.quadraticCurveTo(x + w, y, x + w, y + r)
-      ctx.lineTo(x + w, y + h - r)
-      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h)
-      ctx.lineTo(x + r, y + h)
-      ctx.quadraticCurveTo(x, y + h, x, y + h - r)
-      ctx.lineTo(x, y + r)
-      ctx.quadraticCurveTo(x, y, x + r, y)
-      ctx.closePath()
-    }
-
-    window.dlVariant = function(url, name) {
+    window.downloadVariant = function(url, name) {
       const a = document.createElement('a')
       a.href = url
       a.download = 'blinkflow-' + name.toLowerCase().replace(/\s+/g, '-') + '.jpg'
@@ -516,25 +396,22 @@ Pick stickers that make most sense for the product shown.` }
       document.getElementById('uploadCard').style.display = 'block'
       document.getElementById('resultsSection').classList.remove('show')
       document.getElementById('processingSection').classList.remove('show')
+      document.getElementById('previewArea').classList.remove('show')
       document.getElementById('dropZone').style.display = 'block'
-      document.getElementById('previewSection').style.display = 'none'
-      document.getElementById('aiAnalysis').classList.remove('show')
-      document.getElementById('generateBtn').disabled = true
+      document.getElementById('generateSection').style.display = 'none'
       document.getElementById('imageFile').value = ''
-      originalFile = null; originalImage = null; aiData = null
+      originalFile = null
+      originalImage = null
     }
 
-    function sleep(ms) { return new Promise(r => setTimeout(r, ms)) }
-
-    // Drag and drop
     const dz = document.getElementById('dropZone')
-    dz.addEventListener('dragover', e => { e.preventDefault(); dz.style.borderColor = '#2563EB' })
-    dz.addEventListener('dragleave', () => { dz.style.borderColor = '' })
+    dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over') })
+    dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'))
     dz.addEventListener('drop', e => {
       e.preventDefault()
-      dz.style.borderColor = ''
+      dz.classList.remove('drag-over')
       const file = e.dataTransfer.files[0]
-      if (file?.type.startsWith('image/')) {
+      if (file && file.type.startsWith('image/')) {
         const dt = new DataTransfer()
         dt.items.add(file)
         document.getElementById('imageFile').files = dt.files
