@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <title>Bulk Catalog Filler — TrueSellr</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue: #2563EB; --blue-dark: #1D4ED8; --blue-light: #EFF6FF;
+      --ink: #0F172A; --muted: #64748B; --border: #E2E8F0;
+      --surface: #F8FAFC; --white: #FFFFFF;
+      --green: #16A34A; --green-light: #F0FDF4;
+      --red: #DC2626; --red-light: #FEF2F2;
+      --yellow: #D97706; --yellow-light: #FFFBEB;
+      --purple: #7C3AED; --purple-light: #F5F3FF;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--surface); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+    /* NAV */
+    nav { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 24px; position: sticky; top: 0; z-index: 100; }
+    .nav-inner { max-width: 900px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .logo { display: flex; align-items: center; gap: 8px; font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 800; color: var(--ink); text-decoration: none; }
+    .logo-icon { width: 32px; height: 32px; background: var(--blue); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .logo-icon svg { width: 18px; height: 18px; }
+    .logo .accent { color: var(--blue); }
+    .nav-back { font-size: 14px; color: var(--muted); text-decoration: none; }
+
+    /* MAIN */
+    main { max-width: 900px; margin: 0 auto; padding: 48px 24px; }
+    .page-header { margin-bottom: 36px; }
+    .ai-badge { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, var(--purple), var(--blue)); color: white; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 99px; margin-bottom: 12px; }
+    h1 { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 800; color: var(--ink); margin-bottom: 8px; }
+    .subtitle { font-size: 15px; color: var(--muted); }
+
+    /* CARDS */
+    .card { background: var(--white); border: 1.5px solid var(--border); border-radius: 16px; padding: 28px; margin-bottom: 16px; display: none; }
+    .card.show { display: block; }
+    .card-title { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .card-desc { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+
+    .field { margin-bottom: 16px; }
+    .field-label { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 6px; display: block; }
+    .field-hint { font-size: 11px; color: #94A3B8; margin-top: 4px; }
+    input[type="text"], input[type="number"], textarea, select {
+      width: 100%; padding: 10px 14px;
+      border: 1.5px solid var(--border); border-radius: 8px;
+      font-size: 14px; font-family: 'Inter', sans-serif;
+      color: var(--ink); background: var(--white); outline: none;
+    }
+    input:focus, textarea:focus, select:focus { border-color: var(--blue); }
+    textarea { resize: vertical; min-height: 80px; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+    /* DROP ZONE */
+    .drop-zone { border: 2px dashed var(--border); border-radius: 12px; padding: 32px 24px; text-align: center; cursor: pointer; transition: .2s; position: relative; }
+    .drop-zone:hover { border-color: var(--blue); background: var(--blue-light); }
+    .drop-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .drop-icon { font-size: 32px; margin-bottom: 8px; }
+    .drop-text { font-size: 13px; color: var(--muted); }
+    .drop-text strong { color: var(--blue); }
+
+    /* SUMMARY CHIPS */
+    .summary-chips { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 4px; }
+    .chip { padding: 10px 14px; border-radius: 10px; font-size: 13px; font-weight: 600; display: flex; flex-direction: column; gap: 2px; min-width: 110px; }
+    .chip .chip-num { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 800; }
+    .chip-fk { background: var(--surface); color: var(--muted); }
+    .chip-fixed { background: var(--blue-light); color: var(--blue); }
+    .chip-seller { background: var(--purple-light); color: var(--purple); }
+    .chip-product { background: var(--yellow-light); color: var(--yellow); }
+    .chip-ai { background: var(--green-light); color: var(--green); }
+
+    .btn-primary-wide { width: 100%; padding: 14px; background: var(--blue); color: white; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; margin-top: 8px; }
+    .btn-primary-wide:hover { background: var(--blue-dark); }
+    .btn-generate { width: 100%; padding: 15px; background: linear-gradient(135deg, var(--purple), var(--blue)); color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; }
+    .btn-generate:hover { opacity: .9; }
+    .btn-generate:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-outline { padding: 9px 18px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 8px; font-size: 13px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; color: var(--ink); }
+    .btn-outline:hover { border-color: var(--blue); color: var(--blue); }
+
+    /* CATALOGUE ACCORDION */
+    .catalogue-panel { border: 1.5px solid var(--border); border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
+    .catalogue-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; cursor: pointer; background: var(--surface); user-select: none; }
+    .catalogue-header-title { font-size: 14px; font-weight: 700; color: var(--ink); }
+    .catalogue-header-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .catalogue-chevron { font-size: 13px; color: var(--muted); transition: transform .2s; }
+    .catalogue-panel.open .catalogue-chevron { transform: rotate(180deg); }
+    .catalogue-body { display: none; padding: 20px; border-top: 1px solid var(--border); }
+    .catalogue-panel.open .catalogue-body { display: block; }
+    .catalogue-remove { color: var(--red); cursor: pointer; font-size: 12px; font-weight: 600; background: none; border: none; font-family: 'Inter', sans-serif; }
+
+    /* PROCESSING */
+    .processing { display: none; text-align: center; padding: 48px 24px; }
+    .processing.show { display: block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner { width: 48px; height: 48px; border: 3px solid #E9D5FF; border-top-color: var(--purple); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 16px; }
+    .process-title { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 800; color: var(--ink); margin-bottom: 8px; }
+    .process-sub { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+    .progress-bar-wrap { max-width: 340px; margin: 0 auto; background: var(--border); border-radius: 99px; height: 8px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; background: linear-gradient(135deg, var(--purple), var(--blue)); border-radius: 99px; transition: width .3s ease; width: 0%; }
+    .progress-count { font-size: 12px; color: var(--muted); margin-top: 10px; }
+
+    /* RESULTS */
+    .results { display: none; text-align: center; }
+    .results.show { display: block; }
+    .results-title { font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 800; color: var(--ink); margin-bottom: 8px; }
+    .results-sub { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+    .btn-dl-all { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 28px; background: var(--ink); color: white; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; }
+    .btn-dl-all:hover { background: #1E293B; }
+
+    .info-box { background: var(--blue-light); border: 1px solid #BFDBFE; border-radius: 10px; padding: 14px 16px; font-size: 13px; color: #1E40AF; margin-top: 16px; line-height: 1.6; }
+    .error-row { color: var(--red); font-size: 12px; margin-top: 4px; }
+
+    @media (max-width: 640px) {
+      main { padding: 24px 16px; }
+      .two-col, .three-col { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-inner">
+      <a href="/dashboard" class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+          </svg>
+        </div>
+        <span class="logo-word">True<span class="accent">Sellr</span></span>
+      </a>
+      <a href="/dashboard" class="nav-back">← Back to Dashboard</a>
+    </div>
+  </nav>
+
+  <main>
+    <div class="page-header">
+      <div class="ai-badge">✨ AI-Powered</div>
+      <h1>Bulk Catalog Filler</h1>
+      <p class="subtitle">Upload the blank bulk-listing template your marketplace gave you — TrueSellr fills it in and hands back the exact same file, ready to upload</p>
+    </div>
+
+    <!-- STEP 1: UPLOAD TEMPLATE -->
+    <div class="card show" id="uploadCard">
+      <div class="card-title">Step 1 — Upload your blank template</div>
+      <div class="card-desc">This is the .xls/.xlsx file your marketplace (Flipkart, Amazon, etc.) gave you for your product category — the one with 80+ columns.</div>
+      <div class="drop-zone" id="dropZone">
+        <input type="file" accept=".csv,.xlsx,.xls" id="templateFile" onchange="templateSelected(this)" />
+        <div class="drop-icon">📋</div>
+        <div class="drop-text">Drop your template here or <strong>click to browse</strong></div>
+      </div>
+    </div>
+
+    <!-- STEP 2: WHAT WE FOUND -->
+    <div class="card" id="summaryCard">
+      <div class="card-title">Step 2 — Here's what we found</div>
+      <div class="card-desc" id="summaryDesc"></div>
+      <div class="summary-chips">
+        <div class="chip chip-fk"><span class="chip-num" id="chipFk">0</span>Filled by marketplace</div>
+        <div class="chip chip-fixed"><span class="chip-num" id="chipFixed">0</span>Standard defaults</div>
+        <div class="chip chip-seller"><span class="chip-num" id="chipSeller">0</span>Your business details</div>
+        <div class="chip chip-product"><span class="chip-num" id="chipProduct">0</span>Per-product details</div>
+        <div class="chip chip-ai"><span class="chip-num" id="chipAi">0</span>AI-generated</div>
+      </div>
+      <button class="btn-primary-wide" onclick="goToSellerForm()">Continue →</button>
+    </div>
+
+    <!-- STEP 3: SELLER/BUSINESS PROFILE -->
+    <div class="card" id="sellerCard">
+      <div class="card-title">Step 3 — Your business details</div>
+      <div class="card-desc">These stay the same across all your products — TrueSellr remembers them in this browser so you only fill them in once.</div>
+      <div id="sellerFields"></div>
+      <button class="btn-primary-wide" onclick="saveSellerProfile()">Save &amp; Continue →</button>
+    </div>
+
+    <!-- STEP 4: ADD PRODUCTS (accordion of "Catalogue N" panels) -->
+    <div class="card" id="productCard">
+      <div class="card-title">Step 4 — Add your products</div>
+      <div class="card-desc">Each product gets its own dropdown below. Fill in only the details you'd know — TrueSellr's AI writes everything else.</div>
+
+      <div id="catalogueList"></div>
+
+      <button class="btn-outline" style="width:100%; margin-top:8px" onclick="addCataloguePanel()">+ Add Another Catalogue</button>
+      <button class="btn-generate" style="margin-top:16px" onclick="generateAll()">Generate Filled Template</button>
+    </div>
+
+    <!-- PROCESSING -->
+    <div class="processing" id="processingSection">
+      <div class="spinner"></div>
+      <div class="process-title">Filling in your template...</div>
+      <div class="process-sub" id="progressText">Starting up...</div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressFill"></div></div>
+      <div class="progress-count" id="progressCount">0 of 0 done</div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="results" id="resultsSection">
+      <div class="results-title">Your Template Is Ready</div>
+      <div class="results-sub" id="resultsSub"></div>
+      <button class="btn-dl-all" onclick="downloadFilledTemplate()">⬇ Download Filled Template</button>
+      <div class="info-box">
+        This is your exact original file with the product rows filled in — every other sheet, column and dropdown list is untouched. Upload it straight back to your marketplace.
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const GEMINI_URL = '/api/gemini'
+    const PROFILE_KEY = 'truesellr_seller_profile'
+
+    let workbook = null
+    let originalFileName = ''
+    let originalExt = 'xlsx'
+    let mainSheetName = ''
+    let columns = []       // [{index, header, type, help, classification, allowedValues}]
+    let dataStartRow = 4   // 0-based row index where product data begins
+    let sellerAnswers = {}
+
+    // ── Utility: normalize header text for matching ──────────────
+    function normKey(s) {
+      return String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '')
+    }
+
+    // Known field buckets, matched against normalized headers
+    const FIXED_DEFAULTS = {
+      countryoforigin: 'India',
+      listingstatus: 'Active'
+    }
+    const SELLER_FIELDS = [
+      'brand','manufacturerdetails','packerdetails','importerdetails','hsn','taxcode',
+      'domesticwarranty','domesticwarrantymeasuringunit','internationalwarranty',
+      'internationalwarrantymeasuringunit','warrantysummary','warrantyservicetype',
+      'coveredinwarranty','notcoveredinwarranty','minimumorderquantityminoqminoq',
+      'minimumorderquantityminoq','procurementtype','procurementsladay','fullfilmentby',
+      'shippingprovider','localhandlingfeeinr','zonalhandlingfeeinr','nationalhandlingfeeinr'
+    ]
+    const PRODUCT_FIELDS = [
+      'sellerskuid','mrpinr','yoursellingpriceinr','stock',
+      'lengthcm','breadthcm','heightcm','weightkg','eanupc','modelnumber'
+    ]
+    const NUMERIC_TYPE_HINTS = ['integer', 'decimal', 'number']
+
+    // ── Template upload + parsing ─────────────────────────────────
+    window.templateSelected = function(input) {
+      const file = input.files[0]
+      if (!file) return
+      originalFileName = file.name
+      originalExt = file.name.toLowerCase().endsWith('.xls') ? 'xls' : 'xlsx'
+
+      const reader = new FileReader()
+      reader.onload = function(e) {
+        workbook = XLSX.read(e.target.result, { type: 'binary', cellStyles: true })
+        parseTemplate()
+      }
+      reader.readAsBinaryString(file)
+    }
+
+    function findMainSheet(wb) {
+      const skip = ['summary sheet', 'index', 'listing faq sheet', 'image guidelines',
+                    'matchingattributes', 'variantattributes', 'parent variant products', 'template_version']
+      // Prefer a sheet whose first row contains "Flipkart Serial Number" or similar marker
+      for (const name of wb.SheetNames) {
+        if (name.toLowerCase().startsWith('dropdownvaluesforcolumn')) continue
+        if (skip.includes(name.toLowerCase())) continue
+        const ws = wb.Sheets[name]
+        const firstRow = XLSX.utils.sheet_to_json(ws, { header: 1, range: 0 })[0] || []
+        if (firstRow.some(c => normKey(c).includes('serialnumber'))) return name
+      }
+      // Fallback: largest non-utility sheet
+      let best = null, bestSize = -1
+      for (const name of wb.SheetNames) {
+        if (name.toLowerCase().startsWith('dropdownvaluesforcolumn')) continue
+        if (skip.includes(name.toLowerCase())) continue
+        const ws = wb.Sheets[name]
+        const range = XLSX.utils.decode_range(ws['!ref'] || 'A1:A1')
+        const size = (range.e.r - range.s.r) * (range.e.c - range.s.c)
+        if (size > bestSize) { bestSize = size; best = name }
+      }
+      return best
+    }
+
+    function extractAllowedFromHelp(help) {
+      const m = /possib\w*\s+values?\s+(?:is|are)\s*([^.]+)\./i.exec(help || '')
+      if (!m) return null
+      const text = m[1].trim()
+      // Prefer splitting on commas (preserves multi-word phrases like "Boys and Girls").
+      // Only fall back to splitting on and/or when there are no commas at all (e.g. "Yes or No").
+      const parts = text.includes(',') ? text.split(',') : text.split(/\band\b|\bor\b/i)
+      return parts.map(s => s.trim()).filter(s => s && !/^etc\.?$/i.test(s))
+    }
+
+    function parseTemplate() {
+      mainSheetName = findMainSheet(workbook)
+      const ws = workbook.Sheets[mainSheetName]
+      const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' })
+      const headerRow = rows[0] || []
+      const typeRow = rows[1] || []
+      const helpRow = rows[3] || []
+
+      columns = headerRow.map((header, index) => {
+        if (!header) return null
+        const key = normKey(header)
+        const help = String(helpRow[index] || '')
+        const type = String(typeRow[index] || '')
+        const isFk = /to be filled by (the )?flipkart|to be filled later/i.test(help)
+
+        let classification, allowedValues = null
+        const dropdownSheetName = workbook.SheetNames.find(n => n.toLowerCase() === `dropdownvaluesforcolumn${index}`.toLowerCase())
+        if (dropdownSheetName) {
+          allowedValues = XLSX.utils.sheet_to_json(workbook.Sheets[dropdownSheetName], { header: 1, defval: '' })
+            .flat().map(v => String(v).trim()).filter(Boolean)
+        } else {
+          allowedValues = extractAllowedFromHelp(help)
+        }
+
+        if (isFk) classification = 'fk'
+        else if (FIXED_DEFAULTS[key] !== undefined) classification = 'fixed'
+        else if (SELLER_FIELDS.includes(key)) classification = 'seller'
+        else if (PRODUCT_FIELDS.includes(key)) classification = 'product'
+        else classification = 'ai'
+
+        return { index, header: String(header), key, type, help, classification, allowedValues }
+      }).filter(Boolean)
+
+      renderSummary()
+      renderSellerForm()
+      renderProductForm()
+      document.getElementById('uploadCard').classList.remove('show')
+      document.getElementById('summaryCard').classList.add('show')
+    }
+
+    function renderSummary() {
+      const counts = { fk: 0, fixed: 0, seller: 0, product: 0, ai: 0 }
+      columns.forEach(c => counts[c.classification]++)
+      document.getElementById('summaryDesc').textContent =
+        `We found ${columns.length} columns in the "${mainSheetName}" sheet of your template.`
+      document.getElementById('chipFk').textContent = counts.fk
+      document.getElementById('chipFixed').textContent = counts.fixed
+      document.getElementById('chipSeller').textContent = counts.seller
+      document.getElementById('chipProduct').textContent = counts.product
+      document.getElementById('chipAi').textContent = counts.ai
+    }
+
+    window.goToSellerForm = function() {
+      document.getElementById('summaryCard').classList.remove('show')
+      document.getElementById('sellerCard').classList.add('show')
+    }
+
+    // ── Seller (business) profile form ────────────────────────────
+    function renderSellerForm() {
+      const saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}')
+      const sellerCols = columns.filter(c => c.classification === 'seller')
+      const wrap = document.getElementById('sellerFields')
+      wrap.innerHTML = sellerCols.map(c => `
+        <div class="field">
+          <label class="field-label">${c.header}</label>
+          <input type="text" data-seller-key="${c.key}" value="${(saved[c.key] || '').replace(/"/g,'&quot;')}" placeholder="${c.allowedValues ? 'e.g. ' + c.allowedValues.slice(0,3).join(', ') : ''}" />
+          ${c.allowedValues ? `<div class="field-hint">Allowed: ${c.allowedValues.slice(0,6).join(', ')}${c.allowedValues.length > 6 ? '...' : ''}</div>` : ''}
+        </div>
+      `).join('')
+    }
+
+    window.saveSellerProfile = function() {
+      sellerAnswers = {}
+      document.querySelectorAll('[data-seller-key]').forEach(el => {
+        sellerAnswers[el.dataset.sellerKey] = el.value.trim()
+      })
+      localStorage.setItem(PROFILE_KEY, JSON.stringify(sellerAnswers))
+      document.getElementById('sellerCard').classList.remove('show')
+      document.getElementById('productCard').classList.add('show')
+    }
+
+    // ── Per-product form (accordion of "Catalogue N" panels) ───────
+    let catalogueUid = 0 // stable internal id per panel, independent of display numbering
+
+    function renderProductForm() {
+      // Column list is ready; nothing to pre-render here, panels are added on demand.
+      document.getElementById('catalogueList').innerHTML = ''
+      addCataloguePanel()
+    }
+
+    function productFieldsHtml() {
+      const productCols = columns.filter(c => c.classification === 'product')
+      return `<div class="two-col">` + productCols.map(c => `
+        <div class="field">
+          <label class="field-label">${c.header}</label>
+          <input type="text" data-product-key="${c.header}" placeholder="${c.type.includes('Text') ? '' : '0'}" />
+        </div>
+      `).join('') + `</div>`
+    }
+
+    window.addCataloguePanel = function() {
+      catalogueUid++
+      const uid = catalogueUid
+      const wrap = document.getElementById('catalogueList')
+
+      // Collapse all existing panels before adding the new (open) one
+      wrap.querySelectorAll('.catalogue-panel').forEach(p => p.classList.remove('open'))
+
+      const panel = document.createElement('div')
+      panel.className = 'catalogue-panel open'
+      panel.dataset.uid = uid
+      panel.innerHTML = `
+        <div class="catalogue-header" onclick="toggleCataloguePanel(${uid})">
+          <div>
+            <div class="catalogue-header-title">Catalogue ${wrap.children.length + 1}</div>
+            <div class="catalogue-header-meta" data-summary>New product — click to fill in</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:12px">
+            <button class="catalogue-remove" onclick="event.stopPropagation(); removeCataloguePanel(${uid})">Remove</button>
+            <span class="catalogue-chevron">▾</span>
+          </div>
+        </div>
+        <div class="catalogue-body">
+          <div class="field">
+            <label class="field-label">Product photo (optional, helps the AI)</label>
+            <input type="file" accept="image/jpeg,image/png,image/webp" data-catalogue-image />
+          </div>
+          <div class="field">
+            <label class="field-label">Briefly describe this product</label>
+            <textarea data-catalogue-description placeholder="e.g. Purple hair detangling brush, pack of 2, works on wet and dry hair"></textarea>
+          </div>
+          ${productFieldsHtml()}
+        </div>
+      `
+      wrap.appendChild(panel)
+
+      panel.querySelector('[data-catalogue-description]').addEventListener('input', e => {
+        const summary = panel.querySelector('[data-summary]')
+        summary.textContent = e.target.value.trim().slice(0, 60) || 'New product — click to fill in'
+      })
+    }
+
+    window.toggleCataloguePanel = function(uid) {
+      const panel = document.querySelector(`.catalogue-panel[data-uid="${uid}"]`)
+      panel.classList.toggle('open')
+    }
+
+    window.removeCataloguePanel = function(uid) {
+      const panel = document.querySelector(`.catalogue-panel[data-uid="${uid}"]`)
+      if (panel) panel.remove()
+      renumberCataloguePanels()
+    }
+
+    function renumberCataloguePanels() {
+      document.querySelectorAll('#catalogueList .catalogue-panel').forEach((panel, i) => {
+        panel.querySelector('.catalogue-header-title').textContent = `Catalogue ${i + 1}`
+      })
+    }
+
+    // Reads every catalogue panel currently in the DOM into a plain array,
+    // converting each panel's image (if any) to base64 along the way.
+    async function collectCataloguePanels() {
+      const panels = [...document.querySelectorAll('#catalogueList .catalogue-panel')]
+      const products = []
+      for (const panel of panels) {
+        const description = panel.querySelector('[data-catalogue-description]').value.trim()
+        if (!description) continue // skip empty/unfilled catalogues
+
+        const answers = {}
+        panel.querySelectorAll('[data-product-key]').forEach(el => {
+          answers[el.dataset.productKey] = el.value.trim()
+        })
+
+        const file = panel.querySelector('[data-catalogue-image]').files[0]
+        let imageBase64 = null, imageMime = null
+        if (file) {
+          imageBase64 = await new Promise(resolve => {
+            const reader = new FileReader()
+            reader.onload = e => resolve(e.target.result.split(',')[1])
+            reader.readAsDataURL(file)
+          })
+          imageMime = file.type
+        }
+
+        products.push({ description, imageBase64, imageMime, answers })
+      }
+      return products
+    }
+
+    // ── AI generation ──────────────────────────────────────────────
+    async function callGemini(prompt, imageBase64, imageMime) {
+      const res = await fetch(GEMINI_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt, imageBase64, imageMime })
+      })
+      const data = await res.json()
+      if (data.error) throw new Error(typeof data.error === 'string' ? data.error : 'AI request failed')
+      return data.candidates?.[0]?.content?.parts?.[0]?.text || ''
+    }
+
+    function buildPromptForProduct(product) {
+      const aiCols = columns.filter(c => c.classification === 'ai')
+      const fieldSpecs = aiCols.map(c => {
+        if (c.allowedValues && c.allowedValues.length && c.allowedValues.length <= 30) {
+          return `"${c.header}": one of exactly these allowed values: ${c.allowedValues.join(' | ')}`
+        }
+        return `"${c.header}": short, accurate value for this field based on the product`
+      }).join('\n')
+
+      return `You are an expert e-commerce catalog specialist. Based on the product photo (if provided) and description below, fill in the following listing fields.
+
+Product description: ${product.description}
+
+Respond ONLY with a valid JSON object where each key is the exact field name and the value is your generated content:
+{
+${aiCols.map(c => `  "${c.header}": "..."`).join(',\n')}
+}
+
+Field guidance:
+${fieldSpecs}
+
+Rules:
+- For any field with a listed set of allowed values, respond with EXACTLY one of those values, spelled identically.
+- Keep "Description" and "Key Features" genuinely descriptive and specific to this product.
+- Never leave a field empty — make a reasonable best guess if unsure.`
+    }
+
+    function levenshtein(a, b) {
+      const m = a.length, n = b.length
+      const dp = Array.from({length: m+1}, (_, i) => [i, ...Array(n).fill(0)])
+      for (let j = 0; j <= n; j++) dp[0][j] = j
+      for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
+          dp[i][j] = a[i-1] === b[j-1] ? dp[i-1][j-1] : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1])
+        }
+      }
+      return dp[m][n]
+    }
+
+    function snapToAllowed(value, allowedValues) {
+      if (!allowedValues || !allowedValues.length) return value
+      const v = String(value || '').toLowerCase().trim()
+      const exact = allowedValues.find(a => a.toLowerCase() === v)
+      if (exact) return exact
+      let best = allowedValues[0], bestDist = Infinity
+      allowedValues.forEach(a => {
+        const d = levenshtein(v, a.toLowerCase())
+        if (d < bestDist) { bestDist = d; best = a }
+      })
+      return best
+    }
+
+    // ── Generate: fill workbook for every product in the batch ─────
+    window.generateAll = async function() {
+      const productBatch = await collectCataloguePanels()
+      if (!productBatch.length) { alert('Please describe at least one product before generating.'); return }
+
+      document.getElementById('productCard').classList.remove('show')
+      document.getElementById('processingSection').classList.add('show')
+
+      const ws = workbook.Sheets[mainSheetName]
+      let failedCount = 0
+
+      for (let i = 0; i < productBatch.length; i++) {
+        const product = productBatch[i]
+        document.getElementById('progressText').textContent = `Generating: ${product.description.slice(0, 50)}...`
+        document.getElementById('progressCount').textContent = `${i} of ${productBatch.length} done`
+        document.getElementById('progressFill').style.width = `${Math.round((i / productBatch.length) * 100)}%`
+
+        let aiData = {}
+        try {
+          const raw = await callGemini(buildPromptForProduct(product), product.imageBase64, product.imageMime)
+          aiData = JSON.parse(raw.replace(/```json|```/g, '').trim())
+        } catch (err) {
+          failedCount++
+        }
+
+        const rowIndex = dataStartRow + i
+        columns.forEach(c => {
+          let value = ''
+          if (c.classification === 'fk') { value = '' }
+          else if (c.classification === 'fixed') { value = FIXED_DEFAULTS[c.key] }
+          else if (c.classification === 'seller') { value = sellerAnswers[c.key] || '' }
+          else if (c.classification === 'product') { value = product.answers[c.header] || '' }
+          else if (c.classification === 'ai') {
+            value = aiData[c.header] || ''
+            if (c.allowedValues && c.allowedValues.length) value = snapToAllowed(value, c.allowedValues)
+          }
+
+          if (value === '' || value === undefined) return
+          const addr = XLSX.utils.encode_cell({ r: rowIndex, c: c.index })
+          const isNumeric = NUMERIC_TYPE_HINTS.some(hint => c.type.toLowerCase().includes(hint))
+          if (isNumeric && !isNaN(parseFloat(value))) {
+            ws[addr] = { t: 'n', v: parseFloat(value) }
+          } else {
+            ws[addr] = { t: 's', v: String(value) }
+          }
+        })
+
+        // extend sheet range if we've written beyond the current bounds
+        const range = XLSX.utils.decode_range(ws['!ref'])
+        if (rowIndex > range.e.r) { range.e.r = rowIndex; ws['!ref'] = XLSX.utils.encode_range(range) }
+      }
+
+      document.getElementById('progressFill').style.width = '100%'
+      document.getElementById('progressCount').textContent = `${productBatch.length} of ${productBatch.length} done`
+
+      document.getElementById('processingSection').classList.remove('show')
+      document.getElementById('resultsSection').classList.add('show')
+      document.getElementById('resultsSub').textContent = failedCount
+        ? `${productBatch.length - failedCount} of ${productBatch.length} products filled successfully (${failedCount} had an AI error and were left blank — you can fill those by hand).`
+        : `All ${productBatch.length} products filled successfully.`
+    }
+
+    window.downloadFilledTemplate = function() {
+      const outName = originalFileName.replace(/(\.[^.]+)$/, '-filled$1') || `filled-template.${originalExt}`
+      XLSX.writeFile(workbook, outName, { bookType: originalExt === 'xls' ? 'biff8' : 'xlsx' })
+    }
+  </script>
+</body>
+</html>
