@@ -73,6 +73,7 @@
     .chip-seller { background: var(--purple-light); color: var(--purple); }
     .chip-product { background: var(--yellow-light); color: var(--yellow); }
     .chip-ai { background: var(--green-light); color: var(--green); }
+    .chip-image { background: #FFF7ED; color: #C2410C; }
 
     .btn-primary-wide { width: 100%; padding: 14px; background: var(--blue); color: white; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; margin-top: 8px; }
     .btn-primary-wide:hover { background: var(--blue-dark); }
@@ -164,6 +165,7 @@
         <div class="chip chip-seller"><span class="chip-num" id="chipSeller">0</span>Your business details</div>
         <div class="chip chip-product"><span class="chip-num" id="chipProduct">0</span>Per-product details</div>
         <div class="chip chip-ai"><span class="chip-num" id="chipAi">0</span>AI-generated</div>
+        <div class="chip chip-image"><span class="chip-num" id="chipImage">0</span>Your product photo</div>
       </div>
       <button class="btn-primary-wide" onclick="goToSellerForm()">Continue →</button>
     </div>
@@ -207,7 +209,18 @@
     </div>
   </main>
 
-  <script>
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+
+    const SUPABASE_URL = 'https://yrehpzsajltpinqdjqge.supabase.co'
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlyZWhwenNhamx0cGlucWRqcWdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1MDIzNTEsImV4cCI6MjA5ODA3ODM1MX0.T4gyFGHdNg4xQOQoHf02XUHz2Nkapb7ybW9Ln2BC7Ts'
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    const IMAGE_BUCKET = 'product-images'
+
+    // Check auth — the image-upload storage policy requires a logged-in user, so gate the page the same way
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) { window.location.href = '/login' }
+
     const GEMINI_URL = '/api/gemini'
     const PROFILE_KEY = 'truesellr_seller_profile'
 
@@ -320,6 +333,9 @@
         else if (FIXED_DEFAULTS[key] !== undefined) classification = 'fixed'
         else if (SELLER_FIELDS.includes(key)) classification = 'seller'
         else if (PRODUCT_FIELDS.includes(key)) classification = 'product'
+        // URL fields can never be reliably AI-generated — a made-up link is worse than a blank one.
+        // The seller's uploaded photo fills the main image URL; everything else stays blank.
+        else if (type.trim().toLowerCase() === 'url') classification = /image/i.test(header) ? 'image' : 'url'
         else classification = 'ai'
 
         return { index, header: String(header), key, type, help, classification, allowedValues }
@@ -333,11 +349,12 @@
     }
 
     function renderSummary() {
-      const counts = { fk: 0, fixed: 0, seller: 0, product: 0, ai: 0 }
+      const counts = { fk: 0, fixed: 0, seller: 0, product: 0, ai: 0, image: 0, url: 0 }
       columns.forEach(c => counts[c.classification]++)
       document.getElementById('summaryDesc').textContent =
         `We found ${columns.length} columns in the "${mainSheetName}" sheet of your template.`
       document.getElementById('chipFk').textContent = counts.fk
+      document.getElementById('chipImage').textContent = counts.image
       document.getElementById('chipFixed').textContent = counts.fixed
       document.getElementById('chipSeller').textContent = counts.seller
       document.getElementById('chipProduct').textContent = counts.product
@@ -493,6 +510,32 @@
       return data.candidates?.[0]?.content?.parts?.[0]?.text || ''
     }
 
+    // ── Upload a product photo to Supabase Storage and return its public URL ──
+    async function uploadProductImage(imageBase64, imageMime) {
+      if (!imageBase64) return null
+      try {
+        const byteChars = atob(imageBase64)
+        const byteNumbers = new Array(byteChars.length)
+        for (let i = 0; i < byteChars.length; i++) byteNumbers[i] = byteChars.charCodeAt(i)
+        const blob = new Blob([new Uint8Array(byteNumbers)], { type: imageMime || 'image/jpeg' })
+
+        const ext = (imageMime || 'image/jpeg').split('/')[1] || 'jpg'
+        const path = `${crypto.randomUUID()}.${ext}`
+
+        const { error } = await supabase.storage.from(IMAGE_BUCKET).upload(path, blob, {
+          contentType: imageMime || 'image/jpeg',
+          upsert: false
+        })
+        if (error) throw error
+
+        const { data } = supabase.storage.from(IMAGE_BUCKET).getPublicUrl(path)
+        return data.publicUrl
+      } catch (err) {
+        console.error('Image upload failed:', err.message)
+        return null
+      }
+    }
+
     function buildPromptForProduct(product) {
       const aiCols = columns.filter(c => c.classification === 'ai')
       const fieldSpecs = aiCols.map(c => {
@@ -555,6 +598,8 @@ Rules:
 
       const ws = workbook.Sheets[mainSheetName]
       let failedCount = 0
+      let noPhotoCount = 0
+      let uploadFailedCount = 0
 
       for (let i = 0; i < productBatch.length; i++) {
         const product = productBatch[i]
@@ -570,6 +615,12 @@ Rules:
           failedCount++
         }
 
+        // Upload the photo (if any) so we have a real, working link for the image URL column —
+        // never let the AI invent one, a fake link is worse than a blank field.
+        const imageUrl = await uploadProductImage(product.imageBase64, product.imageMime)
+        if (!product.imageBase64) noPhotoCount++
+        else if (!imageUrl) uploadFailedCount++
+
         const rowIndex = dataStartRow + i
         columns.forEach(c => {
           let value = ''
@@ -577,6 +628,11 @@ Rules:
           else if (c.classification === 'fixed') { value = FIXED_DEFAULTS[c.key] }
           else if (c.classification === 'seller') { value = sellerAnswers[c.key] || '' }
           else if (c.classification === 'product') { value = product.answers[c.header] || '' }
+          else if (c.classification === 'image') {
+            // Only the primary/main image slot gets filled — we only collect one photo per product for now.
+            if (/main/i.test(c.header)) value = imageUrl || ''
+          }
+          else if (c.classification === 'url') { value = '' } // e.g. Flipkart Product Link, Video URL — no real value to give
           else if (c.classification === 'ai') {
             value = aiData[c.header] || ''
             if (c.allowedValues && c.allowedValues.length) value = snapToAllowed(value, c.allowedValues)
@@ -602,9 +658,15 @@ Rules:
 
       document.getElementById('processingSection').classList.remove('show')
       document.getElementById('resultsSection').classList.add('show')
-      document.getElementById('resultsSub').textContent = failedCount
-        ? `${productBatch.length - failedCount} of ${productBatch.length} products filled successfully (${failedCount} had an AI error and were left blank — you can fill those by hand).`
-        : `All ${productBatch.length} products filled successfully.`
+
+      const notes = []
+      if (failedCount) notes.push(`${failedCount} product(s) had an AI error and were left blank — fill those by hand`)
+      if (noPhotoCount) notes.push(`${noPhotoCount} product(s) had no photo, so the Main Image URL is blank — most marketplaces require this to approve a listing`)
+      if (uploadFailedCount) notes.push(`${uploadFailedCount} photo(s) failed to upload — check your Supabase Storage setup and try again`)
+
+      document.getElementById('resultsSub').textContent = notes.length
+        ? `${productBatch.length} product(s) processed. ${notes.join('. ')}.`
+        : `All ${productBatch.length} products filled successfully, including photos.`
     }
 
     window.downloadFilledTemplate = function() {
