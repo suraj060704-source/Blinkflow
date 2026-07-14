@@ -503,14 +503,20 @@ if (readAds) {
         setStep('ps1', 'active')
         const ordersText = await readFileAsText(window.uploadedFiles.orders)
         const rawOrders = parseCSVText(ordersText)
-        const orders = rawOrders.map(row => ({
-          sub_order_no: (row['Sub Order No'] || '').trim(),
-          sku: (row['SKU'] || '').trim(),
-          quantity: parseInt(row['Quantity']) || 1,
-          listed_price: parseFloat(row['Supplier Listed Price (Incl. GST + Commission)']) || 0,
-          order_status: row['Reason for Credit Entry'] || ''
-        })).filter(o => o.sub_order_no)
-        
+        const orderMap = new Map()
+        rawOrders.forEach(row => {
+          const subOrderNo = (row['Sub Order No'] || '').trim()
+          if (!subOrderNo) return
+          orderMap.set(subOrderNo, {
+            sub_order_no: subOrderNo,
+            sku: (row['SKU'] || '').trim(),
+            quantity: parseInt(row['Quantity']) || 1,
+            listed_price: parseFloat(row['Supplier Listed Price (Incl. GST + Commission)']) || 0,
+            order_status: row['Reason for Credit Entry'] || ''
+          })
+        })
+        const orders = Array.from(orderMap.values())
+
         document.getElementById('progressText').textContent = `Loaded ${orders.length.toLocaleString()} orders`
         setStep('ps1', 'done')
         setStep('ps2', 'active')
