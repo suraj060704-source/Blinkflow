@@ -622,7 +622,7 @@ function clearFileError(zoneId) {
 
             } else if (status === 'Return') {
               profit = settlement - PACKAGING
-              totalRevenue += Math.max(settlement, 0)
+              totalRevenue += settlement
               totalPackaging += PACKAGING
               totalReturnShipping += retShip
               returns++
