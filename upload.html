@@ -447,10 +447,10 @@ function clearFileError(zoneId) {
       const wb = XLSX.read(buffer, { type: 'array' })
       const ws = wb.Sheets['Order Payments']
       if (!ws) return { orders: [], ads: 0 }
-      
+
       const allRows = XLSX.utils.sheet_to_json(ws, { header: 1 })
       if (allRows.length < 4) return { orders: [], ads: 0 }
-      
+
       const headers = allRows[1]
       const orders = []
      for (let i = 3; i < allRows.length; i++) {
@@ -463,21 +463,20 @@ function clearFileError(zoneId) {
   orders.push(obj)
 }
 
-      // Parse ads
-   // Parse ads — only from current month's file
-let ads = 0
-if (readAds) {
-  const wsAds = wb.Sheets['Ads Cost']
-  if (wsAds) {
-    const adsRows = XLSX.utils.sheet_to_json(wsAds, { header: 1 })
-    adsRows.slice(3).forEach(row => {
-      const val = parseFloat(row[7])
-      if (!isNaN(val) && val !== 0) {
-        ads += Math.abs(val)
+      // Parse ads — only from current month's file
+      let ads = 0
+      if (readAds) {
+        const wsAds = wb.Sheets['Ads Cost']
+        if (wsAds) {
+          const adsRows = XLSX.utils.sheet_to_json(wsAds, { header: 1 })
+          adsRows.slice(3).forEach(row => {
+            const val = parseFloat(row[3]) // "Ad Cost" column, excl. GST
+            if (!isNaN(val) && val !== 0) {
+              ads += Math.abs(val)
+            }
+          })
+        }
       }
-    })
-  }
-}
       return { orders, ads }
     }
 
