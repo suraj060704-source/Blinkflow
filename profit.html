@@ -154,9 +154,9 @@
         <div class="detail-card">
           <h3>💰 Financial Breakdown</h3>
           <div class="detail-row"><span class="label">Gross Revenue</span><span class="value green" id="dRevenue">—</span></div>
+          <div style="font-size:11px;color:var(--muted);margin-top:-6px;margin-bottom:8px;text-align:right">Return shipping (<span id="dReturnShipping">—</span>) already reflected here</div>
           <div class="detail-row"><span class="label">SKU Cost</span><span class="value red" id="dSkuCost">—</span></div>
           <div class="detail-row"><span class="label">Packaging</span><span class="value red" id="dPackaging">—</span></div>
-          <div class="detail-row"><span class="label">Return Shipping</span><span class="value red" id="dReturnShipping">—</span></div>
           <div class="detail-row"><span class="label">TCS + TDS</span><span class="value red" id="dTcsTds">—</span></div>
           <div class="detail-row"><span class="label">Ad Spend</span><span class="value red" id="dAds">—</span></div>
           <div class="detail-row total"><span class="label">NET PROFIT</span><span class="value green" id="dNetProfit">—</span></div>
@@ -281,7 +281,7 @@
       document.getElementById('dRevenue').textContent = fmt(r.gross_revenue)
       document.getElementById('dSkuCost').textContent = '-' + fmt(r.total_sku_cost)
       document.getElementById('dPackaging').textContent = '-' + fmt(r.total_packaging)
-      document.getElementById('dReturnShipping').textContent = '-' + fmt(r.total_return_shipping)
+      document.getElementById('dReturnShipping').textContent = fmt(r.total_return_shipping)
       document.getElementById('dTcsTds').textContent = '-' + fmt(r.total_tcs_tds)
       document.getElementById('dAds').textContent = '-' + fmt(r.total_ads)
       document.getElementById('dNetProfit').textContent = (profit >= 0 ? '+' : '-') + fmt(profit)

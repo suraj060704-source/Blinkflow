@@ -643,7 +643,7 @@ function clearFileError(zoneId) {
           }
         }
 
-        const netProfit = totalProfit - totalAds
+        const netProfit = totalProfit - totalTcsTds - totalAds
         const netMargin = totalRevenue > 0 ? (netProfit / totalRevenue) * 100 : 0
         const rtoRate = orders.length > 0 ? (rto / orders.length) * 100 : 0
         const settlePct = orders.length > 0 ? ((orders.length - pending) / orders.length) * 100 : 0
